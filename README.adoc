@@ -1,6 +1,6 @@
-= SUSE Linux Enterprise Point of Service 
+= SUSE Manager for Retail
 
-Documentation for the SUSE Enterprise Point of Service Product
+Documentation for the SUSE Manager for Retail
 
 Released versions of the documentation are published at
 https://www.suse.com/documentation/.

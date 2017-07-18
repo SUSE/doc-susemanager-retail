@@ -138,8 +138,9 @@
 <!ENTITY productnumber "11 SP2">
 <!ENTITY sdk           "SUSE Software Development Kit">
 <!ENTITY slreg         "SUSE&reg; Linux">
-<!ENTITY slepos        "SUSE Linux Enterprise Point of Service">
-<!ENTITY sleposreg     "SUSE&reg; Linux Enterprise Point of Service">
+<!ENTITY slepos-old    "SUSE Linux Enterprise Point of Service">
+<!ENTITY slepos        "SUSE Manager for Retail">
+<!ENTITY sleposreg     "SUSE&reg; Manager for Retail">
 <!ENTITY slert         "&sle; Real Time">
 <!ENTITY slertreg      "&slereg; Real Time">
 <!ENTITY hasi          "High Availability Extension">

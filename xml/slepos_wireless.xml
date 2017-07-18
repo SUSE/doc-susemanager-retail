@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+ xml:id="cha.slepos_wireless">
+ <title>Wireless Setup and Rollout</title>
+ <info/>
+ <para>
+  <!--Since SLEPOS11 SP2 FP1 --> It is possible to use wireless networks
+  (Wi-Fi) to connect wireless &slepos; terminals. The wireless support must
+  be added when building images. The wireless support is included only in
+  the netboot image &ndash; PXE booting via wireless networks is however
+  not supported. The first boot of the wireless can be performed using a
+  preloaded image or an image on a USB stick. It is also possible to use a
+  temporary LAN connection. </para>
+ <para> A typical scenario: </para>
+ <procedure>
+  <step>
+   <para> The terminal boots locally from a USB stick or a preloaded image.
+   </para>
+  </step>
+  <step>
+   <para> The wireless adapter is configured and connects to the predefined
+    access point. </para>
+  </step>
+  <step>
+   <para> The appropriate image is downloaded from the &branchserv; and
+    installed. </para>
+  </step>
+ </procedure>
+ <note>
+  <title>Multiple Network Interfaces</title>
+  <para> If a terminal uses multiple network interfaces (LAN and wireless,
+   for example), a new record in LDAP and new
+    <filename>config.MAC</filename> is created for each interface. All
+   interfaces have the same hostname and IP address assigned by DHCP.
+  </para>
+ </note>
+ <sect1>
+  <title>Service Partition</title>
+  <para> For the wireless operation of &slepos; terminals, a service
+   partition on each terminal's hard drive is needed for storing the netboot
+   kernel and initrd. The service partition must be the first partition on
+   the terminal's hard drive and mounted as
+    <filename>/srv/SLEPOS</filename>. </para>
+  <para> To create the service partition, use the
+    <systemitem>scPartition</systemitem> object with
+    <systemitem>scPartNum</systemitem>
+   <literal>0</literal>, <systemitem>scPartType</systemitem>
+   <literal>83</literal> and <systemitem>scPartMount</systemitem>
+   <literal>/srv/SLEPOS</literal>. For more information about creating the
+   partition setup, see <xref linkend="sec.slepos_term.ldap.harddisk"/>. </para>
+  <para> The minimum size of the service partition sufficient for the
+   wireless operation is 200 MB. However, the service partition is also
+   used for downloading compressed images with multicast option and will be
+   used for other purposes in the future. The recommended size of the
+   service partition is 20 GB. </para>
+  <para>
+   <!--bnc831399--> If booting from the service partition is required (for
+   example when wireless operation or offline deployment is used),
+    <systemitem>grub</systemitem> must be included in
+    <systemitem>initrd</systemitem>. This can be accomplished by adding
+    <literal>&lt;package name="grub" bootinclude="true"/&gt;</literal> (or <literal>&lt;package name="grub2" bootinclude="true"/&gt;</literal> for &slepos; 12) to
+   the <filename>config.xml</filename> file or by adding
+    <systemitem>grub</systemitem> to the list of packages to include in
+   boot in via &imgcreat;. </para>
+  <para> The service partition cannot be encrypted. </para>
+ </sect1>
+ <sect1>
+  <!--ok-->
+  <title>Creating Images for Wireless Setup</title>
+  <para> Boot images used for the wireless setup must have wireless setup
+   enabled. The following lines must be present in the
+    <filename>config.xml</filename> file, in the <literal>&lt;packages
+    type="image"...&lt;</literal> section: </para>
+  <screen>
+&lt;!-- begin wireless support --&gt;
+                &lt;package name="kernel-firmware" bootinclude="true"/&gt;
+                &lt;package name="wpa_supplicant" bootinclude="true"/&gt;
+                &lt;package name="wireless-tools" bootinclude="true"/&gt;
+                &lt;package name="libnl" bootinclude="true"/&gt;
+                &lt;package name="grub" bootinclude="true"/&gt;
+                &lt;archive name="wlan.tar.gz" bootinclude="true"/&gt;
+&lt;!-- end wireless support --&gt;
+</screen>
+  <para> Also, the wireless drivers must be enabled in the drivers section
+   of the <filename>config.xml</filename> file: </para>
+  <screen>
+&lt;!-- begin wireless support --&gt;
+        &lt;drivers type="drivers"&gt;
+                &lt;file name="drivers/net/wireless/*"/&gt;
+                &lt;file name="drivers/net/wireless/*/*"/&gt;
+        &lt;/drivers&gt;
+&lt;!-- end wireless support --&gt;
+</screen>
+  <para> The necessary lines are already present in the provided
+   configuration of the minimal image, but they are commented out. The
+   wireless configuration is contained in the
+    <filename>/etc/wpa_supplicant/wpa_supplicant.conf</filename> file
+   present in the <filename>wlan.tar.gz</filename> tarball and can be
+   adjusted there. </para>
+  <para> To create the initial boot image with &kiwi;, use the
+    <command>kiwi --bootusb</command>
+   <replaceable>initrd</replaceable> command. The image must be of the
+   netboot type. The <replaceable>initrd</replaceable> must be an initrd
+   file with wireless support enabled in the
+    <filename>config.xml</filename> file. The kernel is expected to be in
+   the same directory and follow the same naming convention. For example: </para>
+  <screen>
+ cd /var/lib/SLEPOS/system/images/<replaceable>minimal-3.4.0</replaceable>
+ kiwi --bootusb <replaceable>initrd-netboot-suse-SLES11.i686-2.1.1.splash.gz</replaceable>
+</screen>
+  <para> The resulting image can be used for booting from an USB stick or
+   it can be preloaded on the hard drive. </para>
+ </sect1>
+ <sect1>
+  <!--ok-->
+  <title>Multicast Over Wireless Networks</title>
+  <para> Most current Wi-Fi networks do not support multicast correctly and
+   switch to the lowest available network speed when multicast TFTP is
+   used. Unless you are using accesspoints supporting high speed multicast
+   over Wi-Fi, it is recommended to use FTP instead of multicast TFTP on
+   such networks. </para>
+ </sect1>
+ <sect1 xml:id="multipleinterfaces">
+  <!--ok-->
+  <title>Using a Terminal with Multiple Network Interfaces</title>
+  <para> &slepos; supports terminals having more than one network interface
+   (for example WiFi and LAN or more than one LAN). During registration and
+   subsequent boots, the list of all interfaces is retrieved and LDAP
+   updated (attribute <systemitem>macAddress</systemitem> of the
+    <systemitem>scWorkstation object</systemitem>). This ensures that
+    <filename>config.MAC</filename> files, MAC directories and specific pxe
+   files are correctly created (or linked) for all interfaces, so the
+   machine can freely use any of then to boot. </para>
+  <para> MAC interfaces cannot be directly interchanged between
+   workstations, because the workstation is identified by them. To
+   accomplish this, a two step procedure is needed: the MAC(s) of the
+   interface(s) to be exchanged must first be deregistred, by removing the
+   interface(s) from the machine(s) and rebooting the machine(s). The
+    <command>posleases2ldap</command> script then removes the MAC(s) from
+   the workstation's LDAP data. After that, they can be reused, so the
+   interface(s) can be moved into another machine(s). </para>
+ </sect1>
+</chapter>

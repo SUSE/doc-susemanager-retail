@@ -1,0 +1,1316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_overview">
+ <title>Product Overview</title>
+ <info/>
+ <para>
+  &sleposreg; is a secure and reliable Linux platform optimized for
+  enterprise retail organizations. Built on the solid foundation of
+  &slereg;, it is the only enterprise-class Linux operating system tailored
+  specifically for retail &pos; terminals, kiosks, self-service systems, and
+  reverse-vending systems.
+ </para>
+ <para>
+  This section provides an architectural overview of the &slepos; product,
+  along with an overview of server types, images, and the deployment process.
+<!--FIXME TODO deployment process-->
+ </para>
+ <sect1 xml:id="sec.overview.architecture">
+  <title>Architecture</title>
+
+  <para>
+   The &slepos; architecture consists of one centralized &admserv;, one
+   or more &branchserv;s, and &pos; terminals. These can be standard PCs
+   running retail check-out applications or specialized point-of-sale machines
+   such as cash registers and customer kiosks (see
+   <xref linkend="fig.sleposarch"/>). Find a list of system requirements for
+   the individual components in <xref linkend="sec.sysreq"/> and an overview of
+   the different server types and their functions in
+   <xref linkend="sec.server"/>.
+  </para>
+
+  <figure xml:id="fig.sleposarch">
+   <title>&slepos; System Architecture</title>
+   <mediaobject>
+    <imageobject role="fo">
+     <imagedata fileref="sl_pos_a.png" width="100%" format="PNG"/>
+    </imageobject>
+    <imageobject role="html">
+     <imagedata fileref="sl_pos_a.png" width="100%" format="PNG"/>
+    </imageobject>
+   </mediaobject>
+  </figure>
+
+  <para>
+   All system information (system structure, image information, the
+   configuration and deployment method for each &branchserv; and &pos;
+   terminal, etc.) is stored in an LDAP database on the &admserv; and may be
+   replicated on &branchserv;s. The &admserv; usually also holds the
+   master repository for the images required to boot and configure &pos;
+   terminals and provides the utilities required to build those images.
+  </para>
+
+  <note>
+   <title>Creating a Dedicated &imgserv;</title>
+   <para>
+    However, if you have a large system and want to offload the image building
+    function from the &admserv;, you can also set up a dedicated
+    &imgserv;. For more information, see
+    <xref linkend="cha.slepos_adminserv"/> and
+    <xref linkend="cha.slepos_imgserv"/>.
+   </para>
+  </note>
+
+  <para>
+   Triggered by the <command>possyncimages</command> command (see
+   <xref linkend="ad_bsx5jsk"/>, each &branchserv; downloads the system
+   information and images required for its local &pos; terminals from the
+   &admserv;. The &pos; terminals, in turn, download their respective
+   images from the &branchserv; when they boot.
+  </para>
+
+  <warning>
+   <title>Protecting the &branchserv;s</title>
+   <para>
+    Because &branchserv;s contain sensitive information, they must be
+    secured against unauthorized access. Close all unused ports and allow only
+    the root user access to the server console. Refer to
+    <xref linkend="cha.slepos_sec"/> for more details on how to protect your
+    &slepos; setup.
+   </para>
+  </warning>
+
+  <para>
+   &slepos; is broadly scalable. A small shop with five &pos;
+   terminals can be managed as well as a large chain with a thousand
+   branches. For organizations with several &branchserv;s, the link between
+   the Branch and &admserv; is maintained over WAN. During execution of
+   administrative tasks, such as the installation of new &pos; terminals in
+   a branch, steps must be taken to ensure that the WAN link to the
+   &admserv; is available.
+  </para>
+
+  <para>
+   The &slepos; architecture is highly centralized. However, administrative
+   tasks can also be performed on subunits for role-based administration. The
+   &branchserv; provides all the services necessary for the operation and
+   management of the &pos; terminals and the LDAP database can be replicated
+   on the &branchserv;. Consequently, the &branchserv; and &pos;
+   terminals can function independently of the &admserv; if the
+   server fails or the connection is down.
+  </para>
+ </sect1>
+ <sect1 xml:id="sec.sysreq">
+  <title>System Requirements</title>
+
+  <para>
+   This section provides a list of minimal hardware requirements for
+   &slepos;.
+<!-- FIXME entity for the current version?-->
+  </para>
+
+  <sect2 xml:id="sec.sysreq.admin">
+   <title>Administration Server</title>
+   <para>
+    The following list identifies the system requirements for an &admserv;:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      One server with an x86 or x86-64 processor.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 4 GB hard disk space; recommended 15 GB.
+     </para>
+     <para>
+      The required space depends on the size of your images.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      CPU).
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      One network card.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2 xml:id="sec.sysreq.imaging">
+   <title>Image Building Server</title>
+   <para>
+    The following list identifies the system requirements for a dedicated
+    &imgserv;:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      One server with an x86 or x86-64 processor.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 4 GB hard disk space; recommended 25 GB.
+     </para>
+     <para>
+      The required space depends on the size of your images.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      CPU).
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      One network card.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2 xml:id="sec.sysreq.branch">
+   <title>Branch Server</title>
+   <para>
+    The following list identifies the system requirements for a
+    &branchserv;:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      One server with an x86 or x86-64 processor.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 4 GB hard disk space; recommended 10 GB.
+     </para>
+     <para>
+      The required space depends on the size of the images you distribute to
+      your Point of Service terminals.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      CPU).
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      At least two network cards per server:
+     </para>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para>
+        one network card for the &admserv;'s public network,
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        one network card for the &branchserv;'s private network.
+       </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2 xml:id="sec.sysreq.combo">
+   <title>Administration/Branch Server Combination</title>
+   <para>
+    The following list identifies the system requirements for an
+    Administration/Branch Server combination (&combserv;):
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      One server with an x86 or x86-64 processor.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 4 GB hard disk space; recommended 25 GB.
+     </para>
+     <para>
+      The required space depends on the size of your images.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      CPU).
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      One network card.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.server">
+  <title>Server Types</title>
+
+  <para>
+   &slepos; is based on &sle; and installed as an add-on product. After
+   installation and setup, your &slepos; system includes one centralized
+   &admserv;, one or more &branchserv;s, and &pos; terminals. This
+   section focuses on the server types used in &slepos; and gives an
+   overview of the tasks they run and the services they provide.
+  </para>
+
+  <sect2 xml:id="sec.server.as">
+   <title>&admserv;</title>
+   <para>
+    The &admserv; is the central administration point for &sleposreg;. It
+    is usually located in the main office and is used to manage the &pos;
+    infrastructure and to host the LDAP database storing the configuration of
+    the &pos; clients.
+   </para>
+   <para>
+    The &admserv; provides the following functions:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      Maintaining the master LDAP directory for the &branchserv; systems.
+      For more information on the LDAP directory, see
+      <xref linkend="cha.slepos_ldap"/>.
+     </para>
+    </listitem>
+<!--    <listitem>
+     <para>
+      Unless your &slepos; system includes a dedicated &imgserv;, the
+      &admserv; provides the tools to create and customize system
+      images and stores these for distribution to the
+      &branchserv;s and &pos; terminals. For more information, see
+      <xref
+       linkend="cha.slepos_imgcreator"/> and
+      <xref linkend="cha.slepos_kiwi"/>.
+     </para>
+    </listitem>-->
+<!--commented out because of bnc#837604/point4-->
+    <listitem>
+     <para>
+      Storing the configuration parameters for the &branchserv;s.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Providing an rsync server to distribute the system images and software
+      updates to the &branchserv; systems.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    For information on installing and configuring the &admserv;, see
+    <xref linkend="cha.slepos_adminserv"/>. Find out more about the
+    &admserv; structure and functions in the following sections.
+   </para>
+<!--<sect3 id="ad_busoqvv">
+   <title>LDAP Directory</title>
+   <para>The &admserv; stores the &slepos; LDAP directory that runs on
+    OpenLDAP. It is the repository for all system information (system
+    structure, the configuration and deployment method for each
+    &branchserv;, system image information, and &pos; terminal types).
+    For more information, see <xref linkend="cha.slepos_ldap"
+     xrefstyle="ChapTitleOnPage"/>.</para>-->
+<!--taroth 071012: this note is much too specific for this overview
+     chapter and rather should be in slepos_ldap.xml - as this info is already
+     mentioned there, commented the following note-->
+<!-- <note>
+    <para>The &admserv; does not have an associated object in the
+     LDAP tree structure.</para>
+   </note>
+  </sect3>-->
+<!--<sect3 id="sec.server.as.admin">
+   <title>Administrative Tasks</title>
+   <para>The &admserv; is the central administration point for &slepos;.
+    Because it maintains the LDAP directory, the &admserv; provides the
+    information required to set up the &branchserv;s and &pos;
+    terminals. It is also the staging point for creating and distributing system
+    images, unless you install this functionality on a dedicated &imgserv;
+    as described in <xref linkend="cha.slepos_imgserv"/>.</para>
+   <variablelist>
+    <varlistentry>
+     <term>Branch Server Setup</term>
+     <listitem>
+    <para>After &slepos; is installed on the &branchserv;, the
+     &branchserv; must be able to connect to the &admserv; to download
+     its own configuration settings as well as the system information and images
+     required for its local &pos; terminals. </para>
+    <para>For more information on &branchserv; configuration, see <xref
+      linkend="cha.slepos_branchserv"/>.</para>
+   </listitem>
+  </varlistentry>-->
+<!--<varlistentry>
+   <term>System Image Creation and Distribution</term>
+   <listitem>
+   <para>System images are created using &kiwi; or &imgcreat;. Both
+     image building tools can either be installed on the &admserv; or on a
+     dedicated image building server. Images built with &imgcreat; or
+     &kiwi; are typically stored in the<remark>taroth 071127: fix for bug
+      #343835</remark>
+     <filename>/var/lib/SLEPOS/system/images/<replaceable>image_name</replaceable></filename>
+     directory on the &admserv; (or the &imgserv;). This default
+     directory can be changed in &kiwi;'s <filename>config.xml</filename> or
+     in the &imgcreat;. For more information, refer to <xref
+      linkend="sec.kiwi.config"/> and <xref linkend="cha.slepos_imgcreator"/>. Images
+     that are available to distribute to &branchserv;s are located in the
+     &admserv;'s <filename>rsync</filename> directory. Specifically, boot
+     images are located in <filename>/svr/SLEPOS/boot/</filename>
+     <remark>taroth 071012: this was formerly:
+     /opt/SLES/POS/rsync/boot/</remark>; system images are located in
+      <filename>/svr/SLEPOS/image/</filename>
+     <remark>taroth 071012: this was formerly
+     /opt/SLES/POS/rsync/image/</remark>. </para>
+    <para>For information on creating, storing, and distributing system images,
+     see <xref linkend="cha.slepos_imgcreator"/>.</para>
+    <para>For more information on creating a dedicated &imgserv;, see <xref
+      linkend="cha.slepos_imgserv"/>. </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect3>-->
+   <sect3 xml:id="sec.server.as.services">
+    <title>Services</title>
+    <para>
+     The &admserv; provides two important services in your &slepos;
+     system:
+    </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para>
+       LDAP is the protocol for accessing the &slepos; directory, which
+       stores all system information.
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       rsync is a remote data synchronization service that is used to transfer
+       images from the &admserv; to the &branchserv;s.
+      </para>
+     </listitem>
+    </itemizedlist>
+    <para>
+     For the &admserv; to privide services, its firewall needs to allow
+     traffic on the ldap or ldaps ports (389 TCP/UDP and 636 TCP/UDP,
+     respectively) and the rsync port (TCP/UDP 873). For more information,
+     refer to <xref linkend="sec.adminserv.ldapinit"/>.
+    </para>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="sec.server.bs">
+   <title>&branchserv;</title>
+   <para>
+    The &branchserv; provides the network boot and system management
+    infrastructure for the &pos; terminals. It can also serve as a generic
+    system platform for in-store applications such as database systems and
+    back-ends for &pos; applications.
+   </para>
+   <para>
+    The &branchserv; provides the following functions:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      DNS services for the local network.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      DHCP to control the network boot process. Instead of setting up the DHCP
+      service on the &branchserv;, an external DHCP server can be used. For
+      more information, refer to the list of attributes for
+      <literal>scLocation</literal> elements in <xref linkend="ad_b58oz2j"/>.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Multicast boot infrastructure for &pos; terminals.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Transfer of system images from the &admserv; to the &pos;
+      terminals.
+     </para>
+     <para>
+      The &branchserv; uses a software distribution mechanism based on rsync
+      to pull new system images from the &admserv;. It then uses TFTP to
+      push system images and configuration files to the &pos; terminals.
+      Alternativelly, FTP can be used.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Management of diskless and disk-based &pos; terminals. Configuration
+      data is taken from the LDAP directory on the &admserv;.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      System redundancy and failover. A pair of &branchserv;s can be
+      configured as a two-node high availability cluster with replicated data.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      NTP, SNMP, logging of syslog output from terminals and other services are
+      not configured using the &slepos; tools, but can be configured using the
+      standard &sls; tools.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    For information on installing and configuring the &branchserv;, see
+    <xref linkend="cha.slepos_branchserv"/>. Find out more about the
+    &branchserv; structure and functions in the following sections.
+   </para>
+   <sect3 xml:id="sec.server.bs.ldapobj">
+    <title>LDAP &branchserv; Object</title>
+    <para>
+     Each &branchserv; has a corresponding &branchserv; object
+     (<literal>scBranchServer</literal>) in the LDAP directory. This object
+     stores configuration information that is specific to each &branchserv;.
+    </para>
+    <para>
+     For more information on the <literal>scBranchServer</literal> object, see
+     <xref linkend="cha.slepos_ldap" xrefstyle="ChapTitleOnPage"/>.
+    </para>
+   </sect3>
+   <sect3 xml:id="sec.server.bs.ldap">
+    <title>LDAP Access</title>
+    <para>
+     To complete its initial configuration and perform basic functions (such as
+     registering &pos; terminals and downloading system images and
+     configuration files), the &branchserv; must have administrator level
+     access to the LDAP directory. This admin account and password are created
+     by the <filename>posInitAdminserver</filename> command during the initial
+     configuration of the &admserv;. When created, this account is not
+     accessible in the LDAP tree.
+    </para>
+    <para>
+     LDAP communications can be secured with SSL. When you run the
+     <filename>posInitAdminserver</filename> command, you can enable or disable
+     SSL communication. Note that the firewall running on the &admserv; must
+     allow traffic on the ldap and ldaps ports, 389 TCP/UDP and 636 TCP/UDP,
+     respectively. For more information, refer to
+     <xref linkend="sec.adminserv.ldapinit"/>.
+    </para>
+    <para>
+     The &branchserv; mantains a local copy of the branch subtree from the
+     &admserv; LDAP database.
+    </para>
+   </sect3>
+   <sect3 xml:id="sec.server.bs.admin">
+    <title>Administrative Tasks</title>
+    <para>
+     Other than emergency handling, no system administration is necessary on
+     the &branchserv;. All administrative tasks are controlled from the
+     central &admserv; or are regularly executed by daemons running on the
+     &branchserv;. For emergencies and debugging, all administrative
+     functions can be triggered locally or via SSH login by calling commands
+     with few or no parameters.
+    </para>
+    <para>
+     If you need to update the &pos; images stored on the &branchserv;,
+     you can run <filename>possyncimages</filename> to manually trigger the
+     rsync update process and download new image files from the &admserv;.
+     For more information, see <xref linkend="ad_bsx5jsk"/>.
+    </para>
+    <para>
+     If you need to update the &pos; hardware configuration information
+     stored on the &branchserv;, run <command>pos dump-all</command>. It
+     regenerates the hardware configuration and
+     <filename>&confmac;</filename> files for all &pos; terminals found
+     in LDAP. For more information on the <command>pos</command> command, see
+     <xref linkend="cha.pospl"/>. Alternatively, you can trigger terminal
+     updates from the &admserv; by setting
+     <systemitem>scConfigUpdate</systemitem> under the respective
+     <systemitem>scWorkstation</systemitem> object to <literal>TRUE</literal>
+     (see <xref linkend="ad_b58oz2q"/>).
+    </para>
+    <para>
+     For more information on the <filename>pos</filename> command, see
+     <xref linkend="cha.pospl"/>.
+    </para>
+   </sect3>
+   <sect3 xml:id="sec.server.bs.services">
+    <title>Services</title>
+    <para>
+     In &slepos;, &branchserv;s provide the services listed in
+     <xref linkend="ad_b4wx2xf" xrefstyle="TableXRef"/>.
+    </para>
+    <table xml:id="ad_b4wx2xf" frame="topbot" rowsep="1" pgwide="0">
+     <title>&branchserv; Services</title>
+     <tgroup cols="2">
+      <colspec colnum="1" colname="1"/>
+      <colspec colnum="2" colname="2"/>
+      <thead>
+       <row rowsep="1" xml:id="ad_bugrvl9">
+        <entry colname="1">
+         <para>
+          Service
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Description
+         </para>
+        </entry>
+       </row>
+      </thead>
+      <tbody>
+       <row rowsep="1" xml:id="ad_bugrvla">
+        <entry colname="1">
+         <para>
+          DNS
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Every &branchserv; runs a DNS master for that branch. The
+          <command>posldap2dns</command> command generates the zone files for
+          the BIND name server from the data in the LDAP directory and then
+          reloads the zone files on each &branchserv;.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1" xml:id="ad_bugrvlb">
+        <entry colname="1">
+         <para>
+          DHCP
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          A DHCP server can be installed on the &branchserv;. The
+          <command>posldap2dhcp</command> command generates the
+          <filename>dhcpd.conf</filename> file from branch data in the LDAP
+          directory.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1" xml:id="ad_bugrvlc">
+        <entry colname="1">
+         <para>
+          TFTP
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          The TFTP service on the &branchserv; is structured with boot,
+          image, &pos;, and upload directories. There is a PXE default
+          configuration with which all the &pos; terminals first load the
+          same initial initrd and the same kernel. For more information, see
+          <xref linkend="sec.server.bs.tftp" xrefstyle="SectTitleOnPage"/>.
+         </para>
+         <para>
+          If there is an error with a TFTP action, the service waits 60
+          seconds, then restarts.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1">
+        <entry colname="1">
+         <para>
+          FTP
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Alternativelly FTP can be used instead of TFTP. FTP shares same
+          directory structure with TFTP except PXE part. It is recommended on
+          wireless networks not supporting high speed multicast. FTP overcomes
+          the file size limit of TFTP, which enables it to deploy much bigger
+          images.
+         </para>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>
+   </sect3>
+   <sect3 xml:id="sec.server.bs.ha">
+    <title>High Availability Configuration</title>
+    <para>
+     For high availability, &branchserv;s can be configured in two-node
+     pairs. The primary node runs all of the scripts and services required to
+     download &branchserv; configuration information, synchronize time, and
+     download system images from the &admserv;. The secondary node stays
+     synchronized with the primary, ready to take over and run the scripts and
+     services if the primary fails.
+    </para>
+    <para>
+     For information on installing a high availability environment, refer to
+     <xref linkend="hiavail"/>.
+    </para>
+   </sect3>
+   <sect3 xml:id="sec.server.bs.tftp">
+    <title>TFTP Server Directory Structure</title>
+    <para>
+     &slepos; uses <filename>/srv/tftpboot</filename> as the
+     <replaceable>tftp_root</replaceable> path for the TFTP server on the
+     &branchserv;. For more information about the file structure, refer to
+     <xref linkend="ad_bv30ufc" xrefstyle="TableXRef"/>.
+<!--
+     outlines the main areas into which the directory structure is divided
+     under the TFTP root directory.-->
+    </para>
+<!--<table id="ad_b4wx2xg" frame="topbot" rowsep="1" pgwide="0">
+     <title>TFTP Directory Structure on the &branchserv;</title>
+     <tgroup cols="2">
+      <colspec colnum="1" colname="1"/>
+      <colspec colnum="2" colname="2"/>
+      <thead>
+       <row rowsep="1" id="ad_bt02otx">
+        <entry colname="1">
+         <para>
+          Directory
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contents
+         </para>
+        </entry>
+       </row>
+      </thead>
+      <tbody>
+       <row rowsep="1" id="ad_bt02ou0">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/boot/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains the following boot images and configuration files for
+          &pos; terminals: <filename>initrd.gz</filename>,
+          <filename>linux</filename>, the PXE loader
+          (<filename>pxelinux.0</filename>), and the PXE configuration
+          folder (<filename>pxelinux.cfg</filename>).
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bt02ou33">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/boot/pxelinux.cfg</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains the default pxe configuration file
+          and specific pxe configuration files
+          in the format specified by MAC address.<remark>emap: a little confusing. The format is specified by the MAC address? Or does the file name contain the MAC address?</remark>
+          (Note that capital letters in the MAC address are written with lower cases: <filename><replaceable>01-00-09-6b-3b-01-07</replaceable></filename>.)
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1" id="ad_bt02ou2">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/image/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains system image files and their checksums.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bt02ou3">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/upload/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Serves as the destination directory to upload
+          <filename>&hwmac;</filename> files for newly registered &pos;
+          terminals. These files are used to create the &pos; terminal's
+          workstation object in LDAP.
+         </para>
+         <para>
+          This directory also stores the
+          <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+          files that the posleases2ldap daemon uses to provide image install
+          notification. When an image is successfully installed on a &pos;
+          terminal, the linuxrc script creates a
+          <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+          file in the /<filename>tftpboot/upload</filename> directory on the
+          &branchserv;. posleases2ldap then transfers the information to the
+          <literal>scNotifiedImage</literal> attribute in the
+          <literal>scWorkstation</literal> object in LDAP and deletes the
+          <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+          file.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bt02ou32">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/upload/backup/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains backup of all previously used
+          hwtype and bootversion files.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1" id="ad_bt02oty">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/KIWI/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains configuration files for all registered
+          &pos; terminals on the current &branchserv;.
+          Also contains <filename>rollback.<replaceable>MAC</replaceable></filename>
+          files indexing rollback information for given MAC addresses
+          and, in the role-based case, rolelists and idlists.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1" id="ad_bt02otz">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/KIWI/<replaceable>MAC</replaceable>/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains system configuration files, such as
+          <filename>xorg.conf</filename>, for the individual &pos;
+          terminals.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1" id="ad_bt02otz1">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/KIWI/backup/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains backups of all previously used
+          configuration files.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="1" id="ad_bt02otz2">
+        <entry colname="1">
+         <para>
+          <filename><replaceable>tftp_root</replaceable>/KIWI/rollback/</filename>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          Contains <filename>config.<replaceable>MAC</replaceable>.<replaceable>hash</replaceable></filename>
+          files used for restoring older configurations.
+         </para>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>
+    <para>
+     An example of a &branchserv; TFTP structure is shown below:
+    </para>
+<screen>
+ /srv/tftpboot/KIWI
+  00:02:55:E8:FA:C9   config.00:02:55:E8:FA:C9
+  00:03:56:01:D5:5F   config.00:03:56:01:D5:5F
+  00:09:6B:3B:01:07   config.00:09:6B:3B:01:07
+  00:02:55:23:F3:93   config.00:02:55:23:F3:93
+  rolelist
+  rolelist.default
+  rolelist.HWTYPE1
+  rolelist.HWTYPE2
+  rolelist.00:03:56:01:D5:5F
+  idlist
+
+/srv/tftpboot/KIWI/00:02:55:E8:FA:C9
+  XF86Config
+
+/srv/tftpboot/KIWI/00:03:56:01:D5:5F
+  XF86Config
+
+/srv/tftpboot/KIWI/00:09:6B:3B:01:07
+
+/srv/tftpboot/boot
+  initrd.gz
+  linux
+  pxelinux.0
+  pxelinux.cfg
+
+/srv/tftpboot/boot/pxelinux.cfg
+  default
+  01-00-09-6b-3b-01-07
+
+/srv/tftpboot/image
+  minimal-2.0.4    minimal-2.0.4.md5
+  graphical-2.0.4  graphical-2.0.4.md5
+
+/srv/tftpboot/upload
+  hwtype.00:02:55:E8:FA:C9
+ </screen>-->
+    <note>
+     <title>Deletion of &pos; Control File</title>
+     <para>
+      The &pos; control file <filename>hwtype.00:02:55:E8:FA:C9</filename>
+      is deleted (after being moved to
+      <filename>/tftpboot/upload/backup</filename>) and backed up after
+      successful registration in LDAP. For more information, see
+      <xref linkend="ad_cntrlhw" xrefstyle="SectTitleOnPage"/>.
+      <remark>emap: The process is confusing. The file is moved to the backup folder, then deleted, then registered before it is backed up? Should 'moved' rather be 'copied' so that only the original file gets deleted?</remark>
+     </para>
+    </note>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="sec.server.special">
+   <title>Special Server Types</title>
+   <para>
+    Apart from the default implementation shown in
+    <xref linkend="fig.sleposarch"/>, &slepos; allows for a variety of
+    different setups to match your individual requirements. You can create
+    special types of servers, like a dedicated &imgserv; taking load from
+    the &admserv;, or implement &posbranchserv;s instead of fully-fledged
+    &branchserv;s as described in the following sections.
+   </para>
+   <sect3 xml:id="sec.server.special.is">
+    <title>&imgserv;</title>
+    <para>
+     If your system needs to manage a large number of &pos; images, you can
+     outsource the image building task to a dedicated &imgserv;. This
+     reduces the processor and memory load required to generate images from the
+     &admserv;. It also protects the &admserv; and LDAP directory from any
+     possible corruption or user errors that might occur while building
+     &pos; images.
+    </para>
+    <para>
+     For information on installing and configuring the &imgserv;, see
+     <xref linkend="cha.slepos_imgserv"/>.
+    </para>
+   </sect3>
+   <sect3 xml:id="sec.server.special.posbrs">
+    <title>&posbranchserv;</title>
+    <para>
+     For small stores, where the &branchserv; only runs the &pos;
+     infrastructure, the &branchserv; can be deployed as a control terminal
+     running on &pos; hardware. This &posbranchserv; configuration is
+     designed for systems that do not run &pos; applications. However, if
+     the terminal has sufficient memory and disk space, it can run some
+     applications, if required.
+    </para>
+    <!--<para>
+     In the NLPOS9, the &posbranchserv; installation required a special
+     POSBranch image. There is no need for such a specialized POSBranch image
+     any more. Branch servers on &pos; hardware can be installed as a
+     standard &branchserv;, by installing &sls; 11 and the &slepos; 11
+     add-on directly on a &pos; Machine.
+    </para>-->
+    <note>
+     <title>Access Rights</title>
+     <para>
+      This implementation of the &posbranchserv; allows the &pos;
+      applications to run under a non-&rootuser; account.
+     </para>
+    </note>
+   </sect3>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.slepos_overview.img">
+  <title>Images</title>
+
+  <para>
+   &slepos; is designed to automate the rollout of &pos; terminals as
+   much as possible. To assist this automation, the product makes extensive use
+   of image building technology. For each type of terminal, whether it is a
+   non-graphical system or a graphical environment, you can create customized
+   images to be downloaded automatically from the &branchserv; when the
+   terminal boots.
+  </para>
+
+  <sect2 xml:id="sec.oview.imgtools">
+   <title>&kiwi; and &imgcreat;</title>
+   <remark>taroth 071017: DEV - please check the following text - Ok or something wrong/missing? </remark>
+   <para>
+    To create the images for the &pos; terminals, &slepos; includes both
+    a command line tool (&kiwi;) and a graphical front-end for &kiwi;:
+    &imgcreat;.
+    <remark>taroth 071106: commenting
+     xsrc wrapper as we won't mention migration topic/old imaging tools for now (see cihlarov's mail
+     on doku-intern)</remark>
+    Install the image building tools by selecting the <systemitem>&slepos; Image
+    Server</systemitem> and the <systemitem>&slepos; Images</systemitem> software
+    patterns in &yast;.
+   </para>
+   <para>
+    When you build images for the &pos; terminals, all the information
+    required to run a &pos; terminal&mdash;the Linux operating system,
+    drivers, configuration settings, application files, and so
+    forth&mdash;can be compiled into a single image file. This file can then
+    be electronically distributed to &pos; terminals over the network.
+    Additionally, you can generate an ISO version of the image file that can be
+    burned to a CD or copied to a USB flash drive for manual distribution.
+   </para>
+   <para>
+    For detailed information on &kiwi; and &imgcreat;, refer to
+    <xref linkend="cha.slepos_kiwi"/> and
+    <xref linkend="cha.slepos_imgcreator"/>.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.overview.deployment">
+  <title>&slepos; Deployment</title>
+
+  <para>
+   &slepos; requires the following components for a functional system:
+  </para>
+
+  <itemizedlist mark="bullet" spacing="normal">
+   <listitem>
+    <para>
+     &admserv;,
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     &imgserv;,
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     &branchserv;s,
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     &pos; terminals.
+    </para>
+   </listitem>
+  </itemizedlist>
+
+  <para>
+   The way in which these components are deployed depends on your system
+   requirements. For example, systems that maintain hundreds of system images
+   might require a dedicated &imgserv;, whereas smaller systems can have the
+   image building utilities installed on the &admserv;. Some customers might
+   install the Administration and &branchserv;s on a single box, while
+   others deploy the &branchserv; on a &pos; terminal.
+  </para>
+
+  <para>
+   The flexibility of the architecture provides broad scalability.
+   <remark>emap: changed from saleabilty to scalability. I hope that's what was meant.</remark>
+   In large environments components can be distributed to improve
+   system performance, while in smaller environments components can be
+   consolidated to maximize the use of system resources.
+  </para>
+
+  <sect2 xml:id="sec.overview.design">
+   <title>Design Guidelines for Large Environments</title>
+   <para>
+    Every retail environment is different in terms of network speed, server
+    hardware, &pos; terminal hardware, size of images, frequency of updates,
+    etc. This section presents some design guidelines for large environments.
+   </para>
+   <para>
+    The recommended maximum number of &pos; terminals being serviced by a
+    single &branchserv; is 100. You can adjust this number up or down
+    depending on how frequently the &pos; terminals are reimaged and whether
+    you can control when the terminals come online.
+   </para>
+   <note>
+    <title>Time for Booting</title>
+    <para>
+     For every 100 terminals coming online at the same time, it can take up to
+     10 minutes for the terminals to download larger graphical images. If the
+     terminals are simply booting from an existing image, it can take 2-3
+     minutes per 100 terminals.
+    </para>
+   </note>
+  </sect2>
+
+  <sect2 xml:id="sec.overview.installation">
+   <title>Installation and Setup</title>
+   <para>
+    The following summary outlines the general steps required to deploy a
+    &slepos; system. It also identifies the configuration options for each
+    system component and notes where you can go to find detailed instructions.
+   </para>
+   <procedure>
+    <step>
+     <para>
+      Install the &admserv; using one of the following configurations:
+     </para>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para>
+        Install an &admserv; that includes the image building utilities
+        (&kiwi; and &imgcreat;) and all the files and directories
+        required to create Point of Service images. For detailed instructions,
+        see <xref linkend="cha.slepos_adminserv"/>.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Install an &admserv; and a dedicated &imgserv;. For detailed
+        instructions, see <xref linkend="cha.slepos_imgserv"/>.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Install an Admin/&branchserv; combination.
+<!--For detailed instructions,
+        see <xref linkend="cha.adminbranch"/>.-->
+<!--FIXME-->
+       </para>
+      </listitem>
+     </itemizedlist>
+    </step>
+    <step xml:id="bwwsnx6">
+<!--FIXME BOGOID-->
+     <para>
+      Create the LDAP directory on your &admserv;. For detailed
+      instructions, see <xref linkend="sec.adminserv.ldapinit"/>.
+     </para>
+<!--FIXME migration should work in SLEPOS 11-->
+<!--
+     <para>Create the LDAP directory on your &admserv; using one
+      of the following methods:
+     </para>
+     <itemizedlist>
+      <listitem>
+       <remark condition="clarity">
+        2007-09-21 - jjaeger: DEV - again - how to update from SLRS 8 to
+        SLEPOS 10 - taroth 071008: and what about update from SLES9 to SLES10??
+       </remark>
+       <para>If you are migrating from SLRS 8 to Novell Linux Point of Service 9, import the SLRS 8
+        LDAP directory from the backup copy you made in Step 1. 
+        <remark>taroth 071008: add link to migration chapter in old NLPOS 9
+         doc?:
+         http://www.novell.com/documentation/nlpos9/index.html?page=/documentation/nlpos9/nlpos9_install/data/bw0734d.html#bw0734d.html
+         </remark>
+         <remark>toms 20071105: Removed link to bw0734d</remark>
+       </para>
+      </listitem>
+      <listitem>
+       <para> If this is a new installation, create the &slepos; LDAP directory. For detailed
+        instructions, see <xref linkend="sec.adminserv.ldapinit"/>. </para>
+      </listitem>
+     </itemizedlist>
+     -->
+    </step>
+    <step xml:id="bwwsob6">
+<!--FIXME BOGOID-->
+     <para>
+      Create the &pos; images required to deploy your &pos; terminals.
+     </para>
+    </step>
+<!-- FIXME TODO delete?-->
+<!--
+     <substeps id="b2jluy5">
+      <step id="bwwsob7">
+       <para>Copy the image source files to your &imgserv;. For detailed instructions, see <xref
+         linkend="ad_bv7xsai"/>. </para>
+      </step>
+      <step id="bwwsob8">
+       <para>Define the location of the image source files. For detailed instructions, see <xref
+         linkend="ad_bv7ycvs"/>. </para>
+      </step>      
+      <step id="bwwsob9">
+       <para>Build the Point of Service image files. For detailed instructions, see <xref linkend="cha.slepos_imgcreator"/> or <xref linkend="cha.slepos_kiwi"/>. </para>
+      </step>
+      -->
+    <step xml:id="bwwsoba">
+<!--FIXME BOGOID-->
+     <para>
+      Copy the image files you have created to the appropriate directories on
+      the &admserv; so they will be ready for the &branchserv;s to
+      download.
+     </para>
+     <important>
+      <title>Location of the System Images</title>
+      <remark>011010 taroth: DEV - paths OK?</remark>
+<!--FIXME ask-->
+      <para>
+       System images must be located in <filename>/srv/SLEPOS/image/</filename>
+       and boot images must be located in
+       <filename>/srv/SLEPOS/boot/</filename> on the &admserv; before rsync
+       can transmit the images to the &branchserv;.
+      </para>
+     </important>
+    </step>
+    <step xml:id="b4fg7a1">
+<!--FIXME BOGOID-->
+     <para>
+      Create the required LDAP objects for each &branchserv; and its
+      &pos; terminals in the LDAP tree. For detailed instructions, see
+      <xref linkend="sec.branchserv.ldapobjects"/>.
+     </para>
+    </step>
+    <step xml:id="bwwsok5">
+     <para>
+      Install the &branchserv;s using one of the following configurations:
+     </para>
+     <note>
+      <title>Configuring Admin/&branchserv; Combinations</title>
+      <para>
+       If you install an Admin/&branchserv; combination, this step is
+       already completed.
+<!--For instructions on how to configure the
+      Admin/&branchserv; combination, see <xref
+       linkend="cha.adminbranch"/>.-->
+<!--FIXME-->
+      </para>
+     </note>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para>
+        Install a standard &branchserv;. For detailed instructions, see
+        <xref linkend="cha.slepos_branchserv"/>.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        Install a high availability &branchserv; cluster of two nodes in an
+        active/passive setup. For general information on how to set up a high
+        availability environment, refer to the &haguide;, available from
+        <link xlink:href="http://www.suse.com/documentation/sles11/"/>.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        For stores where the &branchserv; is only running the Point of
+        Service infrastructure (for example the &branchserv; is running no
+        additional applications), the &branchserv; can be installed as a
+        control terminal running on Point of Service hardware.
+       </para>
+      </listitem>
+<!-- 
+          <remark>cihlarov 231007 not implemented in slepos 10</remark>
+          <listitem>
+       <para>If the &branchserv; is in a remote location where no onsite system expertise is
+        available, you can create an Automatic Branch Server Installation image. The resulting ISO
+        file can then be burned to a CD and used to install the &branchserv; at the remote
+        location. For detailed instructions, see <xref linkend="autobs"/>. </para>
+      </listitem>-->
+     </itemizedlist>
+    </step>
+    <step xml:id="b3vfyow">
+     <para>
+      After a &branchserv; is installed, you must complete the following
+      steps to initialize the &branchserv; before attempting to boot its
+      &pos; terminals:
+     </para>
+     <substeps xml:id="b3vfyv7" performance="required">
+      <step xml:id="b3vfzdf">
+       <para>
+        Run the <command>posInitBranchserver</command> command to initialize
+        and configure the &branchserv;.
+<!--For detailed instructions, see <xref
+         linkend="b48rtl7"/>.-->
+<!--FIXME TODO link-->
+       </para>
+      </step>
+      <step xml:id="b3vfzja">
+       <para>
+        Run <command>possyncimages</command> command to download the Point of
+        Service images from the &admserv; to the
+        <filename>/srv/tftpboot</filename> directories on the &branchserv;.
+        For detailed instructions, see
+        <xref linkend="sec.slepos_branchserv.download"/>.
+       </para>
+      </step>
+      <step xml:id="b3vg052">
+       <para>
+        Start the core script (<command>posleases2ldap</command>) as a daemon
+        process on the &branchserv;. This script controls all other scripts.
+        For more information, see <xref linkend="b48t0rs"/>.
+       </para>
+      </step>
+      <step>
+       <para>
+        If there is a separate &admserv;, start the
+        <command>posASWatch</command> command. It checks the availability of
+        the &admserv;, the LDAP synchronization and replication, and the
+        <literal>posleases2ldap</literal> core service. For more information,
+        see <xref linkend="b48t0rs"/>.
+       </para>
+      </step>
+     </substeps>
+    </step>
+    <step xml:id="bwwsok6">
+     <para>
+      Deploy the &pos; terminals, following the general instructions in
+      <xref linkend="cha.slepos_term"/>.
+     </para>
+     <para>
+      Depending on your network configuration and terminal hardware, you must
+      prepare the &pos; terminals to boot using one of the following
+      procedures:
+     </para>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para>
+        If the &pos; terminals have access to the network, the terminals can boot 
+        using PXE and download their image files from the &branchserv;. This
+        method is typically used for workstations that are not equipped with a
+        hard disk. For more information on this process, see
+        <xref linkend="ad_bungnpv"/>.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        If the &pos; terminals do not have access to the network, create an
+        isoboot or an oemboot image and deploy the image at the terminal. This
+        method can be used for workstations that either are or are not equipped
+        with a hard disk, and have a CD drive or a USB port. For information on
+        the isoboot process, see <xref linkend="ad_bungoto"/>
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        If a &pos; terminal cannot boot from the network or from a CD, it
+        attempts to boot from the hard disk. For more information, see
+        <xref linkend="ad_bwlov3w"/>.
+       </para>
+      </listitem>
+     </itemizedlist>
+    </step>
+    <step xml:id="b3rch1o">
+     <para>
+      Test your &slepos; installation to ensure that it is functioning
+      correctly. For detailed instructions, see <xref linkend="b4c9w4o"/>.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+ </sect1>
+</chapter>

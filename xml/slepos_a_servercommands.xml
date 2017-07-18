@@ -1,0 +1,1454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appendix
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<appendix xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="app.slepos_srvcom">
+ <title>&pos; Commands</title>
+ <info/>
+ <para> In a &sleposreg; system, several commands are provided to initialize and maintain
+  Administration and &branchserv;s. This section describes these commands and their usage. </para>
+ <sect1 xml:id="servercommands.overview">
+  <title>Overview</title>
+
+  <para> All the programs required to manage the system and to generate configuration files are
+   implemented in Perl and as shell scripts. All the file names contain the prefix
+    <literal>pos</literal>, so a quick overview of the available programs can be displayed using tab
+   completion. </para>
+
+  <para> It is recommended to use the <filename>/usr/sbin</filename> directory as the storage
+   location for the &slepos; scripts. All the scripts can be controlled transparently using the
+    <command>posAdmin</command> meta script, as long as they are not run by
+    <filename>cron</filename>. The <command>posAdmin</command> script is designed to operate in the
+   same way on the &admserv; as on the &branchserv;s. </para>
+
+  <para> The basic mechanism for all actions (image transfer to a &branchserv;, data readout
+   from the directory) is a pull mechanism from the &branchserv;s that is run directly on the
+   &branchserv;s. One important element is the central logging of all actions with success or
+   failure flags on the &admserv;. For all actions, the rule must be transaction security or
+   atomic execution to avoid inconsistent configuration files, for example. </para>
+ </sect1>
+ <sect1 xml:id="servercommands.core">
+  <title>Core Script Process</title>
+
+  <para> When &pos; terminals are being set up in a branch or subsidiary, the
+    <command>posleases2ldap</command> script must be started as a daemon on the &branchserv; for
+   the relevant branch. All other scripts are controlled by this script. </para>
+
+  <para> The interplay of scripts on the &branchserv; works as follows: </para>
+
+  <procedure>
+   <step>
+    <para>
+     <command>posleases2ldap</command> is started directly on the &branchserv;. If the
+      <literal>scDynamicIp</literal> attribute is not set to <literal>TRUE</literal> in the relevant
+      <literal>scLocation</literal>, the script immediately terminates. </para>
+   </step>
+   <step xml:id="st2">
+    <para>
+     <command>posleases2ldap</command> is running as a daemon process and monitors the
+      <filename>/var/lib/dhcp/db/dhcpd.leases</filename> file for changes. The script detects in
+     which <literal>scLocation</literal> (branch) it is running, reading the IP address of the
+     server. </para>
+   </step>
+   <step>
+    <para> If role mode is enabled or <systemitem>scIdPool</systemitem> is not empty,
+      <command>posleases2ldap</command> periodically updates <filename>rolelist</filename> and
+      <filename>idlists</filename> according to the LDAP database. </para>
+   </step>
+   <step>
+    <para> If <command>posleases2ldap</command> finds MAC addresses in the leases that are not yet
+     entered in the directory, it generates new entries for the <literal>scWorkstation</literal>
+     object class under the relevant <literal>scLocation</literal> object. The first items filled
+     out are the required attributes <literal>macAddress</literal>, <literal>ipHostNumber</literal>,
+     and the <literal>cn</literal> for the entry. The terminal's IP address and name are
+     automatically generated, and the MAC address is taken from the <filename>leases</filename>
+     file. These entries are like an outline. </para>
+   </step>
+   <step>
+    <para> The upload directory on the TFTP server is searched for files of the pattern
+       <filename><replaceable>hwtype</replaceable>.<replaceable>MAC</replaceable></filename> or
+       <filename><replaceable>hwtype</replaceable>.<replaceable>MAC</replaceable>.<replaceable>hash</replaceable></filename>
+     that are being uploaded by &pos; terminals registered from the DiskNetboot system. The
+     &pos; hardware type is specified in these files. For more information, see <xref
+      linkend="ad_bwlov3w" xrefstyle="SectTitleOnPage"/>. If any files of this type are found, the
+     following process runs: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para> Using the MAC address, the relevant <literal>scWorkstation</literal> entry is looked up
+       in the LDAP directory. With the content of the
+         <filename><replaceable>hwtype</replaceable>.<replaceable>MAC</replaceable></filename> file,
+       the corresponding <literal>scRefPc</literal> (the reference hardware type in the global
+       container) is searched. In the <literal>scRefPc</literal> object (named after the hardware
+       type), the image type for this hardware type is specified as a reference to a
+        <literal>scPosImage</literal> object in the attribute <literal>scPosImageDn</literal>, which
+       points to the reference image in the global container. The information about the reference
+       hardware and image are then added to the <literal>scWorkstation</literal> object as
+       distinguished names (DN) and the attributes are named <literal>scRefPcDn</literal> and
+        <literal>scPosImageDn</literal>. </para>
+     </listitem>
+     <listitem>
+      <para> All information is collected to generate the
+        <filename>/srv/tftpboot/KIWI/&confmac;</filename> configuration file. It is possible to
+       specify hardware type or image type dependent configuration files, such as
+        <filename>xorg.conf</filename>, which is hardware type dependent. These files are generated
+       in the<filename>/srv/tftpboot/KIWI/<replaceable>MAC</replaceable></filename> directory. For
+       this purpose, an object of the class <literal>scConfigFileTemplate</literal> can be added to
+       the relevant <literal>scRefPc</literal> or <literal>scPosImage</literal> object in the global
+       container. </para>
+      <para> At this point, the <literal>scConfigFileData</literal> attribute of the
+        <literal>scConfigFileTemplate</literal> object contains the required file. Hardware or image
+       dependent configuration files are always looked up by the hardware order image. </para>
+      <para> All newly generated files are initially named with the prefix
+       <filename>TMP_</filename>. </para>
+     </listitem>
+     <listitem>
+      <para> The configuration files are renamed from <filename>TMP_&ast;</filename> to their
+       final names. The <filename>/srv/tftpboot/upload/&hwmac;</filename> file is deleted. The
+       registration of a newly detected &pos; terminal is complete. </para>
+     </listitem>
+    </itemizedlist>
+   </step>
+   <step>
+    <para>
+     <command>posleases2ldap</command> starts <command>posldap2dns</command>. The zone files for the
+     DNS server are regenerated from the directory data as a temporary file and renamed. The DNS
+     service is restarted if there are any changes. </para>
+   </step>
+   <step>
+    <para>
+     <command>posleases2ldap</command> starts <command>posldap2dhcp</command>. The
+      <filename>dhcpd.conf</filename> file is regenerated from the directory data as a temporary
+     file and renamed. The DHCP service is restarted if there are any changes. </para>
+   </step>
+   <step>
+    <para>
+     <command>posleases2ldap</command> runs in a loop starting at <xref linkend="st2"/> until it is
+     terminated or the <literal>scDynamicIp</literal> attribute in the <literal>scLocation</literal>
+     object for the branch is set to <literal>FALSE</literal>. </para>
+   </step>
+   <step>
+    <para>
+     <!--FIXME TODO CHECK-->
+     <remark condition="clarity"> 2007-10-12 - jjaeger: ImageNotify daemon? Does this thing really
+      exist? </remark>
+     <command>posleases2ldap</command> starts the ImageNotify daemon, which monitors
+      <filename>/srv/tftpboot/upload</filename> for boot version, MAC address files, and transfers
+     image notification data to LDAP. </para>
+   </step>
+  </procedure>
+ </sect1>
+ <sect1 role="General" xml:id="ad_bun2nt4">
+  <title>Command Quick Reference</title>
+
+  <para> The remainder of this section provides a brief explanation of each &slepos; command,
+   its function, and usage. </para>
+
+  <sect2 xml:id="ad_bsxoaa6">
+   <title>posNetworkInit</title>
+   <para>
+    <command>posNetworkInit</command> is a helper script that finds the &branchserv; network
+    configuration in LDAP, and depending on the situation, updates either the &branchserv;
+    network configuration or the LDAP database. If successful, <command>posNetworkInit</command>
+    prints the &branchserv;'s network details. </para>
+   <sect3>
+    <title>Function</title>
+    <para>
+     <command>posNetworkInit</command> is used mainly within <command>posInitBranchServer</command>
+     to determine the &branchserv; network configuration and to update the network configuration
+     and resolver (<filename>/etc/resolv.conf</filename>). </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <screen>posNetworkInit [--ldapDev device] [--force] [device]</screen>
+    <table>
+     <title><command>posNetworkInit</command> Options</title>
+     <tgroup cols="2">
+      <colspec colnum="1" colname="1"/>
+      <colspec colnum="2" colname="2"/>
+      <thead>
+       <row rowsep="1">
+        <entry colname="1">
+         <para> Option </para>
+        </entry>
+        <entry colname="2">
+         <para> Description </para>
+        </entry>
+       </row>
+      </thead>
+      <tbody>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>device</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> If more NICs exist on the &branchserv;, choose the NIC with a name equal
+          to the device. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>--force</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Forces reconfiguration of the NIC if the NIC is configured differently than in LDAP.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>--ldapDev device</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> If more than one scNetworkcard object is defined in LDAP, choose the scNetworkcard
+          with scDevice equal to the device. </para>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bt063oq">
+   <title>posInitBranchserver</title>
+   <para> The purpose of <command>posInitBranchserver</command> is to generate the central
+    configuration file for all other &slepos; commands. It is used on a &branchserv; to
+    configure the internal network, to generate configuration files for the DNS, DHCP and TFTP
+    services, to activate the DNS, DHCP, TFTP and posLeases services at boot time, and to start the
+    services if specified in LDAP. </para>
+   <sect3>
+    <title>Function</title>
+    <para> When running this command, you are prompted to enter the organization/company name,
+     country abbreviation, IP address, and the LDAP administrator password of the &admserv;. The
+      <filename>/etc/SLEPOS/branchserver.conf</filename> configuration file is generated by filling
+     in the LDAP base, LDAP administrator password, and the FQDN of the &admserv;. The
+      <filename>/etc/SLEPOS/template/branchserver.conf.template</filename> file is used as a
+     template. </para>
+    <para> The <command>posInitBranchserver</command> command uses <command>posNetworkInit</command>
+     to find internal network details in LDAP and update <filename>/etc/resolv.conf</filename> with
+     basic DNS information. The <command>posNetworkInit</command> command also yields the domain
+     name for this branch, which is used to generate proper configuration header files for the DHCP
+     and DNS services, which in turn are needed for <command>posldap2dns</command> and
+      <command>posldap2dhcp</command> scripts. </para>
+    <para> &branchserv; services are then configured based on settings in LDAP. The
+     &branchserv; service is run and set to start at boot time only when attribute
+      <systemitem>scServiceStatus</systemitem> is <literal>TRUE</literal> under its respective
+      <systemitem>scService</systemitem> entry in LDAP. </para>
+    <para> For compatibility reasons, &branchserv; checks LDAP if a
+      <systemitem>posLeases</systemitem> service configuration exists. If not, the service is added
+     to LDAP based on default values (<systemitem>scPosleasesChecktime</systemitem> set to 5
+     seconds, <systemitem>scPosleasesTimeout</systemitem> set to 60 seconds, and
+      <systemitem>scPosleasesMaxNotify</systemitem> maximum of 6 boot notifications). Also, the
+      <systemitem>scServiceStatus</systemitem> is set to <literal>FALSE</literal>. </para>
+    <para> DNS is only configured when the appropriate service is available in LDAP. The zone file
+     header for posldap2dns is generated from
+      <filename>/etc/SLEPOS/template/dns-zonefile.header.template</filename> and written to
+      <filename>/etc/named.d/ldap_generated/dns-zonefile.header</filename>. The posldap2dns script
+     then configures the rest of the DNS system. Proper DNS forwarder mode is set in Netconfig and
+     the DNS service is started if enabled in LDAP. </para>
+    <para> DHCP service is only configured when the appropriate service is available in LDAP. After
+     preparing <filename>dhcp.conf.header</filename> file, posldap2dhcp configures the rest of the
+     DHCP service. Sysconfig is used to set the DHCP listening interface and chroot settings. Then
+     the DHCP service is started if enabled in LDAP. </para>
+    <para> A multicast route is persistently set up. Sysconfig is used to set the TFTP listening
+     address, directory and user. The rest is configured by the posldap2pxe script. Then the TFTP
+     service is started if enabled in LDAP. </para>
+    <para>
+     <!--Since SLEPOS11 SP2, --> FTP service is available on the &branchserv;. If enabled in
+     LDAP, the service is configured based on the supplied template and started. </para>
+    <para> The rsync service is the only service which does not have an LDAP entry and is always
+     configured and started. </para>
+    <note>
+     <title>Registration of Terminals After &branchserv; Change</title>
+     <para> When the &branchserv; is changed (for example reinstalled) and terminals are still
+      registered in LDAP, but no longer have the associated
+       <filename>/srv/tftpboot/KIWI/config.MAC</filename> files available, these terminals will be
+      reregistered by <command>posleases2ldap</command> when they upload the
+       <filename>hwtype.MAC.hash</filename> file. Alternatively, you can use
+       <command>posldap2crconfig --dumpall</command> to re-create all <filename>config.MAC</filename>
+      files for all registered workstations. The only difference is that in case of a non-role-based
+      approach (legacy), the <option>--dumpall</option> method will honor a customized scRefPcDn
+      cash register reference (even if the referred cash register is not associated to the
+      workstation's scPosRegisterBiosVersion). On the contrary, during the registration update via
+      the uploaded hwtype.MAC file, the standard registration workflow is used. This means that
+      scRefPcDn will be set to a cash register conforming to the workstation's
+      scPosRegisterBiosVersion, or to a default one if not found. </para>
+    </note>
+    <para> posInitBranchserver only works correctly if the Branch Server data in LDAP has been
+     created properly in advance using the posAdmin tool after the installation of the
+     Administration Server. For further information, refer to <xref linkend="sec.slepos_term.ldap"
+     />. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> Run <command>posInitBranchserver</command> on a &branchserv;. </para>
+    <table>
+     <title><command>posInitBranchserver</command> Options</title>
+     <tgroup cols="2">
+      <colspec colnum="1" colname="1"/>
+      <colspec colnum="2" colname="2"/>
+      <thead>
+       <row rowsep="1">
+        <entry colname="1">
+         <para> Option </para>
+        </entry>
+        <entry colname="2">
+         <para> Description </para>
+        </entry>
+       </row>
+      </thead>
+      <tbody>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-r</option> or <option>--reinitialize</option> [=<replaceable>FILE</replaceable>]
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Reinitializes the &branchserv;, default values are loaded from an existing
+          &branchserv; configuration file or from a file specified by
+           <replaceable>FILE</replaceable>. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-f</option> or <option>--file</option> =<replaceable>FILE</replaceable>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Specifies the path to the &slepos; offline installation file for offline
+          initialization. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-n</option> or <option>--noninteractive</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Performs unattended installation (<option>-f</option> or <option>-r</option> options
+          are needed to specify source of information). </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-p</option> or <option>--chpasswd</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Change &branchserv; LDAP password, &branchserv; must be already initialized.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-V</option> or <option>--version</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Displays the version of the script being used. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-h</option> or <option>--help</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Displays available options and their description. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>--usage</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Displays basic usage information. </para>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <screen>
+/etc/SLEPOS/named/named.conf
+/etc/SLEPOS/template/dhcpd.conf.header.template
+/etc/SLEPOS/template/dns-zonefile.header.template
+/etc/named.d/ldap_generated/dns-zonefile.header
+/etc/SLEPOS/dhcpd/dhcpd.conf.header
+/etc/SLEPOS/template/resolv.conf.template
+/etc/resolv.conf
+/etc/sysconfig/network/routes
+/etc/sysconfig/network/config
+/etc/sysconfig/dhcpd
+/etc/sysconfig/atftpd
+</screen>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bsx2uir">
+   <title>posInitAdminserver</title>
+   <para> The purpose of <command>posInitAdminserver</command> is to configure the OpenLDAP
+    directory server software and to create the initial data in the LDAP directory. You are prompted
+    to enter the organization/company name, country abbreviation, and the LDAP administration
+    password. You can also enable or disable SSL communication. Company name and country
+    abbreviation are used to compose the LDAP base DN in the form <literal>&dnorg;</literal>. </para>
+   <note>
+    <title>
+     <command>posInitLdap.sh</command>
+    </title>
+    <para> In previous &slepos; versions, <command>posInitAdminserver</command> was called
+      <command>posInitLdap.sh</command>, which is now a symbolic link to the
+      <command>posInitAdminserver</command> command. </para>
+   </note>
+   <sect3>
+    <title>Function</title>
+    <para>
+     <command>posInitAdminserver</command> uses
+      <filename>/etc/SLEPOS/template/slapd.conf.template</filename> to create the OpenLDAP
+     configuration file <filename>/etc/openldap/slapd.conf</filename>. The LDAP base DN and password
+     are replaced from the <command>posInitAdminserver</command> command with the corresponding user
+     entries. After generating the configuration file, the OpenLDAP service is started. </para>
+    <para>
+     <command>posInitAdminserver</command> then uses the template file
+      <filename>/etc/SLEPOS/template/ldif.pos.template</filename> to create an LDAP data file
+      <filename>/etc/SLEPOS/template/ldif.pos</filename>, which it then imports into the LDAP
+     directory. Now the initial LDAP directory structure is available on the &admserv;. </para>
+    <para>
+     <command>posInitAdminserver</command> uses <command>posReadPassword.pl</command> when the
+     password is entered to hide the password characters. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> Run <command>posInitAdminserver</command> on an Administration Server. </para>
+    <table>
+     <title><command>posInitAdminserver</command> Options</title>
+     <tgroup cols="2">
+      <colspec colnum="1" colname="1"/>
+      <colspec colnum="2" colname="2"/>
+      <thead>
+       <row rowsep="1">
+        <entry colname="1">
+         <para> Option </para>
+        </entry>
+        <entry colname="2">
+         <para> Description </para>
+        </entry>
+       </row>
+      </thead>
+      <tbody>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>--regenerate</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Forces regeneration of SSL certificates. Old certificates are deleted. This option
+          should only be used for SSL. Default is not to regenerate. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-r</option> or <option>--reconfigure</option> =<replaceable>FILE</replaceable>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Reconfigures the &admserv; with the provided configuration file. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-n</option> or <option>--noninteractive</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Performs unattended installation (<option>-f</option> or <option>-r</option> options
+          are needed). <remark>mdejmek: please, explain what -f and -r does</remark>
+          <remark>-r is explained above, for -f i need to investigate</remark>
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-V</option> or <option>--version</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Displays the version of the script being used. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>-h</option> or <option>--help</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Displays available options and their description. </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <option>--usage</option>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para> Displays basic usage information. </para>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>
+    <warning>
+     <para> Running this command destroys any existing data in LDAP. </para>
+    </warning>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <screen>/etc/openldap/ldap.conf
+/etc/openldap/slapd.conf
+/etc/SLEPOS/template/slapd.conf.template
+/etc/init.d/ldap
+/etc/SLEPOS/template/openldap.template
+/etc/SLEPOS/template/ldif.pos.template</screen>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bsx5ot0">
+   <title>posldap2crconfig</title>
+   <para>
+    <command>posldap2crconfig</command> is now a link to provide backward compatibility. It triggers
+     <command>pos</command>. If used with <option>--dumpall</option>, it is equivalent to the
+     <command>pos dump-all</command> command. If used alone, a single registration cycle is executed
+    by calling <command>posleases2ldap -o -d</command>. </para>
+   <sect3>
+    <title>Function</title>
+    <para> See <xref linkend="servercommands.core" xrefstyle="SectTitleOnPage"/> for a detailed
+     description of <command>posleases2ldap</command>. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <screen>posldap2crconfig &lsqb;--dumpall&rsqb;</screen>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <screen>/etc/SLEPOS/branchserver.conf</screen>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bsxo5b1">
+   <title>posldap2dhcp</title>
+   <para>
+    <command>posldap2dhcp</command> generates the DHCP daemon configuration file from LDAP. </para>
+   <sect3>
+    <title>Function</title>
+    <para>
+     <command>posldap2dhcp</command> is called by <command>posleases2ldap</command> at regular
+     intervals. First, all scLocation objects are looked up in LDAP. Each of these objects defines a
+     subnet and for each of them a subnet declaration in the <filename>dhcpd.conf</filename> is
+     generated. </para>
+    <para> The header zone file is taken from the file specified in the configuration file directive
+      <literal>LDAP2DHCP_TEMPLATEFILE</literal>, which is
+      <filename>/etc/SLEPOS/dhcpd/dhcpd.conf.header</filename> by default. The content of the header
+     file is adapted to the installation by <command>posInitBranchserver</command> (see <xref
+      linkend="ad_bt063oq" xrefstyle="SectTitleOnPage"/>). </para>
+    <para> The value of the <literal>scDhcpRange</literal> attribute in an
+      <literal>scLocation</literal> object is translated into a range statement in the subnet
+     declaration. </para>
+    <para> In addition, the options for <filename>tftpboot</filename> are written into each subnet
+     declaration. For each <literal>scCashRegister</literal>, a fixed address declaration is
+     generated. </para>
+    <para> The new <filename>dhcpd.conf</filename> file is first generated in a temporary directory.
+     If it differs from the working version, dhcpc is run with the temporary file in check mode. If
+     it passes the check, it is copied over the working file and the command to restart the DHCP
+     daemon is returned to be executed by <command>posleases2ldap</command>. <remark>emap: Better
+      add a few words about what dhcpc does. This is the only mention of the command in the whole
+      document.</remark>
+    </para>
+    <para> The <filename>dhcp.conf</filename> file now allows persistent customizations. During the
+     &branchserv; initialization and when <command>posldap2dhcp</command> is run, the
+      <filename>dhcp.conf</filename> file is rewriten from templates. However during normal
+     operations, when a workstation is registered by <command>posleases2ldap</command> or its
+     configuration is dumped by <command>pos dump-*</command> commands, the
+      <filename>dhcp.conf</filename> file is only modified by adding or removing host entries. These
+     are confined within a &slepos; area marked by '<literal>##_POS_group_start</literal>' and
+      '<literal>###_POS_group_end</literal>#' comments. These comments, and the structure within
+     them, should not be altered, or &slepos; registration will not work. However all other data
+     in the <filename>dhcp.conf</filename> can be freely modified or extended and customized,
+     provided the whole file still forms a valid configuration. <!--FIXME dhcp.conf chapter?-->
+    </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para>
+     <command>posldap2dhcp</command> is called by <command>posleases2ldap</command>. </para>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <screen>/etc/SLEPOS/branchserver.conf
+/etc/dhcpd.conf -&gt; /etc/SLEPOS/dhcpd/dhcpd.conf
+/etc/SLEPOS/dhcpd/dhcpd.conf.header</screen>
+    <remark condition="clarity"> 2007-10-16 - jjaeger: DEV - just checking: shouldn't
+     /etc/SLEPOS/template/dhcpd.conf.header.template be mentioned as well? </remark>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bsx5xpc">
+   <title>posldap2dns</title>
+   <para>
+    <command>posldap2dns</command> generates DNS configuration and zone files from LDAP. </para>
+   <sect3>
+    <title>Function</title>
+    <para>
+     <command>posldap2dns</command> is called by <command>posleases2ldap</command> at regular
+     intervals. First, all scLocation objects are looked up in LDAP. Each of these objects defines a
+     subnet and for each of them a zone file is created. </para>
+    <para> The header of each zone file is taken from the file specified in the configuration file
+     directive <literal>POS_LDAP2DNS_ZONETEMPLATE</literal>, which is
+      <filename>/etc/named.d/ldap_generated/dns-zonefile.header</filename> by default. The content
+     of the zone file header is adapted to the installation by
+      <command>posInitBranchserver</command> (see <xref linkend="ad_bt063oq"
+      xrefstyle="SectTitleOnPage"/>). </para>
+    <para> The value of the <literal>scDhcpRange</literal> attribute in an
+      <literal>scLocation</literal> object is translated into a <literal>\$GENERATE</literal>
+     directive. For each <literal>scService</literal> or <literal>scHAService</literal>, an A record
+     is created or, if multiple objects of that kind point to the same IP address, a CNAME record.
+     After that, an A record for each &pos; terminal is generated. </para>
+    <para> Finally, the <filename>/etc/named.d/ldap_generated/named.zones</filename> file containing
+     the definitions of all generated zones is created. It is included from within
+      <filename>/etc/named.conf</filename>. If zones were changed, <command>posldap2dns</command>
+     returns the appropriate commands to restart the DNS service. The commands are executed by
+      <command>posleases2ldap</command>. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para>
+     <command>posldap2dns</command> is called by <command>posleases2ldap</command>. </para>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <screen>/etc/SLEPOS/branchserver.conf
+/etc/named.d/ldap_generated/
+/etc/named.d/ldap_generated/dns-zonefile.header
+/etc/named.d/ldap_generated/named.zones
+/etc/named.conf</screen>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bsx5v4p">
+   <title>posleases2ldap</title>
+   <para>
+    <command>posleases2ldap</command> registers new &pos; terminals in LDAP and transfers image
+    install notification data to LDAP. It also triggers <command>posldap2crconfig</command>. </para>
+   <sect3>
+    <title>Function</title>
+    <para> See <xref linkend="servercommands.core" xrefstyle="SectTitleOnPage"/> for a detailed
+     description of <command>posleases2ldap</command>. </para>
+    <figure pgwide="1" xml:id="posleases2ldapschema">
+     <title>Overview of the <command>posleases2ldap</command> Workflow</title>
+     <mediaobject>
+      <textobject role="description">
+       <phrase>&pos; boot process</phrase>
+      </textobject>
+      <imageobject role="fo">
+       <imagedata fileref="posleases2ldap.svg" width="100%" format="svg"/>
+      </imageobject>
+      <imageobject role="html">
+       <imagedata fileref="posleases2ldap.svg" width="100%" format="svg"/>
+      </imageobject>
+     </mediaobject>
+    </figure>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> In normal operation, <command>posleases2ldap</command> is run as a daemon. It can be
+     started by using the <command>/etc/init.d/posleases2ldap init</command> script, which is also
+     used to start the daemon at boot time. To enable this, use <command>chkconfig posleases2ldap
+      on</command>. </para>
+    <para> If <command>posleases2ldap</command> is started manually, it immediately runs in the
+     background. To avoid this, use the optional parameter <command>-d</command>. If started this
+     way, <command>posleases2ldap</command> stops when the shell is closed. </para>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <screen>/etc/SLEPOS/branchserver.conf
+/srv/tftpboot/upload/&hwmac;</screen>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bsxo8ma">
+   <title>posReadPassword.pl</title>
+   <para>
+    <command>posReadPassword.pl</command> is a helper script for the password entry that does not
+    show the entered password. </para>
+   <sect3>
+    <title>Functions</title>
+    <para>
+     <command>posReadPassword.pl</command> is called by <command>posInitAdminserver</command>,
+      <command>posInitEdir</command>, and <command>posInitBranchserver</command> for password entry
+     purposes. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> In shell scripts, use a line such as </para>
+    <screen>PASSWORD=`/usr/lib/SLEPOS/posReadPassword.pl`</screen>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <para> None. </para>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="ad_bsx5jsk">
+   <title>possyncimages</title>
+   <para> The <command>possyncimages</command> command must be run on a &branchserv; to download
+    or update images from the &admserv;. It uses rsync and requires that the rsync service is
+    properly configured and running on the &admserv;. This command can be run manually, but
+    depending on your system requirements, you can create a cron job that runs the command every
+    night to keep the images up to date. <remark>emap: is rsync actually a service?</remark>
+   </para>
+   <!--<para>
+    The download process can be separated into two phases for fine control.
+    The <command>possyncimages - -remote</command> downloads from the
+    <filename>/srv/SLEPOS</filename> directory on the &admserv; to the
+    <filename>/srv/SLEPOS</filename> directory on the &branchserv;. The
+    <command>possyncimages - -local</command> hard links or copies from the
+    <filename>/srv/SLEPOS</filename> directory on the &branchserv; are
+    downloaded to the <filename>/srv/tftpboot</filename> directory on the
+    &branchserv;. By default, <command>possyncimages</command> performs
+    both phases.
+   </para>-->
+   <sect3>
+    <title>Function</title>
+    <para> The <command>possyncimages --remote</command> command transfers the images from
+      <filename>/srv/SLEPOS</filename> (images prepared by central administrator) on the
+     &admserv; to <filename>/srv/SLEPOS</filename> on the &branchserv;. It first downloads
+     all available md5 files, then decides which images should be downloaded (as whole files or as
+     deltas), then it runs <command>rsync</command> command for each image. </para>
+    <para> The <command>possyncimages --local</command> command transfers the images from
+      <filename>/srv/SLEPOS</filename> on the &branchserv; to <filename>/srv/tftpboot</filename>
+     (images in production). </para>
+    <para> The <command>possyncimages</command> command without arguments performs both
+      <option>--remote</option> and <option>--local</option>. </para>
+    <para> The list of downloaded images can be adjusted using the
+      <systemitem>scSynchronizedImagesDn</systemitem> attribute. For more information, see <xref
+      linkend="scSynchronizedImagesDn"/>
+    </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> Run <command>possyncimages</command> on a &branchserv; or set up a cron job. It may
+     be useful to handle <command>possyncimages --remote</command> with cron but perform
+      <command>possyncimages --local</command> manually when necessary. A crontab line to run
+     nightly at 1 AM might look like this: </para>
+    <screen>0 1 &ast; &ast; &ast; /usr/sbin/possyncimages  --remote</screen>
+   </sect3>
+   <sect3>
+    <title>Files</title>
+    <screen>/etc/SLEPOS/branchserver.conf</screen>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="aa_registerimages">
+   <title>registerImages</title>
+   <para> The <command>registerImages</command> command is used to copy the &pos; images to the
+    rsync directory on the &admserv;. </para>
+   <sect3>
+    <title>Function</title>
+    <para> The <command>registerImages</command> command copies the system image files to the rsync
+     directory on the &admserv; (<filename>/srv/SLEPOS</filename>). It also provides functions
+     for compressing the images, adding them to LDAP and installing boot images. </para>
+    <para> The <command>registerImages</command> command only works properly when the &admserv;
+     and &imgserv; are installed on the same machine. If this is not the case, the images must
+     be copied to the &admserv; manually first. For more information, see <xref
+      linkend="sec.slepos_term.dist.rsync"/>. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> The <command>registerImages</command> command uses the following options: </para>
+    <variablelist>
+     <varlistentry>
+      <term><option>-h</option> or <option>--help</option>
+      </term>
+      <listitem>
+       <para> Displays help.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--gzip</option>
+      </term>
+      <listitem>
+       <para> Compress the image.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--delta</option>
+       <replaceable>base_name-ver</replaceable>
+      </term>
+      <listitem>
+       <para> Install also a delta (containing only necessary changes) image created against the
+        given base.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--move</option>
+      </term>
+      <listitem>
+       <para> Delete the source after successful installation.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--no-hardlings</option>
+      </term>
+      <listitem>
+       <para> Do not use hard links, always copy files.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--ldap</option>
+      </term>
+      <listitem>
+       <para> The corresponding LDAP entry.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--luks <replaceable>password</replaceable></option>
+      </term>
+      <listitem>
+       <para> Set the image password in LDAP. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--image_cn</option>
+       <replaceable>cn</replaceable>
+      </term>
+      <listitem>
+       <para> The <systemitem>scPosImage</systemitem> cn. The default value is taken from the
+        file name.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--container_cn</option>
+       <replaceable>cn</replaceable>
+      </term>
+      <listitem>
+       <para> The <systemitem>scDistributionContainer</systemitem> cn. The default value is
+         <literal>default</literal>.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--kernel</option>
+       <filename>path</filename>
+      </term>
+      <listitem>
+       <para> The path to the kernel part of the boot image to install.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--initrd</option>
+       <filename>path</filename>
+      </term>
+      <listitem>
+       <para> The path to the initrd part of the boot image to install.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <option>--include-boot</option>
+      </term>
+      <listitem>
+       <para> Extract the boot image from the first system image. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><option>-v</option><replaceable>level</replaceable> or
+        <option>--verbose</option>=<replaceable>level</replaceable>
+      </term>
+      <listitem>
+       <para> Set the stderr verbosity level. The verbosity level can be specified by a number or as
+        one of the following values: <literal>emerg</literal>, <literal>alert</literal>,
+         <literal>crit</literal>, <literal>err</literal>, <literal>warn</literal>,
+         <literal>notice</literal>, <literal>info</literal>, <literal>debug</literal>.   </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><option>--syslog</option>=<replaceable>level</replaceable>
+      </term>
+      <listitem>
+       <para>
+        <remark>emap: again no hint what exactly these values define.</remark> Set the syslog
+        verbosity level. The verbosity level can be specified by a number or as one of the following
+        values: <literal>emerg</literal>, <literal>alert</literal>, <literal>crit</literal>,
+         <literal>err</literal>, <literal>warn</literal>, <literal>notice</literal>,
+         <literal>info</literal>, <literal>debug</literal>.   </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+  </sect2>
+
+  <sect2>
+   <title>posASwatch</title>
+   <para> The <command>posASwatch</command> service is used on &branchserv;s to determine
+    whether and when synchronization between &admserv; and &branchserv; should be started.
+    It is not needed when the &admserv; and &branchserv; are configured on the same machine. </para>
+   <sect3>
+    <title>Function</title>
+    <para> The <command>posASwatch</command> service checks the availability of the &admserv;,
+     the LDAP synchronization and replication, and the <literal>posleases2ldap</literal> core
+     service. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> On a &branchserv;, run <command>rcposASWatch start</command> to start and
+      <command>rcposASWatch stop</command> to stop the <command>posASwatch</command> service. To
+     check the service status, use the <command>rcposASWatch status</command> command. </para>
+    <para> To ensure that the &branchserv; starts the <command>posASWatch</command> command
+     automatically at boot time, execute the <command>insserv posASWatch</command> command. </para>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="cha.pospl">
+   <title>pos</title>
+   <para> Necessary LDAP objects can be created with <command>posAdmin</command>. You can also use
+     <command>pos</command>, which is easier to use but less general. </para>
+   <sect3>
+    <title>Function</title>
+    <para> The <command>pos</command> command, depending on the subcommand used, easily creates
+     necessary LDAP objects or reads improtant data from them. </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> The following commands are available: </para>
+    <variablelist>
+     <varlistentry>
+      <term>
+       <command>pos help</command>
+      </term>
+      <listitem>
+       <para> Prints help. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos id-list</command>
+      </term>
+      <listitem>
+       <para> Prints the ID list, one ID per line. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos cr-list</command>
+      </term>
+      <listitem>
+       <para> Lists the registered cash register types. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos image-list</command>
+      </term>
+      <listitem>
+       <para> Lists the registered images. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos ws-list</command>
+      </term>
+      <listitem>
+       <para> Lists the registered workstations. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos role-list</command>
+      </term>
+      <listitem>
+       <para> Lists roles. Can be used with <option>--hide-local</option> and
+         <option>--hide-global</option> options to hide local or global roles. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos id-add --id</command>
+       <replaceable>id</replaceable>
+      </term>
+      <listitem>
+       <para> Adds a new ID <replaceable>id</replaceable>. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos id-delete --id</command>
+       <replaceable>id</replaceable>
+      </term>
+      <listitem>
+       <para> Deletes the ID <replaceable>id</replaceable>. If the <option>--force</option> option
+        is used (<command>pos id-delete --force --id</command>
+        <replaceable>id</replaceable>), the ID is deleted even if it is in use. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos id-set --id</command><replaceable>id</replaceable> --workstation
+        <replaceable>name or MAC</replaceable>
+      </term>
+      <listitem>
+       <para> Assigns the ID <replaceable>id</replaceable> to the workstation specified by its LDAP
+        name or MAC address. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos role-create --cn</command><replaceable>cn</replaceable> --role
+        <replaceable>name</replaceable> --description <replaceable>description</replaceable>
+      </term>
+      <listitem>
+       <para> Creates a new role. The <option>--cn</option> option specifies the LDAP CN of the new
+        role. The <option>--role</option> specifies the role name that is shown to users. The
+         <option>--description</option> specifies the role description that is shown to users.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos role-add --cash-register</command><replaceable>cn or hwtype</replaceable>
+       --image <replaceable>image</replaceable> --role <replaceable>cn or name</replaceable>
+      </term>
+      <listitem>
+       <para> Copies the global cash register configuration to the given role and assigns the image
+        to it. The <option>--cash-register</option> option identifies the source cash register by
+        its CN or hardware type. The <option>--image</option> option specifies the image CN or name.
+        The <option>--role</option> option specifies the role CN or name. </para>
+       <para> If used with the <option>--force</option> option, the target cash register is replaced
+        if it exists. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos role-cr-remove --role</command><replaceable>cn or name</replaceable>
+       --cash-register <replaceable>cn or hwtype</replaceable>
+      </term>
+      <listitem>
+       <para> Removes a copy of the given cash register from the given role. The
+         <option>--role</option> option specifies the role by its CN or name. The
+         <option>--cash-register</option> option identifies the source cash register by its CN or
+        hardware type. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos role-delete --role</command>
+       <replaceable>role cn or name</replaceable>
+      </term>
+      <listitem>
+       <para> Deletes a role. <!--FIXME check the existence of the force option-->
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos role-for-ws
+        --roles</command><replaceable>role1</replaceable>[,<replaceable>role2</replaceable>,...]
+       [--workstation] <replaceable>name or MAC</replaceable>[,<replaceable>name or
+        MAC</replaceable>,...] </term>
+      <listitem>
+       <para> Sets the list of allowed roles for a given workstation. The workstation is specified
+        by its LDAP name or MAC address. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos role-set --role</command><replaceable>role</replaceable> [--workstation]
+        <replaceable>name or MAC</replaceable>[,<replaceable>name or MAC</replaceable>,...] </term>
+      <listitem>
+       <para> Assigns the given role to the given workstation. The <option>--workstation</option>
+        option specifies the workstation by its name or MAC address. The <option>--role</option>
+        option specifies the role by its cn or name. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos dump-ws [--workstation]</command><replaceable>name or
+        MAC</replaceable>[,<replaceable>name or MAC</replaceable>...] </term>
+      <listitem>
+       <para> Writes config.<replaceable>MAC</replaceable> for the given workstation. The
+         <option>--workstation</option> option specifies the workstation by its name or MAC address.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos dump-lists</command>
+      </term>
+      <listitem>
+       <para> Writes the role and ID lists, and refreshes the default PXE file. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos dump-all</command>
+      </term>
+      <listitem>
+       <para> Writes the role, ID lists, default PXE and config.<replaceable>MAC</replaceable>, with
+        specific PXE if needed, for all the workstations. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos remap-all</command>
+      </term>
+      <listitem>
+       <para> Updates LDAP registration (ID to DNS and IP mapping) for all workstations. Should be
+        used if <systemitem>scDnsMapFunc</systemitem> or <systemitem>scIpMapFunc</systemitem> was
+        changed. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos sync [start|stop|status]</command>
+      </term>
+      <listitem>
+       <para> Starts, stops, or checks LDAP synchronization between &admserv; and
+        &branchserv;. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos pxe-bootmenu --set [--imagespath &lt;custom boot image directory&gt;]
+        [--force]</command>
+      </term>
+      <listitem>
+       <para> Installs PXE menu. The <option>--imagespath</option> option contains the path to the
+        directory containing files to add into menu, they will be copied into the
+         <filename>boot/ext</filename> subdirectory. If this option is not supplied, only BIOS boot
+        images currently existing in <filename>boot/ext</filename> will be used. </para>
+       <para> The <option>--force</option> option allows to overwrite existing backup files. </para>
+       <para> In order for the PXE menu to not be reverted back, <command>posleases2ldap</command>
+        must be stopped, and no <command>pos dump</command> command can be run. Rebooting of the
+        &branchserv; should also be avoided for PXE menu to stay intact, since the
+        &branchserv; automatically starts the <command>posleases2ldap</command> service. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos pxe-bootmenu --undo [--force]</command>
+      </term>
+      <listitem>
+       <para> Restores the previous default and specific PXE files. The <option>--force</option>
+        option allows to overwrite the current file by backups (for specific PXE, default is always
+        overwritten). The images copied into <filename>boot/ext</filename> directory are not removed
+        by undo command, should be deleted manually if no more needed. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos ws-remove [[--workstation]</command><replaceable>name or
+        MAC</replaceable>[,<replaceable>name or MAC</replaceable>...]|--no-boot-since
+        <replaceable>date</replaceable>|--no-boot-in-last <replaceable>time</replaceable>] [--force]
+       [--dry-run] </term>
+      <listitem>
+       <para> Used to delete workstations not booted since specified date (according to
+         <systemitem>scLastBootTime</systemitem>). To delete workstations that were not booted in
+        last T seconds, use: <command>pos ws-remove --no-boot-in-last</command>
+        <replaceable>T</replaceable>. To delete workstations that were not booted since specified
+        date, use: <command>pos ws-remove --no-boot-since</command>
+        <replaceable>date</replaceable>, where <replaceable>date</replaceable> is a date/time string
+        compatible with the Linux <command>date</command> command, for example <literal>2013-08-13
+         15:21:14</literal>. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>pos role-mode [--branch]
+        [--enable|--disable|--allow-global|--disallow-global|--status]</command>
+      </term>
+      <listitem>
+       <para> Sets role mode. The <option>--branch</option> option specifies the branch on which to
+        act, assuming local branch if not set and run on &branchserv;. The
+         <option>--enable</option> option enables the rolebased mode. The <option>--disable</option>
+        option disables the rolebased mode. The <option>--allow-global</option> option allows and
+        the <option>--disallow-global</option> option disallows global roles. The
+         <option>--status</option> option prints the current role mode setting. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term><command>pos cfg-md5 [--branch] [--role|--cash-register|--workstation]
+        --cfgname</command> or <command>pos cfg-md5 --dn</command>
+      </term>
+      <listitem>
+       <para> Sets configuration md5 sum. The <option>--branch</option> option specifies the branch
+        on which to act, assuming local branch if not set and run on &branchserv;. The
+         <option>--role</option> option specifies the local role name or DN to use. The
+         <option>--cash-register</option> option specifies the terminal to use, must be used
+        together with the <option>--role</option> option. The <option>--workstation</option> option
+        specifies the workstation to use. The <option>--cn</option> option specifies the name of
+         <systemitem>scConfigFileTemplate</systemitem> to act on. The <option>--dn</option> option
+        specifies the direct name of <systemitem>scConfigFileTemplate</systemitem> to act on.
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+    <para> The global option <option>--branch <replaceable>scLocation DN</replaceable></option>
+     specifies the branch for use on the &admserv;. </para>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="save_poslogs">
+   <title>save_poslogs</title>
+   <para> The <command>save_poslogs</command> is a tool for collecting log files, configuration
+    files, and LDAP directory content for easier error reporting. </para>
+   <sect3>
+    <title>Function</title>
+    <para> The <command>save_poslogs</command>
+     <replaceable>filename</replaceable> command collects all &slepos; relevant configuration
+     files (except <filename>salt.key</filename>, so that stored passwords remain encrypted), all
+     log files, and the whole LDAP database. It creates an archive containing the collected items
+     and log files with a complete list of collected items. The produced archive is compressed
+     according to <replaceable>filename</replaceable> extension. Recognized extensions are
+      <filename>.tar</filename>, <filename>.tgz</filename>, <filename>.tar.gz</filename>, and
+      <filename>.tar.bz2.</filename>
+    </para>
+   </sect3>
+   <sect3>
+    <title>Usage</title>
+    <para> The behavior of <command>save_poslogs</command> can be altered by the following options
+     (in any combination): </para>
+    <variablelist>
+     <varlistentry>
+      <term>
+       <command>--noldap</command>
+      </term>
+      <listitem>
+       <para> No LDAP database content is collected. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--nolog</command>
+      </term>
+      <listitem>
+       <para> No log files are collected. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--noconfig</command>
+      </term>
+      <listitem>
+       <para> No configuration files are collected. </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="posSyncSrvPart">
+   <title>posSyncSrvPart</title>
+   <para> Creates a directory structure for offline boot on the &slepos; service partition. </para>
+   <sect3>
+    <title>Usage</title>
+    <para> posSyncSrvPart is started with the following command: </para>
+    <screen>posSyncSrvPart [--server <replaceable>host|path</replaceable>] [--server-type <replaceable>tftp|ftp|local</replaceable>]
+    [--source-config <replaceable>config</replaceable>] [--dest-config <replaceable>config</replaceable>]
+    [--cleanup] [--dest-dir <replaceable>dir</replaceable>]</screen>
+    <para> The following otions are available: </para>
+    <variablelist>
+     <varlistentry>
+      <term>
+       <command>--source-config</command>
+      </term>
+      <listitem>
+       <para> Name of the configuration file on &branchserv;. Default:
+         <filename>config.mac</filename> with fallback to <filename>config.default</filename>.
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--dest-config</command>
+      </term>
+      <listitem>
+       <para> Name of the configuration file on the service partition. Default:
+         <filename>config.default</filename>. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--server</command>
+      </term>
+      <listitem>
+       <para> &branchserv; host name. The default value is <literal>tftp</literal>. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--server-type</command>
+      </term>
+      <listitem>
+       <para>
+        <literal>tftp</literal> or <literal>ftp</literal> or <literal>local</literal>. The default
+        value is <literal>tftp</literal>. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--dest-dir</command>
+      </term>
+      <listitem>
+       <para> The path to the service partition. Default: <filename>/srv/SLEPOS</filename> if it is
+        mounted. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--cleanup </command>
+      </term>
+      <listitem>
+       <para> Delete all files on service partition that are not referenced from the configuration
+        file. </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+  </sect2>
+
+  <sect2>
+   <title>posAdmin-GUI</title>
+   <para> posAdmin-GUI is a graphical tool for creating new &branchserv;, Image, and
+    CashRegister objects. </para>
+   <sect3>
+    <title>Usage</title>
+    <para> posAdmin-GUI is started with the following command: </para>
+    <screen>posAdmin-GUI [<replaceable>YaST2_parameters</replaceable>] [<replaceable>SLEPOS_XML_file</replaceable>]</screen>
+    <para> where <replaceable>YaST2_parameters</replaceable> is the path to the optional
+     &slepos; XML file and <replaceable>YaST2_parameters</replaceable> are optional &yast;
+     parameters. The following YaST options can be used with posAdmin-GUI (in any combination): </para>
+    <variablelist>
+     <varlistentry>
+      <term>
+       <command>--fullscreen</command>
+      </term>
+      <listitem>
+       <para> Fullscreen mode is used for `opt(`defaultsize) dialogs. <!--FIXME-->
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--noborder</command>
+      </term>
+      <listitem>
+       <para> No window manager border is used for `opt(`defaultsize) dialogs. <!--FIXME-->
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--auto-fonts</command>
+      </term>
+      <listitem>
+       <para> Picks fonts automatically, disregarding Qt settings. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--help</command>
+      </term>
+      <listitem>
+       <para> Displays &yast; help text. </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+  </sect2>
+
+  <sect2 xml:id="posLDIFReport">
+   <title>posLDIFReport</title>
+   <para> The <command>posLDIFReport</command> script generates a report with a list of all
+    &branchserv;s and terminals in the &slepos; environment. The report can be limited to
+    terminals booted since a specified date. The report is generated from the LDIF file, which can
+    be obtained suing <command>slapcat</command> or from the <command>save_poslogs</command>
+    TAR archive. </para>
+   <sect3>
+    <title>Usage</title>
+    <para> posLDIFReport is started with the following command: </para>
+    <screen>posLDIFReport [-w|--workstations] [-l|--locations] [-s|--statistics] [--since <replaceable>date</replaceable>] [<replaceable>file</replaceable>]</screen>
+    <para> where <replaceable>file</replaceable> is the path to the LDIF file. If the file is not
+     specified, the standard input is used. The following options can be used with
+      <command>posLDIFReport</command>: </para>
+    <variablelist>
+     <varlistentry>
+      <term>
+       <command>--workstations</command>
+      </term>
+      <listitem>
+       <para> Create workstations report. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--locations</command>
+      </term>
+      <listitem>
+       <para> Create branches/locations report. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--statistics</command>
+      </term>
+      <listitem>
+       <para> Create overall statistics report. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--since</command>
+       <replaceable>date</replaceable>
+      </term>
+      <listitem>
+       <para> Consider only workstations booted since the specified date. </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>
+       <command>--help</command>
+      </term>
+      <listitem>
+       <para> Displays the help. </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </sect3>
+  </sect2>
+ </sect1>
+</appendix>

@@ -1,0 +1,1738 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+ xml:id="cha.slepos_term">
+ <title>Booting &pos; Terminals</title>
+ <info/>
+ <para> &pos; terminals are the end point in the &sleposreg; architecture.
+  They provide customer service functions or bank teller workstations. </para>
+ <para> For booting special images (for example for BIOS update), see <xref
+   linkend="bootspecimages"/>. </para>
+ <sect1 xml:id="sec.slepos_term.conditions">
+  <title>Conditions to Add a Point of Service Terminal</title>
+  <para> The process of adding a Point of Service terminal to a &slepos;
+   system consists of these four steps: </para>
+  <orderedlist spacing="normal">
+   <listitem>
+    <para> The POS machine connected to the &branchserv; is started and
+     downloads the boot image. </para>
+   </listitem>
+   <listitem>
+    <para> The POS machine uploads the <filename>&hwmac;</filename> file
+     (for example <filename>hwtype.00:11:25:A7:D6:0D</filename>) into the
+      <filename>/srv/tftpboot/upload</filename> directory. </para>
+   </listitem>
+   <listitem>
+    <para> The <command>posleases2ldap</command> command uses this file and
+     the information in the LDAP database to create the
+      <filename>&confmac;</filename> file (for example
+      <filename>config.00:11:25:A7:D6:0D</filename>) in the
+      <filename>/srv/tftpboot/KIWI</filename> directory. </para>
+   </listitem>
+   <listitem>
+    <para> The POS machine uses the information in the
+      <filename>&confmac;</filename> file to load the correct image and
+     boot up. </para>
+   </listitem>
+  </orderedlist>
+  <para> The third step is the most important part of this process. The
+   following conditions must be met to complete it successfully: </para>
+  <itemizedlist mark="bullet" spacing="normal">
+   <listitem>
+    <para> The <filename>&hwmac;</filename> file must be in the
+      <filename>/srv/tftpboot/upload</filename> directory. </para>
+    <note>
+     <title>Configuration Without an External DHCP Server</title>
+     <para> If no external DHCP server is used, the terminal must get the
+      IP address from the DHCP server on the &branchserv; (its MAC address
+      must be listed in the
+       <filename>/var/lib/dhcp/db/dhcpd.leases</filename> file). </para>
+     <para> This occurs when the system was set by
+       <command>posInitBranchserver</command> with
+       <literal>EXT_DHCP=FALSE</literal> in the LDAP database under
+       <systemitem>scLocation</systemitem> corresponding to this
+      &branchserv;. </para>
+    </note>
+   </listitem>
+   <listitem>
+    <para> The correct image file and its checksum file must be located on
+     the &branchserv; in the <filename>/srv/tftpboot/image</filename>
+     directory. These files must be downloaded from the &admserv; in
+     advance. For more information, see <xref
+      linkend="sec.slepos_branchserv.download"/>. </para>
+    <example>
+     <title>Example Image and Checksum Files</title>
+     <screen>
+/srv/tftpboot/image/myGraphical_test.i686-3.1.4
+/srv/tftpboot/image/myGraphical_test.i686-3.1.4.md5
+</screen>
+    </example>
+   </listitem>
+   <listitem>
+    <para> An associated object representing the used image file must exist
+     in the LDAP database. <!--(see install. 4.5)-->
+    </para>
+    <para> Image objects are typically located in the global container
+     under the default <systemitem>scDisributionContainer</systemitem>. To
+     add the image to the default
+      <systemitem>scDisributionContainer</systemitem> use these commands: </para>
+    <screen>
+posAdmin --base cn=default,cn=global,&dnorg;
+--add --scPosImage --cn <replaceable>myGraphical</replaceable>
+--scImageName <replaceable>myTestGraphical</replaceable>
+--scDhcpOptionsRemote /boot/pxelinux.0 --scDhcpOptionsLocal LOCALBOOT
+--scImageFile <replaceable>myGraphical_test.i686</replaceable>
+--scBsize <replaceable>8192</replaceable>
+
+posAdmin --base cn=myGraphical,cn=default,cn=global,&dnorg;
+--add --scImageVersion --scDisabled FALSE --scVersion 3.4.2
+</screen>
+    <!--CHECKIV-->
+    <para> However, each set of system images built against a specific
+     Linux kernel and initrd must have their own corresponding
+      <systemitem>scDistributionContainer</systemitem> object in the LDAP
+     database. Therefore, if you are adding a system image built against a
+     new Linux kernel version or initrd, it is necessary to create the
+     corresponding <systemitem>scDisributionContainer</systemitem> object. </para>
+    <!--FIXME LINK-->
+   </listitem>
+   <listitem>
+    <para> An associated object representing the cash register must exist
+     in the LDAP database. This <systemitem>scCashRegister</systemitem>
+     object can either represent a specific machine or a generic machine.
+     The generic object is used if a specific image is not found for the
+     given machine. In both cases, the
+      <systemitem>scCashRegister</systemitem> must have a hardware
+     subobject like <systemitem>scRamDisk</systemitem> or
+      <systemitem>scHarddisk</systemitem>, which specifies where and how
+     the image should be deployed. <!--FIXME LINK (see admin guide 4.4)-->
+    </para>
+    <para> The name of a machine is located in the uploaded
+      <filename>&hwmac;</filename> file under the
+      <systemitem>HWTYPE</systemitem> entry. </para>
+    <para> To add a <systemitem>scCashRegister</systemitem> object for a
+     specific machine (with <literal>HWTYPE=cshr4152</literal>) use the
+     command: </para>
+    <para>
+     <command>posAdmin --base cn=global,&dnorg; --add --scCashRegister
+      --cn</command>
+     <replaceable>cr-test</replaceable> --scCashRegisterName
+      <replaceable>cshr4152</replaceable> --scPosImageDn
+      cn=<replaceable>myGraphical</replaceable>,cn=<replaceable>default</replaceable>,cn=global,&dnorg;
+    </para>
+    <para> Note the <systemitem>scCashRegisterName</systemitem> name and
+     image reference in <option>--scPosImageDn</option>). </para>
+    <para> When deploying to a hard disk (detected on terminal as /dev/sda
+     device) of this specific machine, use these commands: </para>
+    <screen>
+posAdmin --base cn=<replaceable>cshr4152</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--add --scHarddisk --cn <replaceable>sda</replaceable> --scDevice <replaceable>/dev/sda</replaceable> --scHdSize <replaceable>9000</replaceable>
+
+posAdmin --base cn=<replaceable>sda</replaceable>,cn=<replaceable>cshr4152</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--add --scPartition --scPartNum <replaceable>0</replaceable> --scPartType <replaceable>82</replaceable> --scPartMount <replaceable>x</replaceable> --scPartSize <replaceable>1000</replaceable>
+
+posAdmin --base cn=<replaceable>sda</replaceable>,cn=<replaceable>cshr4152</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--add --scPartition --scPartNum <replaceable>1</replaceable> --scPartType <replaceable>83</replaceable> --scPartMount <replaceable>'/'</replaceable> --scPartSize <replaceable>7000</replaceable>
+</screen>
+    <para> When deploying to a RAM disk of this specific machine, use this
+     command: </para>
+    <para>
+     <command>posAdmin --base cn=</command>
+     <replaceable>cshr4152</replaceable>,cn=global,&dnorg; --add
+     --scRamDisk --cn <replaceable>ram</replaceable> --scDevice
+      <replaceable>/dev/ram1</replaceable>
+    </para>
+    <para> To add a <systemitem>scCashRegister</systemitem> object for a
+     generic machine use this command: </para>
+    <para>
+     <command>posAdmin --base cn=global,&dnorg; --add --scCashRegister
+      --cn</command>
+     <replaceable>cr-test-default</replaceable> --scCashRegisterName
+     default --scPosImageDn
+      cn=<replaceable>myGraphical</replaceable>,cn=<replaceable>default</replaceable>,cn=global,&dnorg;
+    </para>
+    <para> (Note the <systemitem>scCashRegisterName</systemitem> name.) </para>
+    <para> When deploying to a hard disk of a generic machine, use these
+     commands: </para>
+    <screen>
+posAdmin --base cn=<replaceable>cr-test-default</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--add --scHarddisk --cn <replaceable>sda</replaceable> --scDevice <replaceable>/dev/sda</replaceable> --scHdSize <replaceable>9000</replaceable>
+
+posAdmin --base cn=<replaceable>sda</replaceable>,cn=<replaceable>cr-test-default</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--add --scPartition --scPartNum <replaceable>0</replaceable> --scPartType <replaceable>82</replaceable> --scPartMount <replaceable>x</replaceable> --scPartSize <replaceable>1000</replaceable>
+
+posAdmin --base cn=<replaceable>sda</replaceable>,cn=<replaceable>cr-test-default</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--add --scPartition --scPartNum <replaceable>1</replaceable> --scPartType <replaceable>83</replaceable> --scPartMount <replaceable>'/'</replaceable> --scPartSize <replaceable>7000</replaceable>
+</screen>
+    <para> When deploying to a RAM disk of the generic machine, use this
+     command: </para>
+    <para>
+     <command>posAdmin --base cn=</command>
+     <replaceable>cr-test-default</replaceable>,cn=global,&dnorg; --add
+     --scRamDisk --cn <replaceable>ram</replaceable> --scDevice
+      <replaceable>/dev/ram1</replaceable>
+    </para>
+   </listitem>
+   <listitem>
+    <para> The <command>posleases2ldap</command> process is started and
+     running. </para>
+   </listitem>
+  </itemizedlist>
+  <para> If all conditions are fulfilled, the new
+    <filename>&confmac;</filename> is created or overwritten and the
+   uploaded file <filename>hwinfo.<replaceable>MAC</replaceable></filename>
+   deleted at the time the <command>posleases2ldap</command> checks the
+   upload directory. </para>
+  <para> The generated <filename>&confmac;</filename> file should contain
+   lines reflecting the values in the LDAP database. The IP address is the
+   address of the TFTP service specified in
+    <systemitem>ipHostNumber</systemitem> under the TFTP
+    <systemitem>scService</systemitem> object in the
+    <systemitem>scBranchserver</systemitem> in the relevant
+    <systemitem>scLocation</systemitem>. </para>
+  <para> If deploying to a hard disk, the following lines should be
+   present: </para>
+  <screen>
+IMAGE=/dev/sda2;myGraphical_test;3.1.4;192.168.90.1;8192
+PART=1000;82;x,8000;83;/
+DISK=/dev/sda
+</screen>
+  <para> If deploying to a RAM disk, the following line should be present: </para>
+  <screen>
+IMAGE=/dev/ram1;myGraphical_test;3.1.4;192.168.90.1;8192
+</screen>
+  <note>
+   <title>Booting with Roles</title>
+   <para> If roles are used, the booting process is different. See <xref
+     linkend="cha.slepos_api"/> for more details. </para>
+  </note>
+ </sect1>
+ <sect1 xml:id="sec.slepos_term.hw">
+  <title>Hardware</title>
+  <para> &pos; terminals are implemented in a variety of hardware. The
+   primary difference of &pos; hardware is whether the terminal has an
+   internal hard disk or other persistent media (such as a flash drive),
+   or whether the terminal is diskless. A system that has a hard disk can
+   be configured to store the image on a disk partition instead of a RAM
+   disk so it can boot from the hard disk if it cannot boot over the
+   network. </para>
+  <sect2 xml:id="sec.slepos_term.hw.conf">
+   <title>Hardware Configuration Files</title>
+   <para> &pos; terminal hardware configuration information is either
+    stored in LDAP, as <literal>scConfigFileTemplate</literal> objects (see
+     <xref linkend="ad_bundo7s"/>), or on the &admserv; as a file in the
+     <filename>/srv/SLEPOS/config/</filename> directory and get distributed
+    via rsync. These hardware configuration files must have a corresponding
+     <literal>scConfigFileSyncTemplate</literal> object (see <xref
+     linkend="ad_bundo7r"/>) in the LDAP directory. </para>
+   <note>
+    <title>&pos; Configuration Files</title>
+    <para> The hardware configuration files discussed in this section
+     should not be confused with <filename>&confmac;</filename> &pos;
+     configuration files. The <filename>&confmac;</filename> files contain
+     the parameters required to configure a &pos; terminal during a network
+     PXE or hard disk boot. For more information, see <xref
+      linkend="sec.slepos_term.conf.mac"/>. </para>
+   </note>
+   <para> The <literal>scConfigFileTemplate</literal> and
+     <literal>scConfigFileSyncTemplate</literal> objects are located in
+    LDAP under the <literal>scPosImage</literal> or
+     <literal>scCashRegister</literal> objects. In addition to providing
+    Point of Service hardware configuration information, they specify which
+    configuration file a &pos; terminal should download from the
+    &branchserv; at boot time. For information on creating these objects in
+    the LDAP directory, see <xref
+     linkend="sec.slepos_term.ldap.conffiletemp"/> or <xref
+     linkend="sec.slepos_term.ldap.cashreg"/>. </para>
+   <para> The &branchserv; initially acquires the hardware configuration
+    information for its local &pos; terminals in one of the following ways: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      <filename>posleases2ldap</filename> reads the configuration
+      information stored in the <literal>scConfigFileTemplate</literal>
+      object in LDAP and creates a configuration file in the
+        <filename>/srv/tftpboot/KIWI/<replaceable>MAC</replaceable>/</filename>
+      directory on the &branchserv;. The hardware configuration file is
+      then distributed to the appropriate &pos; terminal at boot time.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>posleases2ldap</filename> reads where the configuration
+      file is located in the <literal>scConfigFileSyncTemplate</literal>
+      object, then triggers an rsync call to download the configuration
+      file from the &admserv;. The configuration file is stored in the
+        <filename>/srv/tftpboot/KIWI/<replaceable>MAC</replaceable>/</filename>
+      directory on the &branchserv; so it can be distributed to the
+      appropriate &pos; terminal at boot time. </para>
+    </listitem>
+   </itemizedlist>
+   <para> You do not need to do anything to initiate these processes except
+    to start the <literal>posleases2ldap</literal> service on the
+    &branchserv; after installation. </para>
+   <para> However, if the terminal's hardware configuration information
+    changes after its initial registration, you must manually run either
+     <command>pos dump-all</command> or <command>pos dump-ws
+     --workstation</command>
+    <replaceable>name or MAC</replaceable> to update the hardware
+    configuration information on the &branchserv;. These commands
+    regenerate the hardware configuration and
+     <filename>&confmac;</filename> files for all &pos; terminals found in
+    LDAP. </para>
+   <para> For more information on the <command>pos</command> command, see
+     <xref linkend="cha.pospl"/>. </para>
+  </sect2>
+  <sect2 xml:id="sec.slepos_term.hw.display">
+   <title>Graphical Display Configuration</title>
+   <para> The graphics controller depends on the model type, so it can be
+    derived from static tables. Displays that can be probed for their
+    capabilities can be attached to &pos; terminals with different model
+    types.</para>
+   <para>Some &pos; terminals can use multihead X configurations. The
+    corresponding <filename>xorg.conf</filename> files are
+    manufacturer-specific and are not provided as part of the &slepos;
+    software package. </para>
+   <para>If no xorg.conf file is specified in LDAP, but the system image
+    contains an X server, &slepos; attempts to probe the display type.
+    Probing must be defined by the &pos; hardware manufacturer. </para>
+  </sect2>
+  <sect2 xml:id="multipleinterfaces">
+   <!--ok-->
+   <title>Using a Terminal with Multiple Network Interfaces</title>
+   <para> &slepos; supports terminals having more than one network
+    interface (for example Wi-Fi and LAN or more than one LAN). During
+    registration and subsequent boots, the list of all interfaces is
+    retrieved and LDAP updated (attribute
+     <systemitem>macAddress</systemitem> of the <systemitem>scWorkstation
+     object</systemitem>). This ensures that
+     <filename>config.MAC</filename> files, MAC directories and specific
+    PXE files are correctly created (or linked) for all interfaces, so the
+    machine can freely use any of then to boot. </para>
+   <para> MAC interfaces cannot be directly interchanged between
+    workstations, because the workstation is identified by them. To
+    accomplish this, a two step procedure is needed: the MAC(s) of the
+    interface(s) to be exchanged must first be deregistred, by removing the
+    interface(s) from the machine(s) and rebooting the machine(s). The
+     <command>posleases2ldap</command> script then removes the MAC(s) from
+    the workstation's LDAP data. After that, they can be reused, so the
+    interface(s) can be moved into another machine(s). </para>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.slepos_term.conf">
+  <title>&pos; Configuration Files</title>
+  <para> Each &pos; terminal has its own configuration file which it loads
+   at boot time. This configuration file determines which hardware drivers
+   and images are loaded on the &pos; terminal. The following sections
+   describe the configuration files for a &pos; terminal booted from the
+   network or CD, and the configuration file used to register new &pos;
+   terminals. </para>
+  <sect2 xml:id="sec.slepos_term.conf.mac">
+   <title>The &confmac; File</title>
+   <para> The <filename>&confmac;</filename> files (where
+     <replaceable>MAC</replaceable> is the MAC address of the specific
+    terminal) contain the parameters required to configure a specific &pos;
+    terminal during a network PXE or hard disk boot. Each &pos; terminal
+    has its own <filename>&confmac;</filename> file on the &branchserv;. </para>
+   <para> When the &branchserv; connects to the &admserv;, it logs in to the
+    LDAP directory, accesses the configuration parameters for its
+    registered &pos; terminals, and stores the information locally as ASCII
+    configuration files (<filename>&confmac;</filename>) in the
+     <filename>/srv/tftpboot/KIWI</filename> directory. At boot time, each
+    &pos; terminal connects to the &branchserv; over TFTP and loads its
+    associated <filename>&confmac;</filename> file. </para>
+   <para> There is no need to manually create the &pos; configuration
+    files. When a new &pos; terminal comes online, its configuration file
+    is automatically created from LDAP entries on the &admserv;. </para>
+   <para> For more information on this process, see <xref
+     linkend="ad_cntrlhw"/> and <xref linkend="servercommands.core"/>. </para>
+   <para> To modify a &pos; configuration file, you must modify the
+    terminal's entries in LDAP and then run the <command>pos
+     dump-all</command> command on the &branchserv;. </para>
+   <para> For more information, see <xref linkend="ad_b58p3nr"/>. </para>
+   <para> The format of the <filename>&confmac;</filename> file is as
+    follows: </para>
+   <screen>IMAGE=<replaceable>device</replaceable>;<replaceable>image</replaceable>;<replaceable>version</replaceable>;<replaceable>srv_ip</replaceable>;<replaceable>bsize</replaceable>;compressed,...,
+CONF=<replaceable>source</replaceable>;<replaceable>dest</replaceable>;<replaceable>srv_ip</replaceable>;<replaceable>bsize</replaceable>,...,<replaceable>source</replaceable>;<replaceable>dest</replaceable>;<replaceable>srv_ip</replaceable>;<replaceable>bsize</replaceable>
+PART=<replaceable>size</replaceable>;<replaceable>id</replaceable>;<replaceable>mount</replaceable>,...,<replaceable>size</replaceable>;<replaceable>id</replaceable>;<replaceable>mount</replaceable>
+JOURNAL=ext3
+DISK=<replaceable>device</replaceable>
+</screen>
+   <para> Here is a sample <filename>&confmac;</filename> file: </para>
+   <screen>
+IMAGE=/dev/sda2;minimal.i686;3.5.4;192.168.1.1;4096;compressed
+CONF=/KIWI/00:30:05:1D:75:D2/ntp.conf;/etc/ntp.conf;192.168.1.1;1024;d6b12b7c552ca4cff978fffc0776ab92,
+/KIWI/00:30:05:1D:75:D2/xorg.conf;/etc/X11/xorg.conf;
+192.168.1.1;1024;ae3b70560b72ab39688b7dba330b766d
+PART=500;82;swap,2000;83;/
+DISK=/dev/sda
+.
+.
+.
+</screen>
+   <para> The following list provides a detailed description of each
+    parameter in <filename>&confmac;</filename> and its variables. </para>
+   <variablelist>
+    <title>config.MAC Configuration File Parameters</title>
+    <varlistentry>
+     <term><literal>IMAGE=</literal>
+     </term>
+     <listitem>
+      <para> Specifies which image (<replaceable>image</replaceable>)
+       should be loaded with which version
+        (<replaceable>version</replaceable>) and to which storage device
+        (<replaceable>device</replaceable>) it should be linked. </para>
+      <para> Multiple image downloads are possible, but the first listed
+       image must be the main system image. If the hard disk is used, a
+       corresponding partitioning must be performed. </para>
+      <variablelist>
+       <varlistentry>
+        <term><replaceable>device</replaceable>
+        </term>
+        <listitem>
+         <para> The storage device to which the image is linked, for
+          example, <filename>/dev/ram1</filename> for a RAM disk,
+           <filename>/dev/sda2</filename> for a hard disk, or
+           <filename>/dev/md1</filename> for RAID. </para>
+         <para> RAM devices should not be confused with hard disk devices,
+          which use a partition table. On a &pos; terminal, the partition
+           <filename>sda1</filename> is used for the Linux swap partition
+          and <filename>sda2</filename> defines the root file system
+           (<filename>/</filename>). On the RAM disk device,
+           <filename>/dev/ram0</filename> is used for the initial RAM disk
+          and cannot be used as storage device for the system image. It is
+          recommended to use <filename>/dev/ram1</filename> for the RAM
+          disk. </para>
+         <para> When RAID is in use, devices need to be referenced as
+            <filename>/dev/md<replaceable>number</replaceable></filename>,
+          starting from zero (not from one as usual when RAID is not used).
+          The <command>posleases2ldap</command> script automatically takes
+          care of this if the RAID configuration
+           <systemitem>scRaidScheme</systemitem> of the used
+           <systemitem>scCashRegister</systemitem> is detected. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>image</replaceable>
+        </term>
+        <listitem>
+         <para> The name of the image to load on the &pos; terminal.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>version</replaceable>
+        </term>
+        <listitem>
+         <para> The version of the image to load on the &pos; terminal.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>srv_ip</replaceable>
+        </term>
+        <listitem>
+         <para> The server IP address for the TFTP download. </para>
+         <para> This variable must always be included in the
+           <literal>IMAGE=</literal> parameter. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>bsize</replaceable>
+        </term>
+        <listitem>
+         <para> The block size for the TFTP download. If the block size is
+          too small according to the maximum number of data packages
+          (32768), linuxrc automatically calculates a new block size for
+          the download. The maximum block size is 65464 Bytes. </para>
+         <para> This variable must always be included in the
+           <literal>IMAGE=</literal> parameter. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><literal>compressed</literal>
+        </term>
+        <listitem>
+         <para> Specifies that the boot process uses a compressed image. If
+          the <literal>compressed</literal> variable is not included, the
+          standard boot process is used. </para>
+         <para> The boot fails if you specify <literal>compressed</literal>
+          but the image is not compressed. It also fails if you do not
+          specify <literal>compressed</literal> and the image is
+          compressed. </para>
+         <important>
+          <title>Image Compression</title>
+          <para> The name of the compressed image must contain the
+            <literal>.gz</literal> suffix and must be compressed with
+            <command>gzip</command>. </para>
+         </important>
+        </listitem>
+       </varlistentry>
+      </variablelist>
+     </listitem>
+    </varlistentry>
+    <varlistentry xml:id="ad_bumuj7k">
+     <term><literal>CONF=</literal>
+     </term>
+     <listitem>
+      <para> Specifies the configuration files to download to the &pos;
+       terminal. The data is provided in a comma-separated list of
+        <replaceable>source</replaceable>:<replaceable>target</replaceable>
+       configuration files. </para>
+      <variablelist>
+       <varlistentry>
+        <term><replaceable>source</replaceable>
+        </term>
+        <listitem>
+         <para> The path to the source configuration file on the TFTP
+          server. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>dest</replaceable>
+        </term>
+        <listitem>
+         <para> The directory on the &pos; terminal to which you want to
+          download the source configuration file. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>srv_ip</replaceable>
+        </term>
+        <listitem>
+         <para> The server IP address for the TFTP download, which must
+          always be included in the <literal>CONF=</literal> parameter.
+         </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>bsize</replaceable>
+        </term>
+        <listitem>
+         <para> The block size for the TFTP download. If the block size is
+          too small according to the maximum number of data packages
+          (32768), linuxrc automatically calculates a new block size for
+          the download. The maximum block size is 65464 Bytes. This
+          variable must always be included in the <literal>CONF=</literal>
+          parameter. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>md5sum</replaceable>
+        </term>
+        <listitem>
+         <para> Contains the md5sum hash of the configuration file. </para>
+        </listitem>
+       </varlistentry>
+      </variablelist>
+     </listitem>
+    </varlistentry>
+    <varlistentry xml:id="ad_bumuj7l">
+     <term><literal>PART=</literal>
+     </term>
+     <listitem>
+      <para> Specifies the partitioning data provided in a comma-separated
+       list. </para>
+      <!--first element added (service partition), rest moved-->
+      <para> The first element of the list defines the service partition.
+       This partition is used for administration purposes, such as storing
+       the encrypted image before the installation, downloading a new image
+       in the background, or local booting for the wireless terminals. </para>
+      <para> The second element of the list defines the swap partition. The
+       third element defines the root partition. Each element must include
+       the size (<replaceable>size</replaceable>), the type
+        (<replaceable>id</replaceable>), and the mount point
+        (<replaceable>mount</replaceable>). </para>
+      <note>
+       <title>Formatting Partitions</title>
+       <para> The fourth and following partitions are not formatted
+        automatically. If these partitions already exist and contain
+        important data, they are not changed in any way and all data on
+        these partitions is preserved. This is useful to keep data between
+        updates. To force formatting of these partitions, increase the size
+        of the third (root) partition. </para>
+       <para> It is also possible to force formatting of the data
+        partitions (including the service partition, but not the root
+        partition) by using the
+         <systemitem>POS_FORMAT_DATA_PART</systemitem> kernel parameter. By
+        default, data partitions are formatted only when fsck fails with an
+        uncorrectable error. If
+         <systemitem>POS_FORMAT_DATA_PART=yes</systemitem>, data partitions
+        are also formatted if the requested file system type is changed. If
+         <systemitem>POS_FORMAT_DATA_PART=force</systemitem>, data
+        partitions are formatted during each boot. </para>
+      </note>
+      <variablelist>
+       <varlistentry>
+        <term><replaceable>size</replaceable>
+        </term>
+        <listitem>
+         <para> The size of the partition in MB. If you want the partition
+          to take all the space left on a disk, use a lowercase letter
+           <literal>x</literal> as the size specification. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>id</replaceable>
+        </term>
+        <listitem>
+         <para> The partition type: <literal>S</literal> for swap,
+           <literal>L</literal> for all others. </para>
+        </listitem>
+       </varlistentry>
+       <varlistentry>
+        <term><replaceable>mount</replaceable>
+        </term>
+        <listitem>
+         <para> The partition mount point, for example:
+           <filename>/home</filename>. </para>
+         <important>
+          <title>Service Partition</title>
+          <para> The first (service) partition must be mounted as
+            <filename>/srv/SLEPOS</filename>. </para>
+         </important>
+         <important>
+          <title>Swap Partition</title>
+          <para> The swap partition must not contain a mount point. Use a
+           lowercase letter <literal>x</literal> instead. </para>
+         </important>
+        </listitem>
+       </varlistentry>
+      </variablelist>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>JOURNAL=</literal>
+     </term>
+     <listitem>
+      <para> Specifies a journaling file system. The value for this
+       parameter must be set to <literal>ext3</literal> because that is the
+       only journaling file system &slepos; supports. </para>
+      <para> If you have an existing Ext2 image, you can change the file
+       system by setting a flag in the <literal>scCashRegister</literal> or
+       the <literal>scWorkstation</literal> objects rather than re-creating
+       the image. If Ext3 is specified in either of the LDAP objects, the
+       &pos; terminal extends the file system to Ext3 when the image is
+       deployed. </para>
+      <para> The <literal>JOURNAL=</literal> parameter is only evaluated if
+       the <literal>DISK=</literal> parameter is set. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>DISK=</literal>
+     </term>
+     <listitem>
+      <para> Defines the device through which the hard disk can be
+       addressed, for example: <filename>/dev/sda</filename>. This
+       parameter is only used with <literal>PART</literal>. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>RAID=</literal>
+     </term>
+     <listitem>
+      <para> Defines the raid configuration, according to the
+        <systemitem>scRaidScheme</systemitem> attribute of the used
+        <systemitem>scCashRegister</systemitem> (in the same format, but
+       separated with semicolons <literal>;</literal>). When applied, the
+       image device is automatically written on the
+        <systemitem>IMAGE</systemitem> line as
+         <filename>/dev/md<replaceable>number</replaceable></filename>.
+       Only raid1 is supported by KIWI. </para>
+      <para> Note, that dmraid fake-raid controllers are also supported.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>RELOAD_IMAGE=</literal>
+     </term>
+     <listitem>
+      <para> If set to <literal>yes</literal>, this parameter forces the
+       configured image to be loaded from the server even if the image on
+       the disk is up-to-date. </para>
+      <para> If you run <command>pos dump-all</command> or use another
+       method to regenerate the <filename>&confmac;</filename> file, it
+       overwrites this optional parameter, which is mainly used for
+       debugging purposes. This parameter is only pertinent on disk-based
+       systems. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>RELOAD_CONFIG=</literal>
+     </term>
+     <listitem>
+      <para> If set to a non-empty string, this parameter forces the
+        <filename>&confmac;</filename> file to be loaded from the server. </para>
+      <para> If you run <command>pos dump-all</command> to regenerate the
+        <filename>&confmac;</filename> file, it overwrites this optional
+       parameter, also mainly used for debugging purposes and pertinent
+       only on disk-based systems. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>HWTYPE=</literal>
+     </term>
+     <listitem>
+      <para> Hardware type of the terminal, used to determine correct
+        <systemitem>scCashRegister</systemitem> object for registration
+       (compared to <systemitem>scCashRegisterName</systemitem>). </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>POS_HWTYPE_HASH=</literal>
+     </term>
+     <listitem>
+      <para> Hash of the hwtype file used for registration (or a message
+       explaining that <command>pos dump-all</command> or another method
+       was used). </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>KERNELVER=</literal>
+     </term>
+     <listitem>
+      <para> The content of <systemitem>scKernelVersion</systemitem> of the
+        <systemitem>scDistributionContainer</systemitem> containing the
+       used image. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>KERNELMATCH=</literal>
+     </term>
+     <listitem>
+      <para> The content of <systemitem>scKernelMatch</systemitem> of the
+        <systemitem>scDistributionContainer</systemitem> containing the
+       used image. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>KERNELEXP=</literal>
+     </term>
+     <listitem>
+      <para> The content of <systemitem>scKernelExpression</systemitem> of
+       the <systemitem>scDistributionContainer</systemitem> containing the
+       used image. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>WORKSTATION_LDAP_IP=</literal>
+     </term>
+     <listitem>
+      <para> IP of the workstation in the LDAP database when the configuration
+       file was created. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>POS_KERNEL_PARAMS_HASH_VERIFY=</literal>
+     </term>
+     <listitem>
+      <para> Hash of additional kernel parameters supplied by
+        <systemitem>scPxeFileTemplatescPxeFile</systemitem>. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>PART_PASSWORDS=</literal>
+     </term>
+     <listitem>
+      <para> Contains a comma separated list of passwords for the encrypted
+       partition(s). For data partitions, the password is taken from the
+        <systemitem>scPassword</systemitem> attribute of the associated
+        <systemitem>scPartition</systemitem> object (under the used
+        <systemitem>scHarddisk</systemitem>). For the root partition, it
+       contains the password of the system image, according to the
+        <systemitem>scPassword</systemitem> attribute of the used
+        <systemitem>scImageVersion</systemitem> object. </para>
+      <para> Specifying <literal>*</literal> as partition password means
+       that a random password is generated on each boot. This is useful for
+       swap partitions. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>POS_ID=</literal>
+     </term>
+     <listitem>
+      <para> Contains the assigned ID. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>POS_ROLE=</literal>
+     </term>
+     <listitem>
+      <para> Contains the assigned role. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>POS_HWTYPE_ERR_HASH=</literal>
+     </term>
+     <listitem>
+      <para> Identifies the API client to which the message in
+        <literal>POS_ERR=</literal> applies. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>POS_ERR=</literal>
+     </term>
+     <listitem>
+      <para> Error message if setting of the role or ID failed or if there
+       was some other general problem preventing the creation of a valid
+       and current &confmac;. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><literal>SUSEMANAGER=</literal>
+     </term>
+     <listitem>
+      <para> Contains semicolon separated host name to the SUSE Manager and
+       the terminal's SUSE Manager registration key. </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+  <sect2 xml:id="ad_slepos_pos_isoboot_cfg">
+   <title>&kiwi; isoboot Configuration Files</title>
+   <remark>Do we want to provide such documentation? -ke-</remark>
+   <para> For more information on creating an isoboot image, see <xref
+     linkend="sec.kiwi.config"/>. </para>
+   <!--FIXME???-->
+  </sect2>
+  <sect2 xml:id="ad_cntrlhw">
+   <title>The &hwmac; File</title>
+   <para> When a &pos; terminal comes online for the first time, it does
+    not have a <filename>&confmac;</filename> file on the &branchserv;. To
+    create this file for the terminal, the system must first register the
+    &pos; terminal in LDAP. This is done through the &pos; control file,
+     <filename>&hwmac;</filename> (where <replaceable>MAC</replaceable> is
+    the MAC address of the specific terminal). The &pos; control file
+    contains the information required to create the terminal's workstation
+    object (<literal>scWorkstation</literal>) in LDAP and determines which
+    image and configuration settings should be included in the terminal's
+    configuration file (<filename>&confmac;</filename>). </para>
+   <para> When role-based mode is active (see <xref
+     linkend="roles.addscrole"/>) od <systemitem>scIDPool</systemitem> is
+    not empty (see <xref linkend="cha.ids"/>), the terminal returns the
+    hwtype file with an added hash suffix which helps to determine whether
+    the <filename>config.<replaceable>MAC</replaceable></filename> file
+    (via <systemitem>POS_HWTYPE_HASH</systemitem> entry) was created as a
+    result of this request. Also, <command>posleases2ldap</command> reads
+    the role and id requests and reacts according to the role-based scheme
+    when creating the resulting
+      <filename>config.<replaceable>MAC</replaceable></filename>. </para>
+   <para> The &pos; control file is formatted as follows: </para>
+   <screen>HWTYPE=<replaceable>hardware type</replaceable>
+HWBIOS=<replaceable>bios version</replaceable>
+IPADDR=<replaceable>current IP address of the terminal</replaceable>
+POS_ROLE=<replaceable>role selected on the terminal (role based mode)</replaceable>
+POS_ID=<replaceable>id selected on the terminal</replaceable></screen>
+   <para> The process used to create the <filename>&confmac;</filename>
+    file from the <filename>&hwmac;</filename> file is as follows: </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para> During the &pos; boot process, the hardware type and BIOS
+      version are detected. </para>
+    </listitem>
+    <listitem>
+     <para> Using this information, the <filename>posleases2ldap</filename>
+      command creates the control file <filename>&hwmac;</filename>. </para>
+     <para> For more information, see <xref linkend="ad_bsx5v4p"/>. </para>
+    </listitem>
+    <listitem>
+     <para> The linuxrc program uploads <filename>&hwmac;</filename> to the
+      &branchserv;'s upload directory
+       <filename>/srv/tftpboot/upload</filename>. </para>
+     <note>
+      <title>Uploading the Control File</title>
+      <para> The control file is uploaded to the TFTP server only when no
+       configuration file (<filename>&confmac;</filename>) exists. </para>
+     </note>
+    </listitem>
+    <listitem>
+     <para> The hardware type identified in the
+       <filename>&hwmac;</filename> file is compared to the
+       <literal>scCashRegister</literal> objects (see <xref
+       linkend="ad_btxanhw"/>) in the LDAP directory. </para>
+     <para> If a match is found, the information in
+       <literal>scCashRegister</literal> and its associated objects is used
+      to create the &pos; terminal's <literal>scWorkstation</literal>
+      object in LDAP and its <filename>&confmac;</filename> file in the
+      &branchserv;'s <filename>/srv/tftpboot/KIWI</filename> directory.
+      After the <filename>&confmac;</filename> file is created, the
+       <filename>&hwmac;</filename> file is deleted. </para>
+     <para> If the hardware type is unknown, the information in the default
+       <literal>scCashRegister</literal> object is used to create the &pos;
+      terminal's <literal>scWorkstation</literal> object and
+       <filename>&confmac;</filename> file. </para>
+     <important>
+      <title>Default <literal>scCashRegister</literal> Object</title>
+      <para> This safety net feature works only if you have configured a
+       designated default <literal>scCashRegister</literal> object in the
+       LDAP directory. For information on defining a default
+        <literal>scCashRegister</literal> object, see <xref
+        linkend="sec.slepos_term.ldap.cashreg"/>. </para>
+     </important>
+    </listitem>
+   </orderedlist>
+   <para> For a detailed review of the core scripts involved in this
+    process, see <xref linkend="servercommands.core"/>. </para>
+   <para> When changing the ID or role, the client uploads the
+      <filename>upload/hwtype.<replaceable>MAC</replaceable>.<replaceable>HASH</replaceable></filename>
+    file. For more information, see <xref linkend="sec.api.rolechange"/>.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 role="General" xml:id="ad_bwlov3w">
+  <title>Booting the &pos; Terminal</title>
+  <important>
+   <title>Creating LDAP Objects Before Booting</title>
+   <para> You must create <literal>scCashRegister</literal> and its
+    associated objects before you can boot the &pos; terminals. For more
+    information, see <xref linkend="sec.slepos_term.ldap.cashreg"/>.
+   </para>
+  </important>
+  <para> Typically, when you boot a &pos; terminal, it will first try to
+   boot from CD or USB flash drive. If a CD or USB device is not available, the
+   terminal attempts a network boot using PXE. If the network is not available,
+   it boots from the hard disk. You can override this order with the BIOS
+   settings. </para>
+  <para> The first time you boot the &pos; terminals, the
+    <literal>posleases2ldap</literal> daemon creates a workstation object
+    (<literal>scWorkstation</literal>) and hardware configuration files for
+   the &pos; terminals that register on the &branchserv;. For more
+   information on this process, see <xref linkend="ad_cntrlhw"/>. </para>
+  <!--<para>
+   There are several different use cases with different booting processes.
+   There are three different types of boot images (for more information about
+   the types of booting images, see <xref linkend="imagetypes.boot"/>.
+  </para>-->
+  <para>
+   <xref linkend="ad_b4wymao" xrefstyle="FigureXRef"/> provides a
+   simplified overview of the &pos; boot process for a network PXE boot, a
+   hard disk boot, and a CD boot. </para>
+  <figure pgwide="1" xml:id="ad_b4wymao">
+   <title>&pos; Terminal Boot Process</title>
+   <mediaobject>
+    <textobject role="description"><phrase>&pos; boot process</phrase>
+    </textobject>
+    <imageobject role="fo">
+     <imagedata fileref="slrs_decision_a.png" width="80%" format="png"/>
+    </imageobject>
+    <imageobject role="html">
+     <imagedata fileref="slrs_decision_a.png" width="80%" format="png"/>
+    </imageobject>
+   </mediaobject>
+  </figure>
+  <para> Detailed information about each boot process is provided in the
+   following sections. </para>
+  <sect2 xml:id="ad_bungnpv">
+   <title>Network PXE Boot</title>
+   <para> To boot &pos; terminals from the network, the following
+    conditions must be met: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> The terminal must have a network connection to the
+      &branchserv;. </para>
+    </listitem>
+    <listitem>
+     <para> While the TFTP service is set up and started automatically by
+      the <command>posInitBranchserver</command> command, you must make
+      sure to open the TFTP port in the firewall on the &branchserv;. If
+      the FTP service is used, the FTP port must be open. For more
+      information on the &branchserv; configuration, see <xref
+       linkend="cha.slepos_branchserv"/>. </para>
+    </listitem>
+    <listitem>
+     <para> The terminal must have an associated
+       <literal>scCashRegister</literal> object in the LDAP directory. For
+      more information, see <xref linkend="sec.slepos_term.ldap"/>. </para>
+    </listitem>
+    <listitem>
+     <para> The &pos; boot images must be located in the
+       <filename>/srv/tftpboot/boot/</filename> directory on the
+      &branchserv; and the system images must be located in the
+       <filename>/srv/tftpboot/image/</filename> directory. </para>
+     <!--FIXME FTP?-->
+    </listitem>
+    <listitem>
+     <para> The &pos; system images must have an associated
+       <literal>scPosImage</literal> object in the LDAP directory. The
+      image must be activated. For more information on activating images,
+      see <xref linkend="image_activation"/>. For more information, see
+       <xref linkend="sec.slepos_term.ldap.posimage"/>. </para>
+    </listitem>
+   </itemizedlist>
+   <para> If these conditions are met, the &pos; terminal can successfully
+    boot from the network. </para>
+   <para> The following is a detailed description of what takes place when
+    a &pos; terminal boots from the network: </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para> The &pos; terminal makes a DHCP request. </para>
+    </listitem>
+    <listitem>
+     <para> In the boot configuration file, which defaults to
+       <filename>pxelinux.cfg/default</filename>, the boot parameters are
+      defined. There is specified where the kernel and the initrd are
+      located. The terminal downloads these files. </para>
+     <para> The initrd (or initrd.gz) becomes the first bootstrap
+      environment. </para>
+    </listitem>
+    <listitem>
+     <para> The &pos; terminal downloads the Linux kernel from the
+       <filename>netboot</filename> image which consists of several files
+      (the Linux kernel and a symbolic link, the initrd, and the initrd's
+      md5sum), for example: </para>
+     <screen>
+initrd-netboot-suse-SLES11.i686-2.1.1.splash.gz
+initrd-netboot-suse-SLES11.i686-2.1.1.kernel.3.0.8-0.11-default
+initrd-netboot-suse-SLES11.i686-2.1.1.kernel
+initrd-netboot-suse-SLES11.i686-2.1.1.splash.md5
+</screen>
+     <para> The naming scheme of the kernel is
+        <filename>initrd-netboot-suse-SLES11.<replaceable>architecture</replaceable>-<replaceable>image_version</replaceable>.kernel.<replaceable>kernel_version</replaceable>-<replaceable>flavour</replaceable></filename>.
+      The Linux kernel is used to boot the &pos; terminals using PXE. </para>
+    </listitem>
+    <listitem>
+     <para> Using PXE network boot or boot manager (GRUB), the &pos;
+      terminal boots the initrd (for example,
+       <filename>initrd-netboot-suse-SLES11.i686-2.1.1.splash.gz</filename>)
+      which it receives from the &branchserv;. </para>
+     <para> If no PXE boot is possible, the &pos; terminal tries to boot
+      via hard disk, if accessible. </para>
+    </listitem>
+    <listitem>
+     <para> The <filename>linuxrc</filename> script begins. </para>
+    </listitem>
+    <listitem>
+     <para> The file systems required to receive system data are mounted,
+      for example the <filename>/proc</filename> file system. </para>
+    </listitem>
+    <listitem>
+     <para> The &pos; hardware type (<replaceable>hwtype</replaceable>) is
+      detected. </para>
+     <para> The &pos; hardware manufacturer provides a program to do this.
+      The first time the &pos; terminal boots, this information is used to
+      register the &pos; terminal and create the terminal's
+       <filename>&confmac;</filename> file. This information is also used
+      to determine which configuration files the terminal should use.
+     </para>
+    </listitem>
+    <listitem>
+     <para> The &pos; BIOS version (<replaceable>hwbios</replaceable>) is
+      detected. The &pos; hardware manufacturer provides a program to do
+      this. </para>
+    </listitem>
+    <listitem>
+     <para> Network support is activated. The required kernel module is
+      determined from a static table by selecting the entry corresponding
+      to the hardware type. If no known hardware type is detected, a
+      default list of modules is used and types are tried one after the
+      other. Forcing loading a driver is possible using boot parameters
+      such as <literal>kiwikernelmodule=ide-disk</literal>. </para>
+    </listitem>
+    <listitem>
+     <para><remark>emap: layout problem in numbered list. No space between
+       1?. and the first letter.</remark> The module is loaded using
+       <command>modprobe</command>. Any dependencies to other modules are
+      resolved at that time. </para>
+    </listitem>
+    <listitem>
+     <para> The network interface is set up via DHCP. </para>
+    </listitem>
+    <listitem>
+     <para> After the interface has been established, the DHCP variables
+      are exported to the
+       <filename>/var/lib/dhcpcd/dhcpcd-eth0.info</filename> file and the
+      contents of DOMAIN and DNS are used to generate an
+       <filename>/etc/resolv.conf</filename> file. </para>
+    </listitem>
+    <listitem>
+     <para> The TFTP server address is acquired. </para>
+     <para> During this step, a check is made to determine whether the
+      host name <filename>tftp.<replaceable>DOMAIN</replaceable></filename>
+      can be resolved. If not, the DHCP server is used as the TFTP server. </para>
+     <para> Forcing another TFTP server is possible with a kernel parameter
+      such as
+       <literal>kiwitftp=<replaceable>IP_ADDRESS</replaceable></literal> or
+      if you set this kernel parameter in the
+       <filename>pxelinux.cfg/default</filename> file. </para>
+    </listitem>
+    <listitem>
+     <para> The idlist and the first available rolelist
+        (<filename>rolelist.<replaceable>MAC</replaceable></filename>,
+        <filename>rolelist.<replaceable>hwtype</replaceable></filename>,
+       <filename>rolelist.default</filename>) is downloaded and the role
+      mode is activated. </para>
+     <para> The &pos; configuration file, <filename>&confmac;</filename>
+      (see <xref linkend="sec.slepos_term.conf.mac"/>) is loaded from the
+      &branchserv;'s <filename>/srv/tftpboot/KIWI</filename> directory over
+      TFTP. </para>
+     <para> If the &pos; terminal boots for the first time, its
+       <filename>&confmac;</filename> file does not exist yet. The &pos;
+      terminal must first register on the system. </para>
+     <para> If the role mode is activated and it is the first boot, the
+      role and ID menu is displayed. If the role mode is activated but it
+      is not the first boot, the <literal>Press C to change
+       ID/role</literal> message is displayed. If the <keycap>C</keycap>
+      key is pressed, the role and ID menu is displayed. </para>
+     <para> A new &pos; terminal registers as follows: </para>
+     <orderedlist spacing="normal">
+      <listitem>
+       <para> A &pos; control file (<filename>&hwmac;</filename>) is
+        uploaded to the TFTP server's upload directory:
+         <filename>/srv/tftpboot/upload</filename>. </para>
+       <para> The <filename>&hwmac;</filename> file indicates the &pos;
+        hardware type and the BIOS version. The
+         <filename>&hwmac;</filename> file is uploaded during first boot or
+        when the role or ID is changed. If role mode is activated, the
+          <filename>hwtype.<replaceable>MAC</replaceable>.<replaceable>hash</replaceable></filename>
+        is uploaded (for more information, see <xref
+         linkend="cha.slepos_api"/>. The system uses this information to
+        create the terminal's <filename>&confmac;</filename> file. For more
+        information on this process, see <xref linkend="ad_cntrlhw"
+         xrefstyle="SectTitleOnPage"/>. </para>
+      </listitem>
+      <listitem>
+       <para> After the upload, the &pos; terminal renews the DHCP lease
+        file (<command>dhcpcd -n</command>). </para>
+      </listitem>
+      <listitem>
+       <para> The &pos; terminal attempts to load its new
+         <filename>&confmac;</filename> file from the TFTP server. </para>
+      </listitem>
+      <listitem>
+       <para> If the <filename>&confmac;</filename> file is not yet
+        available, the &pos; terminal waits several seconds before
+        repeating the two previous steps. </para>
+      </listitem>
+     </orderedlist>
+    </listitem>
+    <listitem>
+     <para> When the <filename>&confmac;</filename> file loads, the system
+      begins an analysis of its contents. </para>
+     <para> For more information about the content and file format of the
+       <filename>&confmac;</filename> file, refer to <xref
+       linkend="sec.slepos_term.conf.mac" xrefstyle="SectTitleOnPage"/>.
+     </para>
+    </listitem>
+    <listitem>
+     <para> The <literal>PART</literal> line (see <xref
+       linkend="ad_bumuj7l"/>) in the <filename>&confmac;</filename> file
+      is analyzed. </para>
+     <para> If there is a <literal>PART</literal> line in the configuration
+      file, a check is made using the image version to see whether any
+      local systems need to be updated. </para>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para> If no system update is required, no image download occurs and
+        the &pos; terminal boots from the hard disk. </para>
+      </listitem>
+      <listitem>
+       <para> If a system update is required, the &pos; terminal's hard
+        disk is partitioned according to the parameters specified in the
+         <literal>PART</literal> line. </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+    <listitem>
+     <para> Indicated images are downloaded with multicast TFTP. </para>
+    </listitem>
+    <listitem>
+     <para> If the image is compressed, it is copied then decompressed.
+     </para>
+    </listitem>
+    <listitem>
+     <para> The image checksums are verified. If they do not match, the
+      images are downloaded again. </para>
+    </listitem>
+    <listitem>
+     <para> The <literal>CONF</literal> line (see <xref
+       linkend="ad_bumuj7k"/>) in the &pos; configuration file is
+      evaluated.
+      <!--For more information, refer to <xref
+       linkend="sec.slepos_term.conf.mac" />.-->
+     </para>
+     <para> All the indicated files are loaded from the TFTP server and
+      stored in a <filename>/config/</filename> path. For more information
+      about KIWI configuration, see <xref linkend="sec.kiwi.config"/>.
+     </para>
+    </listitem>
+    <listitem>
+     <para> All the user space processes based on the boot image
+       (<command>dhcpcd -k</command>) are terminated. </para>
+    </listitem>
+    <listitem>
+     <para> The system image is mounted. </para>
+    </listitem>
+    <listitem>
+     <para> The configuration files stored in the
+       <filename>/config/</filename> path are copied to the mounted system
+      image. </para>
+    </listitem>
+    <listitem>
+     <para> If this is a new image, an <literal>Image Install
+       Notification</literal> occurs. If the terminal boots successfully,
+      this information will be synchronized to the LDAP directory. </para>
+     <orderedlist spacing="normal">
+      <listitem>
+       <para> The
+          <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+        file is created in <filename>/srv/tftpboot/upload</filename>.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <command>posleases2ldap</command> transfers the information to the
+         <literal>scNotifiedImage</literal> attribute in the
+         <literal>scWorkstation</literal> object in LDAP. </para>
+      </listitem>
+     </orderedlist>
+    </listitem>
+    <listitem>
+     <para> The system switches to the mounted system image. </para>
+    </listitem>
+    <listitem>
+     <para> The root file system is converted to the system image using
+       <command>pivot_root</command>. </para>
+     <para> All the required configuration files are now present because
+      they have been stored in the system image or have been downloaded via
+      TFTP. </para>
+     <para> The file systems that are mounted read-only can be stored in
+      cramfs-compressed RAM file systems to save &pos; RAM resources.
+     </para>
+    </listitem>
+    <listitem>
+     <para> The boot image is unmounted using an exec umount call. </para>
+    </listitem>
+    <listitem>
+     <para> When linuxrc or the exec call terminates, the kernel initiates
+      the initialization process, which starts processing the boot scripts as
+      specified in <filename>/etc/inittab</filename>. </para>
+    </listitem>
+   </orderedlist>
+  </sect2>
+  <sect2>
+   <title>Booting System Images with Kexec</title>
+   <para> System images can also be booted using Kexec. The advantage of
+    using Kexec is the possibility to use a boot image kernel and system
+    image kernel with different versions. There is no need to reboot on the
+    first installation of the terminal. Also, it allows the standard &sls;
+    boot process. The disadvatage is the slower boot with forced Kexec. </para>
+   <para> Kexec is used by default when the kernel version does not match.
+    Kexec can also be forced by setting <literal>FORCE_KEXEC</literal> to a
+    non-empty string on the boot kernel command line. For more information
+    about setting kernel command line parameters, see <xref
+     linkend="terminal_kernel_options"/>. </para>
+   <para> When using Kexec, the system image must contain the
+     <systemitem>kexec-tools</systemitem> package.
+    <!-- Images from SLEPOS 11SP1 and older do not contain this package.-->
+   </para>
+   <para> The booting procedure with Kexec follows these steps: </para>
+   <procedure>
+    <step>
+     <para> The boot image (kernel+initrd) is started from PXE. </para>
+    </step>
+    <step>
+     <para> the system image is downloaded and deployed. </para>
+    </step>
+    <step>
+     <para> The configuration (initrd, GRUB) for the kernel from the system
+      image is generated. </para>
+    </step>
+    <step>
+     <para> The kernel from the system image is started with Kexec, then
+      the standard &sls; boot process continues. </para>
+    </step>
+   </procedure>
+
+   <warning>
+     <title>Kexec Limitations</title>
+     <para>
+      Kexec cannot be used for booting a SLE12-based system image from a SLE11-based boot image, as the latter cannot generate a SLE12-compatible  initrd   and  grub2   configuration. 64-bit kernels may required different arguments. In mixed 32-bit and 64-bit branches, the arguments can be added to a specific image as the <systemitem>scPxeFileTemplate</systemitem> LDAP object. 
+      </para>
+     </warning>
+  </sect2>
+  <sect2>
+   <title>Booting Scenarios Using Netboot Image</title>
+   <para> This section describes the typical booting scenarios using the
+    netboot image. </para>
+   <figure pgwide="1">
+    <title>Booting Scenarios Using Netboot Image</title>
+    <mediaobject>
+     <textobject role="description"><phrase>&pos; boot process</phrase>
+     </textobject>
+     <imageobject role="fo">
+      <imagedata fileref="usecases.png" width="100%" format="png"/>
+     </imageobject>
+     <imageobject role="html">
+      <imagedata fileref="usecases.png" width="100%" format="png"/>
+     </imageobject>
+    </mediaobject>
+   </figure>
+   <sect3>
+    <title>Normal PXE Boot (without a service partition)</title>
+    <para> This is the typical booting scenario using the netboot image
+     with terminals connected over wired network and service partition is
+     not used: </para>
+    <procedure>
+     <step>
+      <para> PXE boot from &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Initialize network </para>
+     </step>
+     <step>
+      <para> Download configuration from &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Download image from &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Install GRUB on system image </para>
+     </step>
+     <step>
+      <para> Image boot </para>
+     </step>
+    </procedure>
+    <para> In case of the &branchserv; failure, the procedure is as
+     follows: </para>
+    <procedure>
+     <step>
+      <para> PXE boot from &branchserv; fails </para>
+     </step>
+     <step>
+      <para> GRUB boot from system image </para>
+     </step>
+    </procedure>
+   </sect3>
+   <sect3>
+    <title>Wi-Fi boot (using a service partition)</title>
+    <para> It is possible to use wireless networks (Wi-Fi) to connect
+     wireless &slepos; terminals. The wireless support must be added when
+     building images. The wireless support is included only in the netboot
+     image &ndash; booting using PXE via wireless networks is however not
+     supported. The first boot of the wireless can be performed using a
+     preloaded image or an image on a USB flash drive. It is also possible to use
+     a temporary LAN connection. </para>
+    <note>
+     <title>Multiple Network Interfaces</title>
+     <para> If a terminal uses multiple network interfaces (LAN and
+      wireless, for example), a new record in LDAP and new
+       <filename>config.MAC</filename> is created for each interface. All
+      interfaces have the same host name and IP address assigned by DHCP.
+     </para>
+    </note>
+    <note>
+     <title>Multicast Over Wireless Networks</title>
+     <para> Most current Wi-Fi networks do not support multicast correctly
+      and switch to the lowest available network speed when multicast TFTP
+      is used. Unless you are using accesspoints supporting high speed
+      multicast over Wi-Fi, it is recommended to use FTP instead of
+      multicast TFTP on such networks. </para>
+    </note>
+    <procedure>
+     <step>
+      <para> GRUB boot from service partition template </para>
+     </step>
+     <step>
+      <para> Inititialize network (Wi-Fi) </para>
+     </step>
+     <step>
+      <para> Download configuration from the &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Install/update GRUB on service partition </para>
+     </step>
+     <step>
+      <para> Download image from the &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Image boot </para>
+     </step>
+    </procedure>
+    <para> A normal Wi-Fi boot proceeds as follows: </para>
+    <procedure>
+     <step>
+      <para> GRUB boot from service partition </para>
+     </step>
+     <step>
+      <para> Initialize network (Wi-Fi) </para>
+     </step>
+     <step>
+      <para> Download configuration from the &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Install/update GRUB on service partition </para>
+     </step>
+     <step>
+      <para> Check/download image from the &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Image boot </para>
+     </step>
+    </procedure>
+   </sect3>
+   <sect3>
+    <title>Boot with Reduced Network Load</title>
+    <para>
+     <!--FIXME-->
+    </para>
+    <procedure>
+     <step>
+      <para> Boot from PXE or service partition </para>
+     </step>
+     <step>
+      <para> Initialize network (Wi-Fi) </para>
+     </step>
+     <step>
+      <para> Download configuration from the &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> If the service partition contains the required image, it is
+       used. </para>
+     </step>
+     <step>
+      <para> Image boot </para>
+     </step>
+     <step>
+      <para> Change terminal configuration via the roles API or
+        <command>pos dump-all</command>
+      </para>
+     </step>
+     <step>
+      <para> Run <command>posSyncSrvPart</command> on the terminal </para>
+     </step>
+     <step>
+      <para> Reboot the terminal, the process starts from the beginning
+      </para>
+     </step>
+    </procedure>
+   </sect3>
+   <sect3>
+    <title>Offline Deployment</title>
+    <para> First boot proceeds as follows: </para>
+    <procedure>
+     <step>
+      <para> GRUB boot from service partition template </para>
+     </step>
+     <step>
+      <para> Network initialization fails </para>
+     </step>
+     <step>
+      <para> Download configuration from service partition template </para>
+     </step>
+     <step>
+      <para> Disk partitioning, the service partition template is copied to
+       the service partition </para>
+     </step>
+     <step>
+      <para> Install GRUB on the service partition </para>
+     </step>
+     <step>
+      <para> Deploy image from the service partition </para>
+     </step>
+     <step>
+      <para> Image boot </para>
+     </step>
+    </procedure>
+    <para> The next boots proceed as follows: </para>
+    <procedure>
+     <step>
+      <para> GRUB boot from service partition template </para>
+     </step>
+     <step>
+      <para> Network initialization fails </para>
+     </step>
+     <step>
+      <para> Download configuration from service partition </para>
+     </step>
+     <step>
+      <para> Check deployed image </para>
+     </step>
+     <step>
+      <para> Image boot </para>
+     </step>
+    </procedure>
+    <para> If the terminal becomes connected to the &branchserv;, the boot
+     proceeds as follows: </para>
+    <procedure>
+     <step>
+      <para> GRUB boot from service partition </para>
+     </step>
+     <step>
+      <para> Initialize network </para>
+     </step>
+     <step>
+      <para> Download configuration from the &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Install/update GRUB on service partition </para>
+     </step>
+     <step>
+      <para> Check/download image from the &branchserv;
+      </para>
+     </step>
+     <step>
+      <para> Image boot </para>
+     </step>
+    </procedure>
+   </sect3>
+  </sect2>
+  <sect2 xml:id="ad_bungoto">
+   <title>Booting from CD (isoboot)</title>
+   <para> If you cannot electronically distribute &pos; images over
+    your network, you must manually distribute the images using isoboot
+    images. For more information on creating an isoboot image, see <xref
+     linkend="cha.slepos_imgcreator"/>. </para>
+   <para> The behavior of &pos; terminals booting from CD is similar to
+    &pos; terminals that receive the first and second stage boot images
+    over the LAN from a &branchserv;. The following is a general
+    description of what takes place when a &pos; terminal boots from CD: </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para> The system image is installed to a RAM or hard disk on the
+      &pos; terminal. </para>
+     <para> The partition information resides in the KIWI
+       <filename>config.xml</filename> file located on the CD. See <xref
+       linkend="ad_slepos_pos_isoboot_cfg"/> for mor information. </para>
+    </listitem>
+    <listitem>
+     <para> The installed system image is booted from the RAM or hard disk
+      on the &pos; terminal. </para>
+    </listitem>
+   </orderedlist>
+   <para> Depending on the system image that resides on the boot CD
+    (Minimal or Graphical), you should note the following restrictions: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> The Graphical image should only be used for &pos; systems with
+      storage media such as hard disk or flash medium. Otherwise, the &pos;
+      system must be upgraded with enough RAM to hold the system image.
+     </para>
+    </listitem>
+    <listitem>
+     <para> There must be enough available RAM on diskless &pos; terminals
+      to load the first and second stage boot images. Otherwise the
+      terminal returns a kernel panic error. </para>
+     <note>
+      <title>Onboard VGA Memory Consumption</title>
+      <para> Keep in mind that onboard VGA reduces the &pos; terminal's
+       available RAM. </para>
+     </note>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+  <!-- <sect2 id="ad_pos_liveiso_usb">
+   <title>Live ISO or USB Boot</title>
+   <para>
+    Another possibility is booting with the Live ISO or the USB device. For
+    more information on creating such boot images, see
+    <xref linkend="imagecreator.buildimmage"/>. The USB option is exactly
+    the same as the Live ISO, but the only difference is the read/write
+    feature of the medium. So you can save configuration data on the USB
+    device at runtime.
+   </para>
+   <para>
+    In these boot scenarios, the system image is stored on the CD,
+    respectively the USB device. During the boot process no network is
+    involved at all and otherwise the boot process is similar to
+    <xref linkend="ad_bungnpv"/>.
+   </para>
+  </sect2>-->
+  <sect2 xml:id="sec.slepos_term.dist.notif">
+   <title>Image Install Notification</title>
+   <para> When the &branchserv; distributes a new image to a &pos;
+    terminal, the system provides notification that the image was
+    successfully installed on the &pos; terminal. The notification is
+    stored in the <literal>scWorkstation</literal> object in the LDAP
+    directory on the &admserv;. </para>
+   <para> When the image is successfully installed on the &pos; terminal,
+    the <filename>linuxrc</filename> script running on the &pos; terminal
+    creates the
+      <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+    file in the <filename>/srv/tftpboot/upload</filename> directory on the
+    &branchserv;. The posleases2ldap process then transfers the information
+    to the <literal>scNotifiedImage</literal> attribute in the
+     <literal>scWorkstation</literal> object in LDAP and deletes the
+      <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+    file. The notification string is extended to also contain time and md5
+    hash of the configuration file used (see <xref linkend="ad_b58oz2q"/>. </para>
+   <para> The
+      <filename>/srv/tftpboot/upload/bootversion.<replaceable>MAC</replaceable></filename>
+    file, in addition to image name (first line) and image version (second
+    line) can contain a hash of the mentioned &confmac; file and a rollback
+    flag: </para>
+   <screen>
+POS_CFG_HASH=<replaceable>41c08da9b4bdc1179506f4f0324b3821</replaceable>
+POS_ROLLBACK=<replaceable>1</replaceable>
+</screen>
+   <para> The <literal>POS_ROLLBACK</literal> flag indicates whether this
+    is a rollback request (<literal>POS_ROLLBACK=1</literal>) or
+    notification (<literal>POS_ROLLBACK=0</literal> or not present). In
+    both cases, the information in the
+     bootversion.<replaceable>MAC</replaceable> file is inserted into LDAP,
+    into the <systemitem>scNotifiedImage</systemitem> parameter. It can
+    contain up to <systemitem>IMAGE2LDAP_MAX_NOTIFY_IMAGES</systemitem>
+    entries, the default is 4. </para>
+   <para> In case of a rollback request, a stored
+     <filename>&confmac;</filename> file
+      (<filename>/srv/tftpboot/KIWI/rollback.config.<replaceable>MAC</replaceable>.<replaceable>hash</replaceable></filename>)
+    is copied back to <filename>/srv/tftpboot/KIWI</filename>. </para>
+   <para> Not only <filename>&confmac;</filename> but all relevant files
+    are saved to be used with rollback: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> The associated configuration files (described in the configuration
+      variable of the <filename>&confmac;</filename> file) are stored as
+        <filename>/srv/tftpboot/KIWI/rollback/config/<replaceable>config_file</replaceable>.<replaceable>hash</replaceable></filename>.
+     </para>
+    </listitem>
+    <listitem>
+     <para> The associated PXE file, a specific PXE (01-M-A-C format) or
+      the default PXE, is stored in
+        <filename>/srv/tftpboot/KIWI/rollback/boot/pxe.<replaceable>hash</replaceable></filename>
+      (specific and default). Both the specific and the default PXE files
+      are recovered as a specific PXE file, otherwise the current default
+      PXE file, possibly shared between many terminals, would be
+      overwritten. </para>
+    </listitem>
+    <listitem>
+     <para> The kernel and initrd files (boot images) are stored as
+        <filename>/srv/tftpboot/KIWI/rollback/boot/<replaceable>kernel</replaceable>.<replaceable>hash</replaceable></filename>
+      and
+        <filename>/srv/tftpboot/KIWI/rollback/boot/<replaceable>initrd</replaceable>.<replaceable>hash</replaceable></filename>.
+      These files are not recovered with their original names to protect
+      the current kernel and initrd possibly shared by other terminals.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para> If rollback files are no longer used (they are not referenced in
+    any rollback <filename>config.MAC.hash</filename> file), they are
+    deleted. The oldest rollback <filename>config.MAC.hash</filename> file
+    is deleted if the number of rollback configurations exceeds the maximum
+    number defined in <systemitem>scNotifiedImage</systemitem> under the
+    relevant <systemitem>scWorkstation</systemitem>. </para>
+   <para> If a different kernel or initrd is in the rollback data,
+    it is not used immediatelly after this rollback is selected, but only
+    after reboot after a bootversion file is uploaded back to the server.
+    The kernel parameters in the PXE file are included in the first boot,
+    but only those used later in the booting process (after the rollback
+    occurs) are applied. The associated configuration files are included
+    and used, even during the first boot in which the rollback selection
+    occured. </para>
+   <para> For terminals, the rollback information is stored in the
+      <filename>/srv/tftpboot/KIWI/rollback.<replaceable>MAC</replaceable></filename>
+    files. To keep them, the files are synchronized in every
+     <command>posleases2ldap</command> cycle according to the
+     <systemitem>scNotifiedImage</systemitem> parameters and the respective
+     <systemitem>scWorkstation</systemitem> objects. If
+     <systemitem>scNotifiedImage</systemitem> contains an invalid reference
+    or a reference without the respective
+      <filename>/srv/tftpboot/KIWI/rollback.<replaceable>MAC</replaceable></filename>
+    file present, it is ignored and not included in the rollback list.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1>
+  <!--
+  menus
+  IDs
+  roles
+  rollback
+  -->
+  <title>Selecting a Boot Image Using Menu on a Terminal</title>
+  <para> If a terminal has a list of IDs, roles or a rollback list, it
+   offers a possibility to change its configuration during boot. The
+   &branchserv; must be configured to use roles. For more information, see
+    <xref linkend="cha.roles"/>. </para>
+  <sect2>
+   <title>Changing the ID of a Booting Terminal</title>
+   <para> To change the ID of the terminal during its boot, follow these
+    steps: </para>
+   <procedure>
+    <step>
+     <para> Wait for the terminal to print the <literal>Press C to change
+       configuration</literal> message. Press <keycap>C</keycap> quickly to
+      prevent a timeout. </para>
+    </step>
+    <step>
+     <para> Using the cursor keys, select <guimenu>Change ID/Role</guimenu>
+      from the menu and press <keycap function="enter"/>. </para>
+    </step>
+    <step>
+     <para> Using the cursor keys, select the requested ID and press
+       <keycap function="enter"/>. </para>
+    </step>
+    <step>
+     <para> Press <keycap function="enter"/>. The booting sequence continues
+      with the selected ID. </para>
+    </step>
+   </procedure>
+  </sect2>
+  <sect2>
+   <title>Changing the Role of a Booting Terminal</title>
+   <para> To change a role of the terminal during its boot, follow these
+    steps: </para>
+   <procedure>
+    <step>
+     <para> Wait for the terminal to print the <literal>Press C to change
+       configuration</literal> message. Press <keycap>C</keycap> quickly to
+      prevent a timeout. </para>
+    </step>
+    <step>
+     <para> Using the cursor keys, select <guimenu>Change ID/Role</guimenu>
+      from the menu and press <keycap function="enter"/>. </para>
+    </step>
+    <step>
+     <para> Using the cursor keys, select the requested role and press
+       <keycap function="enter"/>. </para>
+    </step>
+    <step>
+     <para> Press <keycap function="enter"/>. The booting sequence continues
+      with the selected role. </para>
+    </step>
+   </procedure>
+  </sect2>
+  <sect2>
+   <title>Performing a Rollback</title>
+   <para> During boot of a terminal, if some previous configurations have
+    already been used on the terminal, it is possible to enter the rollback
+    menu and choose one of the four most recent configurations. </para>
+   <para> If an older image is selected, it should be used until the
+     <command>pos dump-all</command> is used. </para>
+   <procedure>
+    <step>
+     <para> Wait for the terminal to print the <literal>Press C to change
+       configuration</literal> message. Press <keycap>C</keycap> quickly to
+      prevent a timeout. </para>
+    </step>
+    <step>
+     <para> Using the cursor keys, select <guimenu>Rollback</guimenu> from
+      the menu and press <keycap function="enter"/>. </para>
+    </step>
+    <step>
+     <para> Using the cursor keys, select the requested image and press
+       <keycap function="enter"/>. </para>
+    </step>
+    <step>
+     <para> Press <keycap function="enter"/>. The booting sequence continues
+      with the selected image. </para>
+    </step>
+   </procedure>
+  </sect2>
+ </sect1>
+</chapter>

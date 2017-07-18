@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_lastchanges">
+ <title>Recent Documentation Changes</title>
+ <info/>
+ <para>
+  This section describes recent and important changes in the &sleposreg;
+  documentation.
+ </para>
+ <itemizedlist mark="bullet" spacing="normal">
+<listitem>
+   <para>
+    Added a chapter on booting 64-bit client images. See <xref linkend="cha.slepos_boot_64_images"/>. (2016-11-15)
+   </para>
+  </listitem>
+ <listitem>
+   <para>
+    Added a chapter on creating 64-bit client images. See <xref linkend="cha.slepos_kiwi"/>. (2016-11-15)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    A new chapter describes the migration procedure from &slepos; 11 SP1 to
+    &slepos; 11 SP2. See <xref linkend="migr11sp1-11sp2"/>. (2012-10-02)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The description of the &slepos; XML format has been updated. See
+    <xref linkend="slepos_xml_format"/>. (2012-10-02)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The chapter describing the posAdmin XML interface has been updated.
+    Modification of the existing LDAP data using XML is now possible. See
+    <xref linkend="posadmin_xml"/> and <xref linkend="slepos_xml_datamodif"/>.
+    (2012-12-05)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The section on querying LDAP objects has been updated. See
+    <xref linkend="ad_bsxnum3"/>. (2012-12-05)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The section on initializing LDAP database has been updated. &slepos; can now
+    coexist with existing LDAP databases. &admserv; now uses YaST CA
+    Management interface for issuing and managing SSL See
+    <xref linkend="sec.adminserv.ldapinit"/>. (2013-05-07)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    A description of a new script for creating directory structure on service
+    partition for offline boot was added. See <xref linkend="posSyncSrvPart"/>.
+    (2013-05-07)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    A new section on booting special images (for example for BIOS update) was
+    added. See <xref linkend="bootspecimages"/>. (2013-05-07)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    A new section on creating images for booting and offline installation from
+    USB flash drives was added. See <xref linkend="sec.kiwi.specimages.usb"/>.
+    (2013-05-07)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    A new section about using external tools for LDAP database modification and
+    the new <command>posAdmin --refresh</command> feature was added. See
+    <xref linkend="ldapexternaltools"/>. (2013-05-10)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    Dmraid fake raid controllers are now supported. See
+    <xref linkend="sec.slepos_term.conf.mac"/>. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The attribute <systemitem>scLastBootTime</systemitem> of
+    <systemitem>scWorkstation</systemitem> object is used to store time of last
+    boot. It is now possible to delete workstations according to the time and
+    date of the last boot. See <xref linkend="ad_bsxnnef"/>. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="sec.adminserv.ldapinit"/> section has been updated.
+    (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="hiavail"/> section has been added. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <command>posLDIFReport</command> script has been added. See
+    <xref linkend="posLDIFReport"/>. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="ad_bsxo5b1"/> section has been updated. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="encrypted_partitions"/> section has been updated.
+    (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="cha.pospl"/> section has been updated. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="prep_repo"/> section has been updated. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="migr11sp2tosp3"/> section has been added. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="imagetypes"/> section has been updated. (2013-08-1)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="sec.slepos_term.ldap.ramdisk"/> section has been
+    updated. (2013-08-20)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="multipleinterfaces"/> section has been updated.
+    (2013-08-20)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="sec.adminserv.ldapinit"/> section has been updated.
+    (2013-08-20)
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The <xref linkend="serverimages"/> section was added. (2013-09-09)
+   </para>
+  </listitem>
+ </itemizedlist>
+</chapter>

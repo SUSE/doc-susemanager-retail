@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+ xml:id="cha.slepos_ldap">
+ <title>The LDAP Directory on &slepos;</title>
+ <info/>
+ <para> LDAP directory is a vital part of &slepos;, containing almost all
+  configuration data, system structure description, user access rules, and
+  more. Unlike LDAP directories in versions prior to &slepos; 11, the LDAP
+  architecture now consists of more partially redundant LDAP databases. </para>
+ <para> The &slepos; LDAP directory runs on OpenLDAP 2.4. LDAP entries are
+  managed using the <command>posAdmin</command> tool. For more information
+  on <command>posAdmin</command>, see <xref linkend="sect.posadmin"/>. </para>
+ <note>
+  <title>Using GQ to Browse LDAP Directory</title>
+  <para> The GQ LDAP browser may fail with a <literal>Cannot find
+    last-resort schema server 'local host'</literal> alert message when
+   used with the &slepos; LDAP database. If you want to use GQ, disable
+   anonymous access to rootDSE in the
+    <filename>/etc/openldap/slapd.conf</filename> configuration file. To
+   disable anonymous access, put a <literal>#</literal> under the
+    <literal>#enabling anonymous access to rootDSE for speeding up LDAP
+    server start':</literal> section: <remark>emap: is start': correct with
+    the apostrophe and colon? Looks strange.</remark></para>
+  <screen>#access to dn="" by * read</screen>
+  <para> Alternatively, you can grant anonymous read access to the
+   subschema subentry (<literal>cn=subschema</literal>). After the line
+    <literal>access to dn="" by * read</literal> in the
+    <filename>/etc/openldap/slapd.conf</filename> file, add the following
+   two lines: </para>
+  <screen>
+access to dn.base="cn=Subschema"
+        by * read
+</screen>
+ </note>
+ <xi:include href="slepos_ldap_arch.xml" parse="xml"/>
+ <xi:include href="slepos_ldap_posadmin.xml" parse="xml"/>
+ <xi:include href="slepos_ldap_check.xml" parse="xml"/>
+ <xi:include href="slepos_ldap_logic.xml" parse="xml"/>
+ <xi:include href="slepos_ldap_ref.xml" parse="xml"/>
+</chapter>

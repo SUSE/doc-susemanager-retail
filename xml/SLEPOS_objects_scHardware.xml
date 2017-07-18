@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scHardware">
+ <title>scHardware</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>cn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Common name of this object, first part of DN
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scDhcpOptionsRemote</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The boot option of the Point of Service terminal. The mandatory value is
+      <literal>/boot/pxelinux.0</literal>
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPosDeltaImageDn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,multivalue,deprecated
+     </para>
+    </entry>
+    <entry>
+     <para>
+      DN of delta image for a Point Of Service terminal
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPosImageDn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The DN of the default system image defined for this Point of Service
+      terminal type
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scRefMonitorDn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      DN of monitor type
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scRefPcDn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      DN to PC hardware type
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scRefServerDn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      DN of a scRefServer
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scSUSEManager</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      SUSE Manager address (FQDN/ip address)
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

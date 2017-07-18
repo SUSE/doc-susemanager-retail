@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_organizationalUnit">
+ <title>organizationalUnit</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>ou</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      name of organizational unit
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>description</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may
+     </para>
+    </entry>
+    <entry>
+     <para>
+      <systemitem>description</systemitem> of the organizational unit
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

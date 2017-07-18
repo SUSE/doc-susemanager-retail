@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+ xml:id="cha.slepos_manage">
+ <title>Managing &slepos;</title>
+ <info/>
+ <para/>
+ <!--
+Management
+* monitoring - pos ws-list, ...
+ image upgrade
+ assign image to ws, ...
+* adminc/admind
+* backup
+ -->
+ <sect1 xml:id="b4c9w4o">
+  <title>Monitoring the Terminal Boot-Up</title>
+  <para> To verify and test your &slepos; installation: </para>
+  <procedure xml:id="b2jluzb">
+   <step xml:id="bsx3sew">
+    <para> Attach a Point of Service client to the Branch Server network.
+    </para>
+   </step>
+   <step xml:id="bsx3sif">
+    <para> Verify the list of properly registered workstations with the
+      <command>pos ws-list</command> command. </para>
+    <para> You can also verify if the necessary LDAP objects have been
+     created manually by using the <command>ldapsearch</command> command.
+     For example (setup without SSL): </para>
+    <screen>ldapsearch -x -H ldap://<replaceable>administration_server_name</replaceable> -b <replaceable>base_context</replaceable> -s base -D <replaceable>dn_of_admin_user</replaceable> -w <replaceable>password</replaceable>
+     </screen>
+    <para> For setups with SSL, use: </para>
+    <screen>ldapsearch -x -H ldaps://<replaceable>administration_server_name</replaceable> -b <replaceable>base_context</replaceable> -s base -D <replaceable>dn_of_admin_user</replaceable> -w <replaceable>password</replaceable></screen>
+   </step>
+   <step xml:id="bwkbn5e">
+    <para> Verify the following LDAP object settings: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para> The <systemitem>scCashRegister</systemitem> object matching
+       the model type of the &pos; terminal must exist in the LDAP
+       database, for example: <literal>IBMSurePOS300Series</literal>.
+      </para>
+     </listitem>
+     <listitem>
+      <para> There must be an <systemitem>scPosImage</systemitem> object
+       for each image in the <filename>/srv/tftpboot/image/</filename>
+       directory on the &branchserv;. The
+        <systemitem>scPosImageDn</systemitem> attribute within each object
+       must correspond to an existing &pos; image. </para>
+     </listitem>
+    </itemizedlist>
+    <para> For further information how to modify and add LDAP entries for
+     your specific &slepos; system environment, see <xref
+      linkend="cha.slepos_ldap"/>. </para>
+   </step>
+   <step xml:id="bwlqq40">
+    <para> Verify that the Point of Service system images and their
+     corresponding MD5 checksum files are available in the
+      <filename>/srv/tftpboot/image/</filename> directory on the Branch
+     Server. </para>
+   </step>
+   <step xml:id="bwkbm74">
+    <para> Verify that the <filename>initrd.gz</filename> and
+      <filename>linux</filename> images are available in the
+      <filename>/srv/tftpboot/boot/</filename> directory on the Branch
+     Server. </para>
+   </step>
+   <step xml:id="bsxiifh">
+    <para> Power up the Point of Service client and watch the Branch Server
+     log messages using the following command: </para>
+    <para>
+     <command>tail -f /var/log/messages</command>
+    </para>
+   </step>
+   <step xml:id="bxaj9p7">
+    <para> While the Point of Service client is booting, check if there are
+     tftpd entries. </para>
+    <para> For example: </para>
+    <screen>
+.. bs1 tftpd[31434]: Serving /boot/pxelinux.0 to 192.168.2.15:2070
+.. bs1 tftpd[31435]: Serving /boot/pxelinux.cfg/C0A8020F to 192.168.2.15:57217
+.. bs1 tftpd[31436]: Serving /boot/pxelinux.cfg/C0A8020 to 192.168.2.15:57090
+.. bs1 tftpd[31437]: Serving /boot/pxelinux.cfg/C0A802 to 192.168.2.15:56963
+.. bs1 tftpd[31438]: Serving /boot/pxelinux.cfg/C0A80 to 192.168.2.15:56836
+.. bs1 tftpd[31439]: Serving /boot/pxelinux.cfg/C0A8 to 192.168.2.15:56709
+.. bs1 tftpd[31440]: Serving /boot/pxelinux.cfg/C0A to 192.168.2.15:56582
+.. bs1 tftpd[31441]: Serving /boot/pxelinux.cfg/C0 to 192.168.2.15:56455
+.. bs1 tftpd[31442]: Serving /boot/pxelinux.cfg/C to 192.168.2.15:56328
+.. bs1 tftpd[31443]: Serving /boot/pxelinux.cfg/default to 192.168.2.15:56201
+.. bs1 tftpd[31444]: Serving /boot/linux to 192.168.2.15:56202
+.. bs1 tftpd[31445]: Serving /boot/initrd.gz to 192.168.2.15:56203
+.. bs1 dhcpd: DHCPDISCOVER from 00:06:29:e3:02:e6 via eth0
+.. bs1 dhcpd: DHCPOFFER on 192.168.2.15 to 00:06:29:e3:02:e6 via eth0
+.. bs1 dhcpd: DHCPREQUEST for 192.168.2.15 (192.168.2.1) from 00:06:29:e3:02:e6 via eth0
+.. bs1 dhcpd: DHCPACK on 192.168.2.15 to 00:06:29:e3:02:e6 via eth0
+.. bs1 tftpd[31454]: Serving CR/config.00:06:29:E3:02:E6 to 192.168.2.15:32768
+.. bs1 tftpd[31455]: Fetching from 192.168.2.15 to upload/hwtype.00:06:29:E3:02:E6
+</screen>
+    <para> The Point of Service terminal performs a PXE boot to receive the
+     Linux kernel and its first stage boot image,
+      <filename>initrd.gz</filename>. For detailed information on the Point
+     of Service boot process, see <xref linkend="ad_bwlov3w"
+      xrefstyle="SectTitleOnPage"/>. </para>
+   </step>
+   <step xml:id="bsxingj">
+    <para> Check the <filename>&hwmac;</filename> file in the
+      <filename>/srv/tftpboot/upload</filename> directory (for example,
+      <filename>hwtype.00:06:29:E3:02:E6</filename>). This file contains
+     the information required to create the terminal's workstation object
+     (scWorkstation) in LDAP and determine which image and configuration
+     settings should be included in the terminal's configuration file. For
+     more information, see <xref linkend="ad_cntrlhw"/>. </para>
+   </step>
+   <step xml:id="bsxiogk">
+    <para> See if the Point of Service client can boot the second
+     stage image. This is the system image configured in LDAP (scPosImage)
+     and downloaded from the <filename>/srv/tftpboot/image/</filename>
+     directory on the Branch Server (for example, the browser-2.0.4 image).
+    </para>
+   </step>
+   <step xml:id="bwkccya">
+    <para> If everything proceeds normally, the Point of Service terminal
+     boots and you see the login prompt. </para>
+    <para> If the boot is successful, the <filename>&confmac;</filename>
+     for the terminal is written to the
+      <filename>/srv/tftpboot/KIWI/</filename> directory on the Branch
+     Server. For example, if a terminal's MAC address is 00:06:29:E3:02:E6,
+     the <filename>config.00:06:29:E3:02:E6</filename> file will be located
+     in the <filename>/srv/tftpboot/KIWI/</filename> directory.
+     Additionally, the scWorkstation object for the Point of Service
+     terminal is created in the LDAP directory. </para>
+   </step>
+  </procedure>
+ </sect1>
+ <sect1 xml:id="hiavail">
+  <title>&slepos; High-Availability Installation Workflow</title>
+  <para> &slepos; relies on &sle; &hasi; to simplify an active-passive
+   high availability scenario. The following workflow assumes basic
+   knowledge of the &sle; &hasi; configuration. For &sle; &hasi; details
+   see the &sle; &hasi; User Guide. Both primary and secondary nodes are
+   assumed to have the &sle; &hasi; and &slepos; extensions installed. </para>
+  <para> Before configuring high-availability, it is necessary to prevent
+   all &slepos; services (LDAP, DHCP, etc.) from starting via traditional
+   init scripts. All services are handled by the RA (resource agent). The
+   initialization of services via the traditional way will prevent the RA
+   from initialization and can potentially prevent shared storage from
+   mounting. </para>
+  <para> Init scripts can be disabled by setting the
+    <command>chkconfig</command>
+   <replaceable>service</replaceable> to <emphasis role="strong"
+    >off</emphasis> or via the <command>yast runlevel-editor</command>
+   command. </para>
+  <para> To configure the primary node, follow these steps: </para>
+  <procedure>
+   <step>
+    <para> Configure networking (virtual IP for HA services) as defined in
+     the &sle; &hasi; User Guide (RA ocf:hearbeat:IPaddr2). </para>
+   </step>
+   <step>
+    <para> Configure shared storage (for example DRBD) as defined in the &sle; &hasi;
+     User Guide. The following directories should be on the shared storage
+     and linked back: </para>
+    <screen>
+/var/lib/SLEPOS
+/var/lib/branchldap
+/var/lib/named
+/var/lib/dhcp
+/etc/named.d/ldap_generated
+</screen>
+   </step>
+   <step>
+    <para> Configure synchronization using <command>csync2</command> as
+     defined in the &sle; &hasi; User Guide and add the following
+     configuration files to synchronize: </para>
+    <screen>
+include /etc/SLEPOS/*;
+include /etc/drbd.d;
+include /etc/drbd.conf;
+include /etc/named.conf;
+include /etc/dhcpd.conf;
+include /etc/openldap/*;
+include /etc/sysconfig/atftpd;
+include /etc/sysconfig/named;
+include /etc/sysconfig/dhcpd;
+include /etc/sysconfig/ldap;
+include /etc/sysconfig/openldap;
+include /etc/named.d/forwarders.conf;
+</screen>
+   </step>
+   <step>
+    <para> Configure the resource agents and the &slepos; resource group
+     containing <systemitem>lsb:posleases</systemitem>,
+      <systemitem>ocf:heartbeat:slapd</systemitem>,
+      <systemitem>osc:heartbeat:named</systemitem>,
+      <systemitem>lsb:atftp</systemitem>,
+      <systemitem>ocf:heartbeat:Pure-FTPd</systemitem> services: </para>
+    <screen>
+primitive aftp lsb:atftpd \
+    operations $id="aftp-operations" \
+    op monitor interval="15" timeout="15"
+primitive dhcpd ocf:heartbeat:dhcpd \
+    operations $id="dhcpd-operations" \
+    op monitor interval="10" timeout="20" \
+    params config="/etc/dhcpd.conf" interface="eth1"
+primitive pureftp ocf:heartbeat:Pure-FTPd \
+    operations $id="ftp-operations" \
+    op monitor interval="60s" timeout="20s" \
+    params script="/usr/sbin/pure-config.pl" conffile="/etc/pure-ftpd/pure-ftpd.conf" pidfile="/var/run/pure-ftpd.pid"
+primitive named ocf:heartbeat:named \
+    operations $id="named-operations" \
+    op monitor interval="30" timeout="30" \
+    params named_config="/etc/named.conf" named_rootdir="/var/lib/named" named_user="named"
+primitive openldap ocf:heartbeat:slapd \
+    operations $id="openldap-operations" \
+    op monitor interval="60s" timeout="20s" \
+    params config="/etc/openldap/slapd.conf" slapd="/usr/lib/openldap/slapd" services="ldap://127.0.0.1:389" bind_dn="&lt;branch server ldap DN&gt;" password="&lt;branch server LDAP password" user="ldap" group="ldap" watch_suffix="&lt;SLEPOS LDAP suffix&gt;"
+primitive posaswatch lsb:posASWatch \
+    operations $id="posaswatch-operations" \
+    op monitor interval="15" timeout="15"
+primitive posleases lsb:posleases2ldap \
+    operations $id="posleases-operations" \
+    op monitor interval="15" timeout="15"
+primitive virtual_ip ocf:heartbeat:IPaddr2 \
+    params ip="&lt;virtualIP&gt;" broadcast="&lt;broadcast_address&gt;" nic="&lt;bonded device&gt;" iflabel="&lt;num_identifier_of_alias&gt;" \
+    op monitor interval="10s"
+group pos virtual_ip mount_mnt openldap named dhcpd aftp pureftp posaswatch posleases \
+    meta target-role="Started"
+</screen>
+    <para> Do not forget to add the configuration for shared storage (for
+     example, <systemitem>ocf:linbit:drbd</systemitem>) and its collocation
+     with the &slepos; services group (pos) and order in which services are
+     activated. </para>
+   </step>
+   <step>
+    <para> Initialize the &branchserv; normally. </para>
+   </step>
+   <step>
+    <para> Check if the directories moved in step 2 are still linking back
+     to the shared storage. If not, repeat step 2. </para>
+   </step>
+   <step>
+    <para> Start HA (openais). </para>
+   </step>
+  </procedure>
+  <para> To configure the primary node, follow these steps: </para>
+  <procedure>
+   <step>
+    <para> Configure the network interfaces. </para>
+   </step>
+   <step>
+    <para> Link the directories to the shared storage (see step 2 of the
+     primary node configuration). </para>
+   </step>
+   <step>
+    <para> Join the cluster and synchronization configuration as defined in the &sle; &hasi; user
+     guide (for example `sleha-join`). </para>
+   </step>
+  </procedure>
+ </sect1>
+ <sect1 xml:id="bootspecimages">
+  <title>Booting Special Images on Terminals</title>
+  <para> It is possible to boot special non-&slepos; images on a terminal, for
+   example images provided by a hardware vendor to update the BIOS on the terminals. </para>
+  <para> To set up booting of these image files via PXE menu, use the
+   following command: </para>
+  <screen>pos sync pxe-bootmenu --set --imagespath <replaceable>path</replaceable></screen>
+  <para> The optional <option>--imagespath</option> option holds the
+   path to the directory containing files to add into the menu. These files will be
+   copied into the <filename>boot/ext</filename> subdirectory. If this
+   option is not supplied, only BIOS boot images currently existing in
+    <filename>boot/ext</filename> will be used. </para>
+  <para> The optional <option>--force</option> option allows to overwrite
+   existing backup files. </para>
+  <para> In order for the PXE menu to not be reverted back,
+    <command>posleases2ldap</command> must be stopped, and no <command>pos
+    dump</command> command can be run. Rebooting of the &branchserv; should
+   also be avoided to ensure the PXE menu stays intact, since the &branchserv;
+   automatically starts the posleases2ldap service. </para>
+  <para> To restore the previous state, use <command>pos sync pxe-bootmenu
+    --undo</command>. The optional <option>--force</option> option allows
+   to overwrite the current file by backups (for specific PXE, default is
+   always overwritten). The images copied into the
+    <filename>boot/ext</filename> directory are not removed by the <command>undo</command>
+   command, they should be deleted manually if they are not needed anymore. </para>
+ </sect1>
+ <xi:include href="slepos_remotemanage.xml" parse="xml"/>
+ <xi:include href="slepos_backup.xml" parse="xml"/>
+</chapter>

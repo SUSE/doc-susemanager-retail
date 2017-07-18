@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scDistributionContainer">
+ <title>scDistributionContainer</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>cn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Common name of this object, from first part of DN
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scInitrdName</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      File name of the initrd.gz placed in the <literal>/boot</literal>
+      directory
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scKernelName</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      File name of the kernel placed in the <literal>/boot</literal> directory
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scKernelExpression</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Expression used to match the <systemitem>scKernelVersion</systemitem>
+      string against uname
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scKernelMatch</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Rule for matching <systemitem>scKernelVersion</systemitem> with the uname
+      result. Valid are <literal>MATCH_VERSION</literal>,
+      <literal>MATCH_ALL</literal>, <literal>MATCH_EXPRESSION</literal>
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scKernelVersion</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Version string written to configuration file to indicate the version of this
+      kernel
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+ <title>Simple Administration GUI</title>
+
+ <para>
+  &slepos;11 SP2 introduced a simple administration GUI,
+  <command>posAdmin-GUI</command>. The goal of the <command>posAdmin-GUI</command>
+  is to help with the creation of &branchserv;, role, image and cashregister
+  objects. Using the posAdmin-GUI, the administrator can avoid typing long
+  <command>posAdmin</command> commands and benefit from a nicer user interface
+  and check data immediately.
+ </para>
+
+ <para>
+  The posAdmin-GUI uses &yast; libraries, therefore ncurses, GTK and Qt user
+  interfaces are available.
+ </para>
+
+ <para>
+  To start the posAdmin-GUI, use the <command>posAdmin-GUI</command> command. If
+  you start it on an already configured &admserv;, the
+  <filename>adminserver.conf</filename> configuration file is parsed and used
+  to fill organization and country entries. You can also start posAdmin-GUI
+  with the <command>posAdmin-GUI</command>
+  <replaceable>slepos-xml-file</replaceable> command. The provided &slepos; XML file
+  is parsed and all available data are loaded.
+ </para>
+
+ <note>
+  <title>posAdmin-GUI Limitations</title>
+  <para>
+   The posAdmin-GUI can only be used for importing new objects into the LDAP
+   database. It does not allow any modification of existing objects and it is
+   not possible to rename existing objects or to add, remove, or change their
+   attributes. Only creating new objects is supported.
+  </para>
+  <para>
+   The posAdmin-GUI does not load data from the existing LDAP database.
+  </para>
+ </note>
+
+<!--
+  Limitations of posAdmin-GUI XML import
+- all global objects are loaded (images, cash registers and roles located under cn=global element)
+- if only one scLocation is found in XML, branch server details are loaded (organizational units, local roles, images...)
+- if more scLocations are found in XML, they are ignored
+ -->
+
+<!--FIXME-->
+
+ <para>
+  The posAdmin-GUI interface has four main sections: the <guimenu>BranchServer
+  Configuration</guimenu>, <guimenu>Images Configuration</guimenu>,
+  <guimenu>CashRegisters Configuration</guimenu>, and
+  <guimenu>Finalize</guimenu>. To navigate between them, click the tabs in the
+  top of the window or the <guimenu>Next</guimenu> and <guimenu>Back</guimenu>
+  buttons in the bottom right corner. Whenever you try to navigate between the
+  tabs, the entered data are checked for consistency.
+ </para>
+
+ <para>
+  Use the <guimenu>Advanced Mode</guimenu> button to toggle the display of
+  advanced configuration options like IP/DNS mapping functions or RAID schemes.
+ </para>
+
+ <para>
+  Use the <guimenu>Default</guimenu> button to revert all configurations to the
+  default state. If posAdmin-GUI was called with a provided XML file, data from
+  the file will be reloaded.
+ </para>
+
+ <sect2>
+  <title>Branch Server Configuration</title>
+  <para>
+   The <guimenu>BranchServer Configuration</guimenu> tab defines all
+   &branchserv;-related data. The values defined on this tab are used for
+   defining the relevant <systemitem>scLocation</systemitem> object and its
+   attributes (as described in <xref linkend="ad_b58oz2j"/>.
+  </para>
+  <para>
+   In the upper section (<guimenu>BranchServer Configuration</guimenu>), enter
+   the name of the &branchserv; using the <guimenu>Country</guimenu>,
+   <guimenu>Organization</guimenu>, <guimenu>Organizational Unit</guimenu>, and
+   <guimenu>Location</guimenu> (<systemitem>scLocation</systemitem>) values. If
+   you need to add nested organizational units, click <guimenu>Add Nested
+   OU</guimenu>. Enter the <guimenu>BranchServer Access Password</guimenu> in
+   the appropriate field.
+  </para>
+  <para>
+   In the middle section (<guimenu>BranchServer Details</guimenu>), check
+   whether an external DHCP server should be used and whether global and/or
+   local roles should be used.
+  </para>
+  <para>
+   In the lower section (<guimenu>BranchServer Advanced
+   Configuration</guimenu>), available only when the <guimenu>Advanced
+   Mode</guimenu> is toggled on, enter the <guimenu>IP Mapping
+   Function</guimenu>, <guimenu>DNS Mapping Function</guimenu>,
+   <guimenu>Associated Domain</guimenu>, <guimenu>Enumeration Mask</guimenu>,
+   and <guimenu>Workstation Base Name</guimenu>.
+  </para>
+  <para>
+   To configure &branchserv; services, click <guimenu>BranchServer Services
+   Configuration</guimenu>. For more information, see
+   <xref linkend="gui.branch.services"/>.
+  </para>
+  <para>
+   To configure &branchserv; networking, click <guimenu>BranchServer Network
+   Configuration</guimenu>. For more information, see
+   <xref linkend="gui.branch.network"/>.
+  </para>
+<!--  <sect3>
+   <title>BranchServer Network Configuration</title>
+  </sect3>-->
+  <sect3 xml:id="gui.branch.services">
+   <title>Branch Server Services Configuration</title>
+   <para>
+    To configure &branchserv; services, click the <guimenu>BranchServer
+    Services Configuration</guimenu> button.
+   </para>
+   <para>
+    To add a new service, select <guimenu>add new service</guimenu> in the
+    <guimenu>List of Registered Services</guimenu>. Enter <guimenu>Service
+    Name</guimenu>, <guimenu>Service DNS Name</guimenu>, <guimenu>Name of
+    Service Script in /etc/init.d/</guimenu>, and <guimenu>Service Specific
+    Parameters</guimenu>. The <guimenu>Service Specific Parameters</guimenu>
+    field can contain optional parameters of the
+    <systemitem>scService</systemitem> object.
+   </para>
+   <para>
+    For example, <guimenu>Service Specific Parameters</guimenu> for
+    <systemitem>posleases</systemitem> service can contain:
+   </para>
+<screen>
+scPosleasesMaxNotify=6
+scPosleasesTimeout=10
+scPosleasesChecktime=40
+   </screen>
+   <para>
+    To enable the service, activate the <guimenu>Service Enabled</guimenu>
+    option. Save the configuration by clicking the <guimenu>Add
+    Service</guimenu> button.
+   </para>
+   <para>
+    To modify a service, select it in the list, modify any value and click
+    <guimenu>Update Service</guimenu>. To delete a device, select it in the
+    list and click <guimenu>Delete Service</guimenu>.
+   </para>
+   <para>
+    When the services configuration is finished, click <guimenu>Return to BS
+    Configuration</guimenu>.
+   </para>
+   <note>
+    <title>Ommiting <systemitem>posleases</systemitem> Service</title>
+    <para>
+     The <systemitem>posleases</systemitem> can be ommited. Then the object is
+     generated during the &branchserv; initialization with default values
+     (see <xref linkend="ad_bt063oq"/>).
+    </para>
+   </note>
+  </sect3>
+  <sect3 xml:id="gui.branch.network">
+   <title>Branch Server Network Configuration</title>
+   <para>
+    To configure the &branchserv; network, click the <guimenu>BranchServer
+    Network Configuration</guimenu> button.
+   </para>
+   <para>
+    Enter <guimenu>BranchServer Hostname</guimenu>, <guimenu>BranchServer
+    Network Address</guimenu>, <guimenu>BranchServer Network Mask</guimenu>,
+    <guimenu>BranchServer Default Gateway</guimenu>, <guimenu>DHCP Fixed IP
+    Range</guimenu>, and <guimenu>DHCP Dynamic IP Range</guimenu>.
+   </para>
+   <para>
+    The <guimenu>BranchServer Network Cards</guimenu> list contains all
+    configured &branchserv; network cards. To add a new card, select
+    <guimenu>add new network card</guimenu> in the list, enter <guimenu>NIC
+    Device Name</guimenu> (for example <literal>eth1</literal>) and
+    <guimenu>NIC IP Address</guimenu>, and click <guimenu>Add Device</guimenu>.
+    To modify a device, select it in the list, modify any value and click
+    <guimenu>Update Device</guimenu>. To delete a device, select it in the list
+    and click <guimenu>Delete Device</guimenu>.
+   </para>
+   <para>
+    When the network configuration is finished, click <guimenu>Return to BS
+    Configuration</guimenu>.
+   </para>
+  </sect3>
+<!--
+   
+   Configuration of network cards and services is available after advanced
+   configuration is enabled. Configuration of roles is enabled after global
+   and/or local roles checkbox are checked.
+
+Note: To add new role "&lt;add new role&gt;" must be selected in selection
+box. If any other role is selected, then selected role is renamed instead and
+changed data are updated. THe same system apply on adding network cards,
+services, images, etc..-->
+ </sect2>
+
+ <sect2>
+  <title>Images Configuration</title>
+  <para>
+   The <guimenu>Images Configuration</guimenu> tab lists all registered local
+   and global images. Select an image in the list to edit its properties. Save
+   any changes by clicking the <guimenu>Update Image</guimenu> button. To
+   delete an image from the list, click <guimenu>Remove Image from
+   List</guimenu>. To add a new image, select <guimenu>&lt;add new
+   image&gt;</guimenu> in the list and click <guimenu>Add Image</guimenu>.
+  </para>
+  <para>
+   For each image, select whether it is a <guimenu>Global Image</guimenu> or
+   <guimenu>BranchServer Local Image</guimenu>. Enter <guimenu>Image
+   Name</guimenu>, <guimenu>Image Version</guimenu>, and the path to the
+   <guimenu>Image File</guimenu>.
+  </para>
+  <para>
+   If the <guimenu>Advanced Mode</guimenu> is activated, you can enter
+   <guimenu>Image Password</guimenu> and <guimenu>DHCP Options</guimenu> and
+   blockize.
+<!--FIXME-->
+  </para>
+  <para>
+   For each image a list of configuration templates and its management is
+   available.
+  </para>
+ </sect2>
+
+ <sect2>
+  <title>Cash Registers Configuration</title>
+  <para>
+   The <guimenu>CashRegisters Configuration</guimenu> tab lists all known local
+   and global POS terminals (CashRegisters), as well as terminals defined by
+   their roles. Select a terminal in the list to edit its properties. Save any
+   changes by clicking the <guimenu>Update CashRegister</guimenu> button. To
+   delete a terminal from the list, click <guimenu>Remove CR from
+   List</guimenu>. To add a new terminal, select <guimenu>&lt;add new
+   CR&gt;</guimenu> in the list and click <guimenu>Add
+   CashRegister</guimenu>.
+  </para>
+  <para>
+   For each terminal, select whether it is a <guimenu>Global CR</guimenu> or
+   <guimenu>Local CR</guimenu>. If global and/or local roles are enabled and
+   roles are registered in the <guimenu>BranchServer Configuration</guimenu>
+   tab, you can also select <guimenu>Role CR</guimenu> for a terminal defined
+   by its role. In such a case, select the needed role from the list of known
+   roles on the right.
+  </para>
+  <para>
+   Enter <guimenu>CashRegister Name</guimenu> and select the <guimenu>Associate
+   Image</guimenu> from the list of images registered in the <guimenu>Images
+   Configuration</guimenu> tab.
+  </para>
+  <para>
+   If the <guimenu>Advanced Mode</guimenu> is activated, you can enter
+   <guimenu>Raid Scheme</guimenu> definition and/or enable disk journaling.
+  </para>
+  <para>
+   For each terminal, lists of associated disks and configuration templates and
+   their management are available.
+<!--FIXME-->
+  </para>
+ </sect2>
+
+ <sect2>
+  <title>Finalization</title>
+  <para>
+   Use the <guimenu>Generate configuration</guimenu> button to create the
+   &slepos; XML file. Before generating the file, the configured data are
+   checked. You will be asked where to save the generated XML file.
+  </para>
+  <para>
+   If the <guimenu>Update LDAP after generation</guimenu> option is checked,
+   the <command>posAdmin --import --type XML --file</command>
+   <replaceable>generated_xml_file</replaceable> command is automatically
+   called after the XML file is generated.
+  </para>
+  <para>
+   If the <guimenu>Generate OIF after LDAP modify</guimenu> option is checked,
+   the <command>posAdmin --generate --base</command>
+   <replaceable>branchserver_DN</replaceable> command is automatically called
+   after the XML file is imported into the LDAP database.
+  </para>
+ </sect2>
+</sect1>

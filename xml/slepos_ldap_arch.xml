@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0">
+ <title>LDAP Architecture and Synchronization</title>
+ <para> The central database is located on the &admserv; and acts as the
+  main LDAP database and LDAP replication provider. Since &slepos; 11, each
+  &branchserv; has its own LDAP replica for independent use, thus saving
+  network bandwidth and maintaining all functionality if the connection to
+  the &admserv; is lost. </para>
+ <para> For security and management reasons, only a part of the central
+  LDAP database is replicated on each &branchserv;: the section common to
+  all &branchserv;s (read-only access) and the organizational unit branch
+  in which the current &branchserv; is configured (read-write access). </para>
+ <sect2>
+  <title>&admserv; LDAP</title>
+  <para> In the &admserv; LDAP the &slepos; 11 system is configured. The
+   LDAP directory must be initialized before any &branchserv; installation
+   or deployment. The &admserv; LDAP is managed by the
+    <command>posAdmin</command> tool. </para>
+  <sect3>
+   <title>&admserv; Access Control List</title>
+   <para> &slepos; 11 introduces Access Control List (ACL) to: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> protect the &admserv; LDAP directory against unauthorized
+      access (credentials no longer distributed to &branchserv;s), </para>
+    </listitem>
+    <listitem>
+     <para> grant write access for each &branchserv; to its subtree and
+      restrict other parts of the directory. </para>
+    </listitem>
+   </itemizedlist>
+   <para> ACL is automatically managed by <command>posAdmin</command> when
+    a new <systemitem>scLocation</systemitem> object is created or deleted.
+    Default ACRs (Access Control Rules) restraining anonymous users are
+    activated when &admserv; is initialized by the
+     <command>posInitAdminServer</command> command. </para>
+   <para> ACL is stored in the LDAP dynamic <literal>cn=config</literal>
+    database and in the <filename>/etc/openldap/acl.ldif</filename>
+    file. The file is used to preserve ACL during the OpenLDAP server
+    restart. This file should be kept secure. </para>
+   <para> Each &branchserv; has only access to its respective LDAP subtree.
+    For example, if the <systemitem>scLocation</systemitem>
+    <systemitem>dn</systemitem> of the &branchserv; is
+     <literal>&dnbranch;</literal>, the &branchserv; only has read and
+    write access to the <literal>&dnbranch;</literal> subtree. </para>
+   <para> In previous versions, the &branchserv; had read and write access
+    to the whole organizational unit (<systemitem>ou</systemitem>).
+    <!--FIXME v rozporu s predchozi stati?--> LDAP replication is directly
+    affected by this change. Now only the relevant subtree is replicated
+    (replication of general read-only items is preserved (for example
+     <literal>cn=global,&dnorg;</literal> and
+     <literal>cn=standards,&dnorg;</literal>). &branchserv; may see other
+    organizational units but sees them empty. </para>
+   <sect4>
+    <title>Manual Configuration of ACL</title>
+    <para> The Access Control List <systemitem>default</systemitem> is
+     automatically generated during <command>posInitAdminServer</command>
+     execution. The rule definition starts with: </para>
+    <screen>#STARTACL-default</screen>
+    <para> The following lines grant read access to the LDAP subtree
+      <literal>cn=global,&dnorg;</literal> for any authenthicated user and
+     blocks others: </para>
+    <screen>access to dn.subtree="cn=global,&dnorg;"
+ by users read
+ by anonymous none</screen>
+    <para> This grants read access to any LDAP
+      <systemitem>scHardware</systemitem> object class for any
+     authenthicated user and blocks others: </para>
+    <screen>access to filter="(objectClass=scHardware)"
+ by users read
+ by anonymous none</screen>
+    <para> This grants read access to LDAP root for authenthicated users
+     and blocks others: </para>
+    <screen>access to dn.base="&dnorg;"
+ by users read
+ by anonymous none</screen>
+    <para> posAdmin ends the ACR named "default" with: </para>
+    <screen>#ENDACL-default</screen>
+    <para> When the &branchserv;
+     <systemitem>scLocation</systemitem> LDAP object is added by posAdmin,
+     the following ACR is added, with the appropriate marker starting the
+     ACR definition for &branchserv; located in the organizational unit
+      <literal>&dnunit;</literal>: </para>
+    <screen>#STARTACL-&dnunit;</screen>
+    <para> The following lines grant write access to the LDAP subtree
+      <literal>&dnunit;</literal> for &branchserv;s authenthicated against
+     the <systemitem>scLocation</systemitem> object
+      <literal>&dnbranch;</literal> and no access for other users (except
+     the &admserv; root user). It allows LDAP the compare method for
+     anonymous users so they can authenticate themselves. </para>
+    <screen>access to dn.subtree="&dnunit;"
+ by dn.base="&dnbranch;" write
+ by users none
+ by anonymous auth</screen>
+    <para> The ACR ends with the marker corresponding with the
+     &branchserv;: </para>
+    <screen>#ENDACL-&dnunit;</screen>
+    <para> A typical problem with ACL is that despite wrong settings LDAP
+     Bind is successful, LDAP filter is valid, but the LDAP search returns
+     an empty result. </para>
+    <para> To identify the problematic ACL, search for the <literal>access
+      to</literal> keyword followed by your search base DN or the DN under
+     which your base DN is located. Remove that entry. </para>
+    <para> Remember to restart the LDAP server after modifying the
+      <filename>/etc/openldap/acl.ldif</filename> file. </para>
+    <warning>
+     <title>Non-Persistent Changes</title>
+     <para> If you are configuring LDAP server via the cn=config
+      configuration interface, remember these changes are not persistent in
+      current configuration. </para>
+    </warning>
+   </sect4>
+  </sect3>
+  <sect3>
+   <title>Synchronization Provider</title>
+   <para> The &admserv; LDAP performs a crucial role in the &slepos;
+    central management. To support the &branchserv;'s independent
+    opperation when a network connection to the &admserv; LDAP is
+    unavailable, the &admserv; provides LDAP synchronization. The &admserv;
+    LDAP provides each &branchserv; LDAP with its respective content,
+    according to the defined ACL, via the LDAP SyncProv protocol. </para>
+   <para> The synchronization provider is activated by the following
+    statements in the <filename>slapd.conf</filename> file: </para>
+   <screen># sycnrepl provider configuration
+overlay syncprov
+syncprov-checkpoint 100 5
+syncprov-sessionlog 100</screen>
+   <para> Provider activation is done by the <literal>overlay
+     syncprov</literal> statement. </para>
+   <para>
+    <literal>syncprov-checkpoint 100 5</literal> forces the LDAP server to
+    store the current contextCSN (value where the actual database state is
+    stored) in the database after 100 operations or 5 minutes, whichever
+    occurs first. This reduces the time and processing power needed to
+    restart the LDAP server after a crash. </para>
+   <para> The <literal>syncprov-sessionlog 100</literal> statement tells
+    the LDAP server to store up to 100 write operations in the dedicated
+    log, which is then used to simplify the determining LDAP control
+    attributes. It is used primarily in <literal>refreshOnly</literal>
+    synchronization mode, which is used while switching &branchserv; from
+    online to offline mode. </para>
+  </sect3>
+ </sect2>
+ <sect2>
+  <title>&branchserv; LDAP</title>
+  <para>The &branchserv; LDAP is an exact replica of
+    <literal>cn=global</literal> and the &branchserv;'s organizational unit
+   subtree. Its purpose is to lower the network bandwidth usage by LDAP
+   search and read operations and to support the &branchserv;'s ability to
+   work without a network connection to the &admserv;. </para>
+  <sect3>
+   <title>&branchserv; Access Control List</title>
+   <para> The &branchserv; ACL is simple. It restricts access to the
+    database to the &branchserv; root DN (as root DN can access everything
+    anyway). </para>
+   <para> The &branchserv; ACL is stored in OpenLDAP's
+     <filename>slapd.conf</filename> (default path
+     <filename>/etc/openldap/slapd.conf</filename>): </para>
+   <screen>
+access to dn.subtree="&dnorg;"
+by dn.base="&dnbranch;" write
+by users none
+by anonymous auth</screen>
+   <para> This rule is applied to the main &branchserv; database. There are
+    two additional global rules to provide general compatibility with some
+    LDAP browsers, mainly GQ, and speed up the start of the LDAP server: </para>
+   <screen>
+access to dn="" by * read
+access to dn.base="cn=Subschema" by * read
+</screen>
+   <para> The &branchserv; ACL should not require any maintenance and is
+    only changed during &branchserv; reinitialization. </para>
+   <note>
+    <title>Modifying the Global LDAP Section on &branchserv;</title>
+    <para> Using the &slepos; administrator user name and password on the
+     &branchserv; is unsupported because of the nature of LDAP subsystem
+     organization. The only way to modify the
+      <systemitem>cn=global</systemitem> LDAP subtree from the &branchserv;
+     is to use remote SSH to the &admserv;. </para>
+   </note>
+  </sect3>
+  <sect3>
+   <title>&branchserv; Synchronization</title>
+   <para> Compared to the &admserv; synchronization controls, the
+    &branchserv; synchronization settings are much more complex. Every
+    synchronization issue should be solvable on the &branchserv; side. </para>
+   <!--
+''Please note, that synchronization is not started by default during
+BranchServer`s LDAP start. Instead, posASWatch daemon is used to determine
+whether and when should be synchronization started. To properly understand
+whole synchronization concept, see
+[[Slepos-ldap#LDAP_Synchronization_and_Offline_LDAP|LDAP Synchronization and
+Offline LDAP]].''
+-->
+   <para> The &branchserv; synchronization consists of two steps: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> SyncRepl consumer, </para>
+    </listitem>
+    <listitem>
+     <para> LDAP chaining. </para>
+    </listitem>
+   </itemizedlist>
+   <sect4>
+    <title>SyncRepl consumer</title>
+    <para> SyncRepl (Synchronized Replication) is the main database update
+     mechanism. It continually asks the &admserv; LDAP for changes and
+     updates the &branchserv; LDAP accordingly as the "RefreshAndPersist"
+     LDAP synchronization mode is used. </para>
+    <para> SyncRepl is usually controlled by the
+      <command>posASWatch</command> script, but with the
+      <command>pos</command> command, manual control is also possible:
+      <command>pos status</command> displays current synchronization
+     status, <command>pos start</command> starts synchronization, and
+      <command>pos stop</command> stops synchronization. </para>
+    <para> For debugging purposes, the following command prints the current
+     SyncRepl state: </para>
+    <screen>ldapsearch -x -LLL -h localhost -D cn=admin,cn=config -w <replaceable>password</replaceable> -b cn=config '(objectClass=*)' 'olcSyncrepl'</screen>
+    <para> The typical setup with SSL looks like this: </para>
+    <screen>
+{0}rid=000 provider="ldaps://adminserver.mycompany.us"
+    bindmethod=simple
+    timeout=0
+    network-timeout=0
+    binddn="&dnbranch;"
+    credentials="secret"
+    starttls=no
+    tls_cacert=/etc/SLEPOS/keys/certs/ca.crt
+    searchbase="&dnorg;"
+    scope=sub
+    type=refreshAndPersist
+    retry="2 +"</screen>
+    <para> If SSL is not used, the
+      <literal>tls_cacert=/etc/SLEPOS/keys/certs/ca.crt</literal> line is
+     not present. </para>
+   </sect4>
+   <sect4>
+    <title>Chaining</title>
+    <para> Chaining with the updateRef directive is the second part of the
+     &admserv; LDAP and the &branchserv; LDAP collaboration. It handles
+     updates in the opposite direction to that of the SyncRepl consumer
+     when &branchserv; is in online mode. </para>
+    <para> When a write request arrives on the &branchserv; LDAP and the
+     &branchserv; is in online mode, the request is forwarded using LDAP
+     updateRef and chaining the overlay to the &admserv; LDAP, where the
+     actual request is executed. The UpdateRef directive is set up and
+     maintained by the <command>posASWatch</command> daemon together with
+     SyncRepl. Chaining settings are persistent and stored in the
+     &branchserv;'s <filename>slapd.conf</filename>: </para>
+    <screen>
+overlay                    chain
+chain-uri                  "ldaps://adminserver.mycompany.us"
+chain-idassert-bind        bindmethod="simple"
+                           binddn="&dnbranch;"
+                           credentials="secret"
+                           mode="self"
+chain-return-error         TRUE
+</screen>
+    <para> These settings reflect the typical &slepos; chain overlay setup. </para>
+    <para> When the &branchserv; is in offline mode, updateRef and Syncrepl
+     are deactivated by posASWatch. </para>
+   </sect4>
+  </sect3>
+ </sect2>
+</sect1>

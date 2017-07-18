@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scRole">
+ <title>scRole</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>cn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Common name of this object, from first part of DN
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scRoleName</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Name of the role. Displayed in the list on the Point Of Service terminal
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scAllowedHwTypes</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Allow role to be used only with given hardware types
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scDiskJournal</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Turn on disk journaling. This will only occur on diskfull systems.
+      (<literal>TRUE</literal> or <literal>FALSE</literal>)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scRoleDescription</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description of the role. Displayed in the list on the Point Of Service
+      terminal
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

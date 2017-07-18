@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scNetworkcard">
+ <title>scNetworkcard</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>ipHostNumber</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      IP-Address
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scDevice</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The name of the device. E.g. <literal>eth0</literal>
+      <literal>/dev/hda</literal> <literal>/dev/hda1</literal> ...
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>ipNetmaskNumber</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Netmask
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>macAddress</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      MAC address in maximal, colon separated hex notation, eg.
+      00:00:92:90:EE:F2
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scModul</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue,deprecated
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The name of the Linux kernel module for the network interface card.
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scModulOption</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue,deprecated
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The module options for the network interface card to be passed to the
+      kernel
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

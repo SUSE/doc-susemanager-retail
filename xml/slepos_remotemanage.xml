@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_remote">
+ <title>Remotely Managing &pos; Terminals with admind and adminc</title>
+
+ <para>
+  In a &sleposreg; system, <command>admind</command> and
+  <command>adminc</command> enable you to perform tasks like shutdown,
+  configuration reload, or application restart on multiple &pos; terminals
+  from a single location.
+ </para>
+
+ <sect2 role="General" xml:id="ad_bv39ac1">
+  <title>admind</title>
+  <para>
+   The daemon admind allows simple commands to be executed on &pos;
+   terminals from a remote location. Using it with adminc, an administrator can
+   perform tasks like shutdown, configuration reload, or application restart on
+   multiple &pos; terminals from a single location. admind is typically
+   started by the xinetd super-server, but can be run as a regular service.
+  </para>
+  <important>
+   <title>admind with Limited Authentication Only</title>
+   <para>
+    admind does not provide strong authentication. Its level of security is
+    adequate only for systems that boot from the network, thus relying on the
+    integrity of the network infrastructure (DHCP and DNS in particular).
+    Authentication is provided through verification of the host name and user
+    against a list in the configuration file.
+   </para>
+  </important>
+  <para>
+   admind writes its diagnostics via syslog to
+   <filename>/var/log/messages</filename>.
+  </para>
+  <sect3 xml:id="ad_bsxn4eo">
+   <title>Command Line Options</title>
+   <para>
+    <command>admind</command> has the following command syntax:
+   </para>
+<screen>admind [-vIP] [configfile] [<replaceable>options</replaceable>]
+</screen>
+   <para>
+    <xref linkend="ad_b59a524" xrefstyle="TableXRef"/> summarizes the
+    <command>admind</command> command line options.
+   </para>
+   <table xml:id="ad_b59a524">
+    <title><command>admind</command> Command Line Options</title>
+    <tgroup cols="2">
+     <colspec colnum="1" colname="1"/>
+     <colspec colnum="2" colname="2"/>
+     <thead>
+      <row rowsep="1" xml:id="ad_bsxmzyw">
+       <entry colname="1">
+        <para>
+         Option
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0" xml:id="ad_bsxmzyx">
+       <entry colname="1">
+        <para>
+         <option>-I</option> (uppercase i)
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Does not require <command>admind</command> to look up identities to
+         authenticate the calling user. This option is not recommended because
+         it poses a security risk to your system.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bsxmzyy">
+       <entry colname="1">
+        <para>
+         <option>-P</option>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Does not require <command>admind</command> to verify the host name.
+         This option is not recommended because it poses a security risk to
+         your system.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bsxmzyz">
+       <entry colname="1">
+        <para>
+         <option>-v</option>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Provides verbose output to syslog.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+  </sect3>
+  <sect3 xml:id="ad_bsxn4ep">
+   <title>admind.conf</title>
+   <para>
+    The standard configuration information for admind is located in
+    <filename>/etc/SLEPOS/admind.conf</filename>. The file format typically
+    appears as follows:
+   </para>
+<screen>S=hostname1
+S=hostname2
+U=username1
+U=username1
+X:0=init 0
+X:6=init 6
+X:r=/etc/init.d/rc/POSApplication restart
+(...)
+</screen>
+   <informaltable frame="topbot" rowsep="0">
+    <tgroup cols="2">
+     <colspec colnum="1" colname="1"/>
+     <colspec colnum="2" colname="2"/>
+     <thead>
+      <row rowsep="1" xml:id="ad_bsxn1kv">
+       <entry colname="1">
+        <para>
+         Option
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0" xml:id="ad_bsxn1kw">
+       <entry colname="1">
+        <para>
+         <command>-S</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Defines a valid server. The names of the connecting servers are
+         compared against this list. Short names can be used and are expanded
+         for the local domain.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bsxn1kx">
+       <entry colname="1">
+        <para>
+         <command>-U</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Defines a valid user name on the connecting machine.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bsxn1ky">
+       <entry colname="1">
+        <para>
+         <command>-X</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Defines the fixed commands. Each command has a single letter or digit
+         key (<literal>X:[0-9a-zA-Z]</literal>).
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </informaltable>
+   <para>
+    Executed commands are expected to terminate and deliver a return value.
+    Long-running commands or commands that do not terminate must be wrapped in
+    a script that executes the command in the background.
+   </para>
+  </sect3>
+ </sect2>
+
+ <sect2 role="General" xml:id="ad_bsxn4eq">
+  <title>adminc</title>
+  <para>
+   adminc distributes commands to &pos; terminals running admind. It sends a
+   command string to the list of IP addresses. adminc attempts to connect to
+   clients in parallel up to a specified maximum number.
+  </para>
+  <para>
+   adminc can also be used to start (wake) a series of terminals designated by
+   MAC address.
+  </para>
+  <sect3 xml:id="ad_bsxn4er">
+   <title>Command Line Options</title>
+   <para>
+    adminc has the following command syntax:
+   </para>
+<screen>adminc [--port] <replaceable>portno</replaceable>
+       [--parallel] <replaceable>maxparallel</replaceable>
+       [--commands] <replaceable>keys</replaceable> IP [IP&ast;] 
+</screen>
+<screen>adminc [--wake] MAC [MAC&ast;] 
+</screen>
+   <para>
+    summarizes the available options for adminc.
+    <remark>emap: Missing reference to the following table or something. What summarizes?</remark>
+   </para>
+   <table xml:id="ad_b59a9kc">
+    <title>adminc Command Line Options</title>
+    <tgroup cols="2">
+     <colspec colnum="1" colname="1"/>
+     <colspec colnum="2" colname="2"/>
+     <thead>
+      <row rowsep="1" xml:id="ad_bsxn36f">
+       <entry colname="1">
+        <para>
+         Option
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0" xml:id="ad_bsxn36g">
+       <entry colname="1">
+        <para>
+         <command>--port</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         The port number that admind listens to. The default is 8888.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bsxn36h">
+       <entry colname="1">
+        <para>
+         <command>--parallel</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         The maximum number of parallel sessions to start. The default is 8.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bsxn36i">
+       <entry colname="1">
+        <para>
+         <command>--commands</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         The command keys to be sent to clients. The command keys are specified
+         in the client&rsquo;s <filename>admind.conf</filename> file.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bsxn36j">
+       <entry colname="1">
+        <para>
+         --<command>wake MAC</command> <replaceable>MACes</replaceable>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         The wake command starts the designated clients. Clients are designated
+         by their MAC addresses.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+  </sect3>
+  <sect3 xml:id="ad_bsxn4eu">
+   <title>adminc Examples</title>
+<screen>adminc --command 0 192.168.99.11 192.168.99.12 192.168.99.13
+Node: 192.168.99.11   Exit Code: 0
+Node: 192.168.99.12   Exit Code: 65280
+Node: 192.168.99.13   Exit Code: 0
+</screen>
+  </sect3>
+ </sect2>
+
+ <sect2 role="General" xml:id="ad_bw1g5g1">
+  <title>posGetIP</title>
+  <para>
+   posGetIP is a helper script that is used with adminc. It
+   finds all addresses for &pos; terminals that are managed by the local
+   &branchserv;. This tool must be run on the &branchserv;. The output is
+   a list of addresses, one line each.
+  </para>
+  <para>
+   Both IP and MAC addresses can be listed. The default is to list the IP
+   addresses. It finds its server base by looking at the IP addresses that are
+   configured on the local machines.
+   <filename>/etc/SLEPOS/branchserver.conf</filename> is used to find the LDAP
+   connection information.
+  </para>
+  <sect3 xml:id="ad_bw1g9vb">
+   <title>Command Line Options</title>
+   <para>
+    posGetIP has the following command syntax:
+   </para>
+<screen>posGetIP [--ip|noip] [--mac] 
+</screen>
+   <para>
+    <xref linkend="ad_b59a9kd" xrefstyle="TableXRef"/> summarizes the available
+    posGetIP command options.
+   </para>
+   <table xml:id="ad_b59a9kd">
+    <title>posGetIP Command Options</title>
+    <tgroup cols="2">
+     <colspec colnum="1" colname="1"/>
+     <colspec colnum="2" colname="2"/>
+     <thead>
+      <row rowsep="1" xml:id="ad_bw1gabb">
+       <entry colname="1">
+        <para>
+         Option
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0" xml:id="ad_bw1gabc">
+       <entry colname="1">
+        <para>
+         <command>--ip</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Prints the IP addresses of all &pos; terminals that are managed by
+         the local &branchserv;.
+        </para>
+        <para>
+         This option is enabled by default.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bw1gc3i">
+       <entry colname="1">
+        <para>
+         <command>--noip</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Provides a screen dump of the &pos; terminals that are managed by
+         the local &branchserv;. This option does not print the IP addresses
+         of the terminals managed by the current &branchserv;.
+         <remark>emap: Is there a difference between the local and the current Branch Server? If not, I'd delete "managed by the current &branchserv;" to avoid confusion.</remark>
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0" xml:id="ad_bw1gabd">
+       <entry colname="1">
+        <para>
+         <command>--mac</command>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Prints the MAC address of all &pos; terminals that are managed by
+         the local &branchserv;.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+  </sect3>
+  <sect3 xml:id="ad_bw1gduk">
+   <title>posGetIP Examples</title>
+<screen>adminc --command 6 `posGetIP`
+</screen>
+<screen>adminc --wake `posGetip --mac --noip`
+</screen>
+  </sect3>
+ </sect2>
+
+ <sect2 role="General" xml:id="ad_bw1qj12">
+  <title>Installing admind on a &pos; Terminal</title>
+  <para>
+   The following sections outline how to add admind to a terminal system image.
+  </para>
+  <procedure xml:id="ad_b2jlhm6">
+   <step xml:id="ad_bw1r1sn">
+    <para>
+     Use the &imgcreat; tool to start this procedure.
+    </para>
+    <para>
+     For information about using &imgcreat;, see
+     <xref linkend="cha.slepos_imgcreator"/>.
+    </para>
+   </step>
+   <step xml:id="ad_bw1qmhg">
+    <para>
+     To start the xinetd service on the &pos; terminal, activate the
+     <guimenu>Scripts</guimenu> tab. In the <guimenu>Image Configuration
+     Script</guimenu> box, add after the line
+     <literal>suseActivateDefaultServices</literal>:
+    </para>
+<screen>suseInsertService xinetd
+</screen>
+   </step>
+   <step xml:id="ad_bw1qsbm">
+    <para>
+     Create the <filename>admind.conf</filename> file in the
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>image_name</replaceable>-<replaceable>version</replaceable>/root/etc</filename>
+     <remark>DEF:
+      correct?</remark>
+     directory.
+    </para>
+<!--     <screen>mkdir -p files-user/etc/SLEPOS
+vi files-user/etc/SLEPOS/admind.conf
+</screen>-->
+   </step>
+   <step xml:id="ad_bw1qt8v">
+    <para>
+     Set the configuration parameters in the <filename>admind.conf</filename>
+     file.
+    </para>
+    <substeps xml:id="ad_b2jlhm7" performance="required">
+     <step xml:id="ad_bw1qubk">
+      <para>
+       Set the <replaceable>branch.local</replaceable> parameter to the fully
+       qualified host name of the Administration or &branchserv;, on which
+       you want to run adminc. This allows the terminals to trust the
+       designated box. If you are running adminc from multiple stations, they
+       must be included in this list. For example:
+      </para>
+<screen>S=<replaceable>branch.local</replaceable>
+S=<replaceable>branch2.local</replaceable>
+S=localhost
+</screen>
+     </step>
+     <step xml:id="ad_bw1qx7d">
+      <para>
+       Add all users with rights to execute commands on &pos; terminals. For
+       example:
+      </para>
+<screen>U=root
+U=tux
+</screen>
+     </step>
+     <step xml:id="ad_bw1r04c">
+      <para>
+       Add any additional commands you want to execute on the POS terminals.
+       For example:
+      </para>
+<screen>X:0=/sbin/init 0
+X:3=/sbin/init 3
+X:5=/sbin/init 5
+X:6=/sbin/init 6
+X:p=/sbin/poweroff
+X:r=/sbin/reboot
+</screen>
+     </step>
+    </substeps>
+   </step>
+   <step xml:id="ad_bw1r0za">
+    <para>
+     <remark>This is all obsolete, probably. Is it enough to click "Finish"?</remark>
+     Build the image with the <command>--extend</command> option to include the
+     <filename>setup.admind</filename> file.
+    </para>
+    <note>
+     <para>
+      <remark>DEV: is setup.admind still in use and where can I find it? -ke-</remark>
+      The <filename>setup.admind</filename> file is located in the
+      <filename>/usr/share/kiwi/SLEPOS/templates/addons/</filename> directory.
+      It references the RPMs required to add the admind utility to a standard
+      client image.
+     </para>
+    </note>
+   </step>
+   <step xml:id="ad_bw1rc5t">
+    <para>
+     Distribute the image to your &pos; terminals.
+    </para>
+<!--<para>
+     For information on this procedure, see
+     <xref linkend="sec.slepos_term.dist"
+       xrefstyle="SectTitleOnPage"/>.
+     </para>-->
+   </step>
+  </procedure>
+ </sect2>
+
+ <sect2 role="General" xml:id="ad_bw1rf6a">
+  <title>Installing the admind Client on Administration and &branchserv;s</title>
+  <para>
+   To install admind on an Administration or &branchserv;, follow these
+   steps:
+  </para>
+  <procedure xml:id="ad_b2jlhma">
+   <step xml:id="ad_bw1rixd">
+    <para>
+     Install the <systemitem>admind-client</systemitem> RPM on the
+     &admserv; or &branchserv;: Start &yast;, <menuchoice>
+     <guimenu>Software</guimenu> <guimenu>Software Management</guimenu>
+     </menuchoice>, and select <systemitem>admind-client</systemitem> for
+     installation.
+    </para>
+    <note>
+     <para>
+      It may also be necessary to install the <systemitem>tcpd</systemitem>,
+      <systemitem>xinetd</systemitem>, and <systemitem>pidentd</systemitem>
+      RPMs.
+     </para>
+    </note>
+   </step>
+   <step xml:id="ad_bw1rk82">
+    <para>
+     Start identd using &yast;: <menuchoice> <guimenu>System</guimenu>
+     <guimenu>System Services (Runlevel)</guimenu> </menuchoice> and enable
+     identd.
+    </para>
+   </step>
+  </procedure>
+ </sect2>
+</sect1>

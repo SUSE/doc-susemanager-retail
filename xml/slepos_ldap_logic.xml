@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" role="General"
+ xml:id="ad_bsx1cd4">
+ <title>Logical Structure of the LDAP Directory</title>
+ <para> The LDAP directory is designed with multiple, hierarchical object
+  classes so it can accommodate large corporate structures. The following
+  list describes the standard object classes represented in the &slepos;
+  LDAP directory tree. For a complete listing of &slepos; object classes
+  and their attributes, see <xref linkend="ad_bt0325q"/> or refer to the
+  OpenLDAP schemata specific to &slepos; that are located under
+   <filename>/etc/openldap/schema/sc-pos-attr.schema</filename> and
+   <filename>/etc/openldap/schema/sc-pos-pos-obj.schema</filename>,
+  respectively. </para>
+ <variablelist>
+  <varlistentry xml:id="ad_btx5xmz">
+   <term>Root</term>
+   <listitem>
+    <para> The top level in the LDAP tree. The root represents the world.
+     The next level is represented by Country. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btx5xn0">
+   <term>Country</term>
+   <listitem>
+    <para> The country in which the organization is located. The next level
+     is represented by Organization. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btx5xn1">
+   <term>Organization (<literal>organization</literal>)</term>
+   <listitem>
+    <para> The name of the organization represented in the LDAP tree. The
+     next level is represented by: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para>
+       <!-- Locator Object -->
+       <xref linkend="ad_buw4wh0" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- Global -->
+       <xref linkend="ad_btxam6w" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- Organizational Units -->
+       <xref linkend="ad_btx5xn2" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_buw4wh0">
+   <term>Locator Object (<systemitem>scHardware</systemitem>)</term>
+   <listitem>
+    <para> posInitAdminserver initially creates an object of the type
+      <systemitem>scHardware</systemitem>, for example
+      <literal>cn=standards,&dnorg;</literal>. The purpose of this object
+     is to contain the default PXE boot file name (in the
+      <systemitem>scDhcpOptionsRemote</systemitem>, being
+      <literal>/boot/pxelinux.0</literal>, by default). </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btxam6w">
+   <term>Global (<systemitem>scRefObjectContainer</systemitem>)</term>
+   <listitem>
+    <para> This initial <phrase>reference object container</phrase> is
+     created automatically. </para>
+    <para> All globally valid information for a chain or company&mdash;that
+     is server hardware, &pos; hardware, or client images&mdash;is stored
+     in the global container in the form of reference objects. These
+     reference objects are linked to the actual entries for the &pos;
+     terminals and servers in the branches using distinguished names. </para>
+    <para> The initial LDAP structure after installation includes only one
+      <systemitem>scRefObjectContainer</systemitem> named global under the
+     directory root. Other <systemitem>scRefObjectContainer</systemitem>
+     objects can be added as needed. However, the
+      <systemitem>scRefObjectContainer</systemitem> container objects
+     should always have <literal>cn=global</literal> and appear only
+     once per directory level. This provides great flexibility. For
+     example, each server can be assigned its own reference objects and
+     therefore its own hardware types. On the other hand, if all servers
+     have the same hardware, a unified standard can be defined in the
+     global container on the regional or organizational level. The next
+     level is represented by: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para>
+       <!-- Distribution Container -->
+       <xref linkend="ad_btxarm9" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- Hardware Reference Object -->
+       <xref linkend="ad_btxanhw" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- Role -->
+       <xref linkend="scrole" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btxarm9">
+   <term>Distribution Container
+     (<systemitem>scDistributionContainer</systemitem>)</term>
+   <listitem>
+    <para> A container for the distribution of sets of images. </para>
+    <para> A distribution set is a collection of images designed for &pos;
+     terminals on a given version of the Linux kernel. The Default
+     distribution container references the current kernel version included
+     in &slepos;. The next level is represented by the Image Reference
+     object. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btxanhv">
+   <term>Image Reference Object
+    (<systemitem>scPosImage</systemitem>)</term>
+   <listitem>
+    <para> The Image Reference object stores information about an image
+     stored on the &admserv;. </para>
+    <para> By default, an Image Reference object is created for the minimal
+     client image. For information on adding this object class to the LDAP
+     directory, see <xref linkend="sec.slepos_term.ldap.posimage"/>. The
+     next level is represented by: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para>
+       <!-- File-Based Configuration Template -->
+       <xref linkend="ad_bundo7r" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- LDAP-Based Configuration Template -->
+       <xref linkend="ad_bundo7s" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_bundo7r">
+   <term>File-Based Configuration Template
+     (<systemitem>scConfigFileSyncTemplate</systemitem>)</term>
+   <listitem>
+    <para>
+     <systemitem>scConfigFileSyncTemplate</systemitem> objects are used
+     when running services, such as an X Window System, which require
+     hardware-dependent configuration files. The
+      <systemitem>scConfigFileSyncTemplate</systemitem> object points to
+     the configuration file that a &pos; terminal needs to run a given
+     service. This object differs from
+      <systemitem>scConfigFileTemplate</systemitem> objects because the
+     configuration data is not stored in the object; rather, the object
+     points to a configuration file outside the LDAP directory. </para>
+    <para> This element can also exist under
+      <systemitem>scCashRegister</systemitem> objects. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="sec.slepos_term.ldap.conffilesynctemp"
+     />. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_bundo7s">
+   <term>LDAP-Based Configuration Template
+     (<systemitem>scConfigFileTemplate</systemitem>)</term>
+   <listitem>
+    <para>
+     <systemitem>scConfigFileTemplate</systemitem> objects are used when
+     running services, such as the X Window service, which require
+     hardware-dependent configuration files. An
+      <systemitem>scConfigFileTemplate</systemitem> object contains the
+     configuration file data that a &pos; terminal needs to run a given
+     service. </para>
+    <para> This element can also exist under
+      <systemitem>scCashRegister</systemitem> objects. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="sec.slepos_term.ldap.conffiletemp"/>.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btxanhw">
+   <term>Hardware Reference Object
+    (<systemitem>scCashRegister</systemitem>)</term>
+   <listitem>
+    <para> The Hardware Reference object stores information about the &pos;
+     hardware. </para>
+    <para> Typically, you should define an
+      <systemitem>scCashRegister</systemitem> object for each type of
+     terminal used on the &slepos; system; however, if a &pos; terminal
+     does not have an <systemitem>scCashRegister</systemitem> object for
+     its specific hardware type, it will use the configuration defined in
+     the default <systemitem>scCashRegister</systemitem> object. For
+     information on adding this object class to the LDAP directory, see
+      <xref linkend="sec.slepos_term.ldap.cashreg"/>. The next level is
+     represented by: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para>
+       <!-- Hard Disk -->
+       <xref linkend="ad_bujpydy" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- RAM Disk -->
+       <xref linkend="ad_buv2kgs" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- File-Based Configuration Template -->
+       <xref linkend="ad_bundo7r" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- LDAP-Based Configuration Template -->
+       <xref linkend="ad_bundo7s" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_bujpydy">
+   <term>Hard Disk (<systemitem>scHarddisk</systemitem>)</term>
+   <listitem>
+    <para> The configuration for a &pos; terminal hard disk. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="sec.slepos_term.ldap.harddisk"/>.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_buv2kgs">
+   <term>RAM Disk (<systemitem>scRamDisk</systemitem>)</term>
+   <listitem>
+    <para> The configuration for a &pos; terminal RAM disk. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="sec.slepos_term.ldap.ramdisk"/>. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btx5xn2">
+   <term>Organizational Units
+    (<systemitem>organizationalUnit</systemitem>)</term>
+   <listitem>
+    <para> Organizational units were introduced to improve organizational
+     coherence. They typically represent organizational structures such as
+     regions, branches or divisions. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="ad_bsxk4te" xrefstyle="SectTitleOnPage"
+     />. The next level is represented by Location. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btx5xn3">
+   <term>Location (<systemitem>scLocation</systemitem>)</term>
+   <listitem>
+    <para> A branch office; this is a site where a &branchserv; and &pos;
+     terminals are located. Location containers are used to store
+     information about the deployed &pos; terminals and the &branchserv;s.
+     This and all other information that can be modified at the
+     &branchserv; should be stored or referenced in the Location containers
+     to limit the need to grant write privileges to subtrees. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="ad_bsxkk8v"/>. The next level is
+     represented by: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para>
+       <!-- Workstation -->
+       <xref linkend="ad_btx5xn4" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- Server Container -->
+       <xref linkend="ad_btx5xn5" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btx5xn4">
+   <term>Workstation (<systemitem>scWorkstation</systemitem>)</term>
+   <listitem>
+    <para> The Workstation object stores information for a specific &pos;
+     terminal. Using information from the Hardware Reference object
+      (<systemitem>scCashRegister</systemitem>) and Image Reference object
+      (<systemitem>scPosImage</systemitem>),
+      <command>posleases2ldap</command> automatically creates a Workstation
+     object in the LDAP directory for every &pos; terminal that registers
+     on the &branchserv;. For information on this process, see <xref
+      linkend="ad_cntrlhw"/>. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btx5xn5">
+   <term>Server Container
+    (<systemitem>scServerContainer</systemitem>)</term>
+   <listitem>
+    <para> A container for all the &branchserv; objects for a given site.
+     The information pertaining to the &branchserv;s is stored in the
+     Server container. </para>
+    <para> To provide system redundancy and failover, there can be multiple
+     &branchserv;s for each site. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="ad_bsxlcvy"/>. The next level is
+     represented by: &branchserv;. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btx5xn6">
+   <term>&branchserv; (<systemitem>scBranchServer</systemitem>)</term>
+   <listitem>
+    <para> The &branchserv; object stores configuration information that is
+     specific to each &branchserv;. There must be a &branchserv; object for
+     every &branchserv; in the &slepos; system. </para>
+    <important>
+     <title>Defining the &branchserv; Host Name</title>
+     <para> The location of the <systemitem>scBranchServer</systemitem>
+      object in the LDAP directory must correspond to the host name defined
+      for the Admin/&branchserv; during installation. For example, if the
+      host name is <literal>bs.mybranch.myorgunit.myorg.us</literal>, the DN
+      of the <systemitem>scBranchServer</systemitem> object needs to be
+       <literal>cn=bs,cn=server,cn=mybranch,ou=myorgunit,o=myorg,c=us</literal>.
+      You must create the <systemitem>scBranchServer</systemitem> object
+      and its supporting organizational structure before you can run
+       <command>posInitBranchserver</command> and deploy the &branchserv;.
+      For information on creating the &branchserv; objects, see <xref
+       linkend="sec.branchserv.ldapobjects"/>. </para>
+    </important>
+    <para> The &admserv; does not have an associated object in the LDAP
+     tree structure. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="ad_bsxlcvy"/>. The next level is
+     represented by: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para>
+       <!-- Service -->
+       <xref linkend="ad_btxv73a" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- Network Card -->
+       <xref linkend="ad_bujpydx" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+     <listitem>
+      <para>
+       <!-- Hard Disk -->
+       <xref linkend="ad_bvsg54e" xrefstyle="select:title nopage"/>
+      </para>
+     </listitem>
+    </itemizedlist>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_btxv73a">
+   <term>Service (<systemitem>scService</systemitem>)</term>
+   <listitem>
+    <para> The configuration for &branchserv; services like DNS, TFTP, or
+     DHCP. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="ad_bsxlcvy" xrefstyle="SectTitleOnPage"
+     />. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_bujpydx">
+   <term>Network Card (<systemitem>scNetworkcard</systemitem>)</term>
+   <listitem>
+    <para> The configuration for a &branchserv; network interface card. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="ad_butnhri"/>. </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="ad_bvsg54e">
+   <term>Hard Disk (<systemitem>scHarddisk</systemitem>)</term>
+   <listitem>
+    <para> The configuration for the &branchserv;'s boot hard disk. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="sec.slepos_term.ldap.harddisk"/>.
+    </para>
+   </listitem>
+  </varlistentry>
+  <varlistentry xml:id="scrole">
+   <term>Role (<systemitem>scRole</systemitem>)</term>
+   <listitem>
+    <para> The definition of a role. </para>
+    <para> For information on adding this object class to the LDAP
+     directory, see <xref linkend="cha.roles"/>. </para>
+   </listitem>
+  </varlistentry>
+ </variablelist>
+ <para> To illustrate how the directory structure is used, here is a sample
+  query procedure using objects from the example LDAP structure described
+  above. </para>
+ <orderedlist spacing="normal">
+  <listitem>
+   <para> A search is performed for an object of object class
+     <systemitem>scLocation</systemitem> with
+    <literal>cn=eastbay</literal>. </para>
+   <note>
+    <title>Search Scope of the Core Scripts</title>
+    <para> The core scripts only search for the names of the object
+     classes. The common name for an entry is not used. </para>
+   </note>
+  </listitem>
+  <listitem>
+   <para> Below <systemitem>scLocation</systemitem> a search for an object
+    of object class <systemitem>scServerContainer</systemitem> (server) is
+    carried out. </para>
+  </listitem>
+  <listitem>
+   <para> Below this <systemitem>scServerContainer</systemitem>, we search
+    for an object of object class
+     <systemitem>scBranchServer</systemitem> with <literal>cn=bs</literal>.
+   </para>
+  </listitem>
+  <listitem>
+   <para> Data specific to this server is located below this
+     <systemitem>scBranchServer</systemitem> object, such as objects of
+    object class <systemitem>scNetworkcard</systemitem>, in which the IP
+    addresses are indicated. </para>
+  </listitem>
+  <listitem>
+   <para> All the data that generally applies to this hardware type, such
+    as partitioning, is read from a reference object of object class
+     <systemitem>scRefServer</systemitem> in which this hardware is
+    described. These reference objects are always organized as containers
+    of an object of object class
+     <systemitem>scRefObjectContainer</systemitem>. </para>
+  </listitem>
+  <listitem>
+   <para> Next, the reference objects that are valid for this &branchserv;
+    are located. First the attribute <systemitem>scRefServerDn</systemitem>
+    in the <systemitem>scBranchServer</systemitem> object that represents
+    this server is read. If a DN is included here, the target is used as
+    the reference object for the &branchserv;. </para>
+  </listitem>
+  <listitem>
+   <para> If the entry is empty, the search for an object of the object
+    class <systemitem>scHardware</systemitem> moves upward in the directory
+    structure, one level at a time. If the attribute
+     <systemitem>scRefServerDn</systemitem> is set for this type of object,
+    this DN is taken as the target; if not, the search continues upward in
+    the directory structure. If no appropriate object with this attribute
+    is found all the way up to the root level, the process aborts with an
+    error. </para>
+  </listitem>
+ </orderedlist>
+ <para> The procedure is similar for &pos; terminal hardware. In this
+  example, in addition to the referenced hardware type (through attribute
+   <systemitem>scRefPcDn</systemitem> to a
+   <systemitem>scCashRegister</systemitem> object),
+   <systemitem>scPosImageDn</systemitem> points to the reference image
+   <systemitem>scPosImage</systemitem> object. </para>
+</sect1>

@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_branchserv">
+ <title>Setting Up a &branchserv;</title>
+ <info/>
+ <para>
+  The &branchserv; provides the network boot and system management
+  infrastructure for the &sleposreg; terminals and a generic system
+  platform for instore applications, such as database systems and back-ends for
+  the &pos; applications.
+ </para>
+ <para>
+  The &branchserv; can be installed in two modes, online or offline. The
+  online installation mode requires an Internet connection to the &admserv;.
+  If no Internet connection to the &admserv; is available, use the offline
+  installation mode.
+ </para>
+ <para>
+  If you intend to set up a high-availability &branchserv;, check out the
+  &haguide;, available from
+  <link xlink:href="http://www.suse.com/documentation/sles11/"/>.
+ </para>
+ 
+ <!--<note>
+  <title>Setting Up a POSBranch Server</title>
+  <para>
+   In the NLPOS9, a specialized POSBranch image was needed to setup a
+   &branchserv; running on &pos; hardware. There is no need for such a
+   specialized POSBranch image now. The &branchserv; can now be directly
+   installed on POS hardware.
+  </para>
+  </note>-->
+ 
+ <note>
+  <title>System Requirements</title>
+  <para>
+   For a list of system requirements to set up an &branchserv;, refer to
+   <xref linkend="sec.sysreq.branch"/>.
+  </para>
+ </note>
+ <para>
+  Before configuring a &branchserv;, check if the following conditions are
+  met:
+ </para>
+ <itemizedlist mark="bullet" spacing="normal">
+  <listitem>
+   <para>
+    The <systemitem>&branchserv;</systemitem> pattern must be installed on
+    the machine to be configured. If it is missing, install it. For more
+    information about the &slepos; 11 installation, see
+    <xref linkend="cha.slepos_inst"/>.
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    The &admserv; and its LDAP database must be configured and initialized
+    as described in <xref linkend="cha.slepos_adminserv"/>. For more
+    information about LDAP database configuration and initialization, see
+    <xref linkend="sec.adminserv.ldapinit"/>.
+   </para>
+  </listitem>
+  <listitem>
+   <para>
+    Either Internet connection to the &admserv; or the offline installation
+    package must be available. If an Internet connection is available, follow
+    the procedure described in <xref linkend="sec.branchserv.online"/>. If the
+    offline installation package is available, follow the procedure described
+    in <xref linkend="sec.branchserv.offline"/>.
+   </para>
+  </listitem>
+ </itemizedlist>
+ <sect1 xml:id="branch.net">
+  <title>&branchserv; Network Configuration</title>
+
+  <para>
+   &slepos; offers three ways to configure the network on a &branchserv;:
+  </para>
+
+  <orderedlist spacing="normal">
+   <listitem>
+    <para>
+     LDAP-based,
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     &branchserv;-based,
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     predefined defaults.
+    </para>
+   </listitem>
+  </orderedlist>
+
+  <sect2>
+   <title>LDAP-Based Network Configuration</title>
+   <para>
+    The &branchserv; network is configured based on the settings defined in
+    LDAP. This mode is selected when all of the following conditions are met:
+   </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para>
+      The &branchserv;'s object scLocation attributes ipNetworkNumber and
+      ipNetworkMask differ from 0.0.0.0.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Either one scNetworkcard is defined under scLocation object or one NIC is
+      left unconfigured on &branchserv;.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      scNetworkcard attribute scDevice matches one of the &branchserv;'s
+      NIC.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      scNetworkcard attribute ipHostNumber differs from 0.0.0.0.
+     </para>
+    </listitem>
+   </orderedlist>
+   <para>
+    <command>posInitBranchServer</command> then automatically updates network
+    configuration and basic DNS configuration. When
+    <command>posInitBranchServer</command> is about to overwrite a manual
+    configuration, user confirmation is requested. If it is running in
+    noninteractive mode, permission to overwrite is granted automatically.
+   </para>
+  </sect2>
+
+  <sect2>
+   <title>&branchserv;-Based Network Configuration</title>
+   <para>
+    The &branchserv;'s NICs are manually configured on the &branchserv;.
+    This mode is selected when all of the following conditions are met:
+   </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para>
+      &branchserv;'s object scLocation attributes ipNetworkNumber and
+      ipNetworkMask equal 0.0.0.0.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      One scNetworkcard is defined under scLocation object and its scDevice
+      attribute matches one of the manually configured NICs on the
+      &branchserv;, or there is only one manually configured NIC on the
+      &branchserv;, which matches one of scNetworkCards scDevice attributes.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      scNetworkcard attribute ipHostNumber equals 0.0.0.0.
+     </para>
+    </listitem>
+   </orderedlist>
+   <para>
+    <command>posInitBranchServer</command> then updates the LDAP configuration
+    to match the current BranchServer configuration and updates the basic DNS
+    configuration.
+   </para>
+  </sect2>
+
+  <sect2>
+   <title>Predefined Network Configuration</title>
+   <para>
+    The &branchserv;'s NICs are configured according to the &slepos; defaults.
+    This mode is selected when all of the following conditions are met:
+   </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para>
+      &branchserv;'s object scLocation attributes ipNetworkNumber and
+      ipNetworkMask equal 0.0.0.0.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      One scNetworkcard is defined under scLocation object and its scDevice
+      attribute matches one unconfigured NIC on the &branchserv;, or there
+      is only one unconfigured NIC on the &branchserv;, which matches one of
+      the scNetworkCards scDevice attributes.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      scNetworkcard attribute ipHostNumber equals 0.0.0.0.
+     </para>
+    </listitem>
+   </orderedlist>
+   <para>
+    When no information about the network is set,
+    <command>posInitBranchServer</command> configures NICs and updates LDAP
+    databases with a configuration based on &slepos; defaults:
+   </para>
+<screen>
+scLocation attributes:
+  scNetworkNumber  = '192.168.1.0'
+  scNetworkMask    = '255.255.255.0'
+  scDhcpRange      = '192.168.1.10,192.168.1.54'
+  scDhcpFixedRange = '192.168.1.55,192.168.1.88'
+  scDefaultGw      = '192.168.1.1'
+scNetworkcard attribute
+  ipHostNumber = '192.168.1.1'
+</screen>
+<!--All other scenarios are unsupported during posInitBranchServer. Underlying script, posNetworkInit, however can solve even here not listed scenarios. See chapter B.3.1 for details.-->
+  </sect2>
+ </sect1>
+ <sect1>
+  <title>Configuring &branchserv; with the <command>posInitBranchserver</command> Command</title>
+
+  <para>
+   The <command>posInitBranchserver</command> command is provided for the
+   &branchserv; configuration.
+  </para>
+
+  <sect2 xml:id="sec.branchserv.online">
+   <title>Online &branchserv; Configuration</title>
+   <para>
+    The following procedure describes the installation process of a
+    &slepos; 11 &branchserv; if an Internet connection to the &admserv;
+    is used:
+   </para>
+   <procedure>
+    <step>
+     <para>
+<!--0-->
+      Execute the <command>posInitBranchserver</command> command.
+     </para>
+     <para>
+<!--a-->
+      The <command>posInitBranchserver</command> command asks for the
+      installation mode to be used. For the default online installation enter
+      <literal>1</literal> or press <keycap function="enter"/>.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--b-->
+      Provide the required information. Enter the organization/company name
+      (<systemitem>organization</systemitem>), organizational unit
+      (<systemitem>organizationalUnit</systemitem>) and location/branch name
+      (<systemitem>scLocation</systemitem>) as initialized on the &admserv;
+      (and as specified in the LDAP database). Enter the resolvable and
+      connectible name or the IP address of the &admserv;. Enter the
+      &branchserv; password defined when the
+      <systemitem>scLocation</systemitem> object was created using
+      <command>posAdmin</command> on the &admserv;.
+     </para>
+     <para>
+      It is possible to use nested organizational units, for example:
+      <literal>cn=mybranch,ou=mysuborgunit,ou=myorgunit,o=myorg,c=us</literal>.
+      To enter nested organizational units to
+      <command>posInitBranchserver</command>, use the dot notation:
+      <literal>mysuborgunit.myorgunit</literal>.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--c-->
+      The script checks resolvability of the &admserv; IP address and tries
+      to download &admserv; certificates. The certificates are then used for
+      automatic establishment of encrypted SSL communication. If no
+      certificates are found, an unencrypted communication is used.
+     </para>
+     <important>
+      <title>&admserv;'s rsync Port Must Be Open</title>
+      <para>
+       Make sure the rsync port (usually 873) is open on the &admserv;. The
+       rsync port is not open in the default SLES11 installation. You need to
+       add it by entering its number in the &yast;
+       <guimenu>Firewall</guimenu> module under <menuchoice> <guimenu>Allowed
+       Services</guimenu> <guimenu>Advanced</guimenu> <guimenu>TCP
+       Ports</guimenu> </menuchoice>.
+      </para>
+     </important>
+<!-- bug #518858 start -->
+     <important>
+      <title>&branchserv;'s TFTP Port Must Be Open</title>
+      <para>
+       Make sure the TFTP port (usually 69) is open on the &branchserv;.
+       This port is not open in the default SLES11 installation. You need to
+       add it by adding its number in the &yast; <guimenu>Firewall</guimenu>
+       module under <menuchoice> <guimenu>Allowed Services</guimenu>
+       <guimenu>Advanced</guimenu> <guimenu>TCP Ports</guimenu> </menuchoice>.
+       If FTP is used, the FTP ports must be open.
+      </para>
+     </important>
+<!-- bug #518858 end -->
+     <para>
+<!--d-->
+      If an &admserv; certificate is found, you are asked to acknowledge its
+      fingerprint and validate it.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--e-->
+      The script asks if you want to create and use a local branch LDAP
+      database on the &branchserv;. It contains a copy of the subtree from
+      the &admserv; LDAP database which corresponds to this &branchserv;.
+      This is part of the &slepos; 11 offline functionality feature. The
+      recommended default setting is <literal>yes</literal>.
+     </para>
+     <para>
+<!--f-->
+      If your choice is <literal>yes</literal>, the script initializes a local
+      branch LDAP database. If your choice is <literal>no</literal>, enter the
+      host name or IP address of an already initialized LDAP database.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--g-->
+<!---xxx-->
+      The script issues a command to start LDAP SyncRelp replication to create
+      a copy of the branch subtree from the &admserv;'s LDAP database.
+     </para>
+    </step>
+    <step>
+     <para>
+<!-- h-->
+      If everything is in order, the script finds the &branchserv; domain in
+      the &admserv;'s LDAP database and prints information about the found
+      domain.
+     </para>
+    </step>
+    <step>
+<!-- i -->
+     <para>
+      The script asks for a final confirmation before it configures and starts
+      the core &branchserv; services.
+     </para>
+    </step>
+    <step>
+<!-- j-->
+     <para>
+      If everything is in order, the script finishes successfully. If an error
+      occurs, it is reported and logged in syslog.
+     </para>
+     <note>
+      <title>Aborting the Command</title>
+      <para>
+       If you select <literal>no</literal> in any configuration step (except
+       when selecting not to use a local branch LDAP), the script deletes all
+       its intermediate data and exits.
+      </para>
+     </note>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="sec.branchserv.offline">
+   <title>Offline &branchserv; Configuration</title>
+   <para>
+    The following procedure describes the installation process of a
+    &slepos; 11 &branchserv; if no Internet connection to the &admserv;
+    is used:
+   </para>
+   <procedure>
+    <step>
+     <para>
+      Preferably, execute <command>posInitBranchserver -f</command>
+      <replaceable>pathToOfflineInstallationFile</replaceable>. You can also
+      execute the <command>posInitBranchserver</command> command without
+      options and select <literal>2</literal> when asked for the installation
+      mode to be used.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--b-->
+      Provide the required information. Enter the organization/company name
+      (<systemitem>organization</systemitem>), organizational unit
+      (<systemitem>organizationalUnit</systemitem>) and location/branch name
+      (<systemitem>scLocation</systemitem>) as initialized on the &admserv;
+      (and as specified in the LDAP database). Enter the resolvable and
+      connectible name or the IP address of the &admserv;. Enter the
+      &branchserv; password defined when the
+      <systemitem>scLocation</systemitem> object was created using
+      <command>posAdmin</command> on the &admserv;.
+     </para>
+     <para>
+      If an offline installation file was provided in the first step, the
+      default values from the file are used.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--NOTE ack certif merged-->
+<!--c-->
+      In the offline installation mode, the script does not check resolvability
+      of the &admserv; IP address. Server certificates are copied from the
+      offline installation file, if present.
+     </para>
+     <para>
+<!--d-->
+      If an &admserv; certificate is found, you are asked to acknowledge its
+      fingerprint and validate it. SSL communication is then automatically
+      established.
+      <remark>emap: even during offline installation?</remark>
+      If no certificate is found, unencrypted communication is used.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--e-->
+      The script asks if you want to create and use a local branch LDAP
+      database on the &branchserv;. It contains a copy of the subtree from
+      the &admserv; LDAP database which corresponds to this &branchserv;.
+      This is a part of the &slepos; 11 offline functionality feature. The
+      recommended default setting is <literal>yes</literal>.
+     </para>
+     <para>
+<!--f-->
+      If you select <literal>yes</literal>, the script initializes a local
+      branch LDAP database. If you select <literal>no</literal>, enter the
+      host name or IP address of an already-initialized LDAP database.
+     </para>
+    </step>
+    <step>
+     <para>
+<!--g-->
+<!---xxx-->
+      The script initializes the local branch LDAP database using
+      the <command>ldapadd</command> command from the offline installation
+      file.
+     </para>
+    </step>
+    <step>
+     <para>
+<!-- h-->
+      In offline installation mode, it is not yet possible to find the
+      &branchserv; domain. Therefore, if there is no Internet connection,
+      the attempt fails and the script terminates. However if there is a
+      connection to the &admserv;, the script finds the &branchserv;
+      domain in the &admserv;'s LDAP database and prints information about
+      the found domain.
+     </para>
+    </step>
+    <step>
+<!-- i -->
+     <para>
+      The script asks for a final confirmation before it configures and starts
+      the core &branchserv; services.
+     </para>
+    </step>
+    <step>
+<!-- j-->
+     <para>
+      If everything is in order, the script finishes successfully. If an error
+      occurs, it is reported and logged in syslog.
+     </para>
+     <note>
+      <title>Aborting the Command</title>
+      <para>
+       If you select <literal>no</literal> in any configuration step (except
+       when you select not to use a local branch LDAP), the script deletes all
+       its intermediate data and exits.
+      </para>
+     </note>
+    </step>
+   </procedure>
+   <note>
+    <title>Administration and Branch Server Combination</title>
+    <para>
+     If the Administration and Branch Servers are being configured on a single
+     machine, no certificates are used and the SSL communication is disabled.
+     Also, there is no local branch LDAP database created, as the offline
+     functionality is not needed.
+    </para>
+   </note>
+   <sect3 xml:id="sec.adminserv.offlinepackage">
+    <title>Creating an Offline Installation Package</title>
+    <para>
+     If you want to initialize an offline &branchserv; without any Internet
+     connection, create an offline installation package:
+    </para>
+    <procedure>
+     <step>
+      <para>
+       To create an offline installation package, use:
+      </para>
+<screen>posAdmin
+--base <replaceable>scLocationDN</replaceable>
+--generate
+</screen>
+      <para>
+       For example, for the <literal>&dnbranch;</literal> branch, use:
+      </para>
+<screen>posAdmin
+--base &dnbranch;
+--generate
+</screen>
+     </step>
+     <step>
+      <para>
+       The generated offline installation package is located in the
+       <filename>/var/share/SLEPOS/OIF/<replaceable>scLocationDN</replaceable>.tgz</filename>
+       file. For the company mentioned earlier, the file name would be
+       <filename>/usr/share/SLEPOS/OIF/&mybranch;.&myou;.&myo;.&myc;</filename>.
+      </para>
+     </step>
+    </procedure>
+   </sect3>
+   <sect3>
+    <title>Transferring System Image Files</title>
+    <para>
+     If there is no network connection between &admserv; and
+     &branchserv;, the system image files must be copied from the
+     &admserv; to the &branchserv; manually.
+    </para>
+    <para>
+     Boot images must be copied from the <filename>/srv/SLEPOS/boot/</filename>
+     directory on the &admserv; to the
+     <filename>/srv/tftpboot/boot/</filename> directory on the &branchserv;
+     and then put to production using the <command>possyncimages
+     --local</command> command.
+    </para>
+    <para>
+     System images and their associated MD5 checksum files must be copied from
+     <filename>/srv/SLEPOS/image/</filename> on the &admserv; to
+     <filename>/srv/tftpboot/image</filename> on the &branchserv; and then
+     put to production using the <command>possyncimages --local</command>
+     command.
+    </para>
+   </sect3>
+  </sect2>
+
+  <sect2>
+   <title>Changing the &branchserv; Password</title>
+   <para>
+    Before attempting to change the &branchserv; password, ensure that the
+    following conditions are met and understood:  
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      The &branchserv; is already initialized.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      The &branchserv; is in online mode and the &admserv;'s LDAP is
+      available.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      The &branchserv;'s local LDAP will be restarted during the procedure.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    When you are ready to proceed with changing the password, call
+    <command>posInitBranchServer -p</command> or <command>posInitBranchServer
+    --chpasswd</command>.
+   </para>
+   <para>
+    You will be asked to enter the old &branchserv; password then the new
+    &branchserv; password twice. After changing the password, the system
+    will perform a password validation and inform you of the result.
+   </para>
+   <para>
+    In case of problems, see <xref linkend="trouble.passwd"/>.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.slepos_branchserv.download">
+  <title>Distributing Images to the &branchserv;</title>
+
+  <para>
+   If you want to create a new image or change an image version, run the
+   <filename>possyncimages</filename> command at the &branchserv;. This
+   transfers new or updated images to the &branchserv; after the images have
+   been added to the &admserv;’s RSYNC directory.
+  </para>
+
+  <important>
+   <title>rsync Service and LDAP Objects</title>
+   <para>
+    The rsync service must be properly configured and running on the
+    &admserv; for the <filename>possynimages</filename> command to run. For
+    more information, see
+    <xref linkend="ad_bsxlcvy" xrefstyle="HeadingOnPage"/>.
+   </para>
+   <para>
+    Additionally, each system image has an associated
+    <literal>scPosImage</literal> object in LDAP. The object's
+    <literal>scPosImageVersion</literal> attribute should be set to active or a
+    relevant <systemitem>scImageVersion</systemitem> object must be created to
+    keep track of the most recent image version and state before
+    <filename>possyncimages</filename> transfers the images to the
+    &branchserv;. For more information, see
+    <xref linkend="image_activation"/>.
+   </para>
+  </important>
+
+  <para>
+   The basic process is as follows:
+  </para>
+
+  <procedure>
+   <step>
+    <para>
+     Via the PID file, the <filename>possyncimages</filename> command initially
+     checks if an instance is already running.
+    </para>
+   </step>
+   <step>
+    <para>
+     The image files are then copied from the &admserv; to the
+     &branchserv;. Boot images are copied from the
+     <filename>/srv/SLEPOS/boot/</filename> directory on the &admserv; to
+     the <filename>/srv/tftpboot/boot/</filename> directory on the
+     &branchserv;. System images and their associated MD5 checksum files are
+     copied from <filename>/srv/SLEPOS/image/</filename> to
+     <filename>/srv/tftpboot/image</filename>.
+    </para>
+    <para>
+     <command>possyncimages</command> downloads the base images first but later
+     prefers downloading the deltas instead of full images. Full images are
+     re-created on the &branchserv; in <filename>/srv/SLEPOS</filename>.
+    </para>
+    <para>
+     During this process, the TFTP server must be stopped or otherwise
+     prevented from transmitting the image files to clients.
+    </para>
+   </step>
+  </procedure>
+
+  <para>
+   For more information on the <filename>possyncimages</filename> command, see
+   <xref linkend="ad_bsx5jsk"/>.
+  </para>
+
+  <para>
+   After executing the <filename>possyncimages</filename> command, verify the
+   result by checking the contents of the following directories:
+  </para>
+
+  <itemizedlist mark="bullet" spacing="normal">
+   <listitem>
+    <para>
+     <filename>/srv/tftpboot/image</filename>
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     <filename>/srv/tftpboot/boot</filename>
+    </para>
+   </listitem>
+  </itemizedlist>
+
+  <sect2 xml:id="scSynchronizedImagesDn">
+   <title>Controlling the List of Images Downloaded by &branchserv;</title>
+   <para>
+    The <systemitem>scLocation</systemitem> object can have a multivalue
+    <systemitem>scSynchronizedImagesDn</systemitem> attribute, which contains a
+    list of <systemitem>scPosImage</systemitem> or
+    <systemitem>scCashRegister</systemitem> DNs. The
+    <command>possyncimages</command> command downloads only the listed images
+    or the images used on listed terminals. If one
+    <systemitem>scPosImage</systemitem> object points to multiple image
+    versions, the command downloads all active ones. An empty list means that
+    all images have been downloaded. The list can be edited with
+    <command>posAdmin</command>.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="b48t0rs">
+  <title>Starting the <command>posleases2ldap</command> Core Script</title>
+
+  <para>
+   Start the core script (<command>posleases2ldap</command>) as a daemon
+   process on the &branchserv;. The core script is responsible for
+   registering any new &pos; terminals at the LDAP directory and
+   transferring image install notification data to the LDAP directory on the
+   &admserv;.
+  </para>
+
+  <itemizedlist mark="bullet" spacing="normal">
+   <listitem>
+    <para>
+     To verify that <command>posleases2ldap</command> is currently running,
+     execute the following command:
+    </para>
+    <para>
+     <command>rcposleases2ldap status</command>
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     To manually start the <filename>posleases2ldap</filename> service, execute
+     the following command:
+    </para>
+    <para>
+     <command>rcposleases2ldap start</command>
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     To ensure the &branchserv; automatically starts the core script at boot
+     time, execute the following command:
+    </para>
+    <para>
+     <command>insserv posleases2ldap</command>
+    </para>
+   </listitem>
+  </itemizedlist>
+ </sect1>
+ <sect1>
+  <title>Starting the <command>posASWatch</command> Service</title>
+
+  <para>
+   The <command>posASWatch</command> command checks if the Administration
+   server is available. It also checks the status of LDAP synchronization replication and
+   the <literal>posleases2ldap</literal> core service. The service is started
+   with the <command>rcposASWatch start</command> command and stopped with the
+   <command>rcposASWatch stop</command> command. To check the service status,
+   use the <command>rcposASWatch status</command> command.
+  </para>
+
+  <important>
+   <title>Start the Service Manually</title>
+   <para>
+    To ensure that local LDAP contains valid data (if the &branchserv; and
+    &admserv; are installed on different machines), you need to start the
+    service after the &branchserv; is restarted. The service is
+    <emphasis>NOT</emphasis> configured to start automatically by default. If
+    the service is not running and the network connection to the &admserv;
+    is down, the &branchserv; cannot function properly.
+   </para>
+   <para>
+    To ensure that the &branchserv; starts the <command>posASWatch</command>
+    command automatically at boot time, execute the <command>insserv
+    posASWatch</command> command.
+   </para>
+  </important>
+
+  <note>
+   <title>When the <command>posASWatch</command> Service is Not Required</title>
+   <para>
+    The <command>posASWatch</command> service is needed when the network
+    connection to the &admserv; is down. If the &admserv; is never used
+    or the &admserv; and the &branchserv; are combined on one machine,
+    this service is not required. When the machine hosting both servers is
+    configured and an attempt to start the service is made, the service will
+    exit with an error message.
+   </para>
+  </note>
+ </sect1>
+ <sect1 xml:id="branchserv_image">
+  <title>Installing a &branchserv; Using a Specialized Image</title>
+
+  <para>
+   Instead of installing &branchserv;s using the standard method (installing
+   &sls; with the &slepos; add-on and manual configuration of the &branchserv;),
+   it is possible to build a &branchserv; image using Image Creator or KIWI.
+  </para>
+
+  <para>
+   The image building process is the same as for terminal images. The image
+   boot defaults to "oemboot" with the "install_stick" option. The result is a
+   USB image, which offers installation to a hard disk during first boot. Other
+   boot methods can be configured according to the KIWI manual.
+  </para>
+
+  <para>
+   The provided image is suitable for the online installation, where the
+   terminal images and LDAP data are downloaded from the &admserv;. For
+   offline installation, the terminal images and OIF files must be added to the
+   &branchserv; image before building. The OIF files of one or more branches
+   must be added to the <filename>/usr/share/SLEPOS/OIF</filename> of the image
+   (<filename>/var/lib/SLEPOS/system/images/branchserver-3.4.0/root/usr/share/SLEPOS/OIF</filename>).
+   You can also copy the terminal images from &admserv;'s
+   <filename>/srv/SLEPOS</filename> to
+   <filename>/var/lib/SLEPOS/system/images/branchserver-3.4.0/root/srv/SLEPOS</filename>.
+  </para>
+
+  <para>
+   When the &branchserv; image boots, it is necessary to configure one
+   network interface card for connecting to the &admserv;, the other one can
+   remain unconfigured. Then it offers offline installation based on the
+   selected OIF file or online installation.
+  </para>
+ </sect1>
+</chapter>

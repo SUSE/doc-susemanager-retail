@@ -1,0 +1,1451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.custom">
+ <title>&slepos; Customization</title>
+ <info/>
+ <para></para>
+ <sect1 xml:id="cha.ids">
+  <title>Using Terminals with IDs</title>
+
+  <para>
+   Terminals can be registered not only under automatically generated names
+   (see <systemitem>scEnumerationMask</systemitem> and
+   <systemitem>scWorkstationBaseName</systemitem>
+<!--FIXME-->
+   ) but also under custom names. To enable this, a list of allowed IDs must be
+   specified for the respective <systemitem>scLocation</systemitem> object. The
+   <systemitem>scIdPool</systemitem> multivalue attribute is used to specify
+   the list of allowed IDs. The IDs are entered sequentially via
+   <command>posAdmin</command>:
+  </para>
+
+<screen>
+posAdmin --DN &dnbranch; --modify --multival
+--scLocation --scIdPool '=&gt;Id1'
+posAdmin --DN &dnbranch; --modify --multival
+--scLocation --scIdPool '=&gt;Id2'
+</screen>
+
+  <para>
+   Using <command>posAdmin</command> only, modifications to
+   <systemitem>scIdPool</systemitem> can be cumbersome, especially when a large
+   number of IDs is present. It is therefore preferable to use the
+   <command>pos</command> script and its <command>id-list</command>,
+   <command>id-add</command> and <command>id-delete</command> subcomands (for
+   more information, see <xref linkend="cha.pospl"/>.
+  </para>
+
+  <para>
+   Using <command>posAdmin</command> only, modifications of
+   <systemitem>scIdPool</systemitem> can be cumbersome, especially when a large
+   number of IDs is present. This can be alleviated by taking advantage of
+   <systemitem>scIdPool</systemitem> being a multivalued attribute.
+  </para>
+
+  <para>
+   When <systemitem>scIdPool</systemitem> is defined, the
+   <command>posleases2ldap</command> script creates the
+   <filename>/srv/tftpboot/KIWI/idlist</filename> file for terminals to allow
+   ID selection from the pool of values.
+  </para>
+
+  <para>
+   When the ID is selected for a given terminal, it is written under the
+   respective <systemitem>scWorkstation</systemitem> object into the
+   <systemitem>scId</systemitem> attribute.
+  </para>
+ </sect1>
+ <sect1 xml:id="cha.roles">
+  <title>Using Terminals with Roles</title>
+
+  <para>
+<!--FIXME intro, co jsou role-->
+  </para>
+
+  <para>
+   To set up the LDAP database for a role-based approach, the following is
+   necessary:
+  </para>
+
+  <note>
+   <title>Creating Necessary Objects with <command>pos</command></title>
+   <para>
+    Necessary LDAP objects can be created with <command>posAdmin</command>. You
+    can also use <command>pos</command>, which is easier to use but less
+    general. For more information about <command>pos</command>, see
+    <xref linkend="cha.pospl"/>.
+   </para>
+  </note>
+
+  <sect2 xml:id="roles.addscrole">
+   <title>Creating the <systemitem>scRole</systemitem> Object</title>
+   <para>
+    Create the <systemitem>scRole</systemitem> object with the following
+    attributes:
+   </para>
+   <table>
+    <title>Attributes for scRole Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Role
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>cn</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         cn name.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>scRoleName</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Name of the role displayed in the list on terminal.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>scRoleDescription</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         May
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Description of the role displayed in the list on terminal.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>scAllowedHwTypes</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         May
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Multi-value parameter, marks role to be used only with given hardware
+         types.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+   <para>
+    The <systemitem>scRole</systemitem> object must be located under
+    <systemitem>scRefObjectContainer</systemitem>, which can be located either
+    under the <systemitem>organization</systemitem> or
+    <systemitem>scLocation</systemitem> object. If the role object is located
+    under <systemitem>scLocation</systemitem>, the role is considered local. If
+    the role object is located above <systemitem>scLocation</systemitem>, it is
+    global.
+   </para>
+   <para>
+    Assuming the <systemitem>scLocation</systemitem> DN is
+    <literal>&dnbranch;</literal>, the command to add
+    <systemitem>scRefObjectContainer</systemitem>
+    <literal>rolecontainerA</literal> under the location is:
+    <remark>mdejmek: sounds very weird; could you explain this sentence?</remark>
+   </para>
+<screen>posAdmin --base &dnbranch; --add --scRefObjectContainer --cn <replaceable>rolecontainerA</replaceable></screen>
+   <para>
+    To add a role <literal>roletest</literal>, use:
+   </para>
+<screen>posAdmin --base cn=<replaceable>rolecontainerA</replaceable>,&dnbranch; --add --scRole --cn <replaceable>roletest</replaceable> --scRoleName <replaceable>'Testing Role'</replaceable> --scRoleDescription <replaceable>'Testing description'</replaceable></screen>
+  </sect2>
+
+  <sect2>
+   <title>Adding Related Objects Under <systemitem>scRole</systemitem></title>
+   <para>
+    In the role-based approach, the role object contains
+    <systemitem>scCashRegister</systemitem> objects, which are used in the same
+    sense as the <systemitem>scCashRegister</systemitem> objects under global
+    container (<literal>cn=global,&dnorg;</literal> in our example) in the
+    non-role-based (legacy) mode.
+   </para>
+   <para>
+    When a role is selected in a terminal, <command>posleases2ldap</command>
+    tries to find the role in the LDAP database, finds the appropriate
+    <systemitem>scCashRegister</systemitem> object (with
+    <systemitem>scCashRegisterName</systemitem> equal to the
+    <literal>HWTYPE</literal> of the terminal or default) and uses it to find
+    the <systemitem>scPosImage</systemitem> and other releavant data. The
+    <systemitem>scCashRegister</systemitem> under
+    <systemitem>scRole</systemitem> needs to contain an
+    <systemitem>scDevice</systemitem> object as in the legacy case.
+   </para>
+   <para>
+    <systemitem>scRole</systemitem> can also contain configuration objects, the
+    <systemitem>scConfigFileTemplate</systemitem>,
+    <systemitem>scConfigFileSyncTemplate</systemitem> and
+    <systemitem>scPxeFileTemplate</systemitem>. These configuration objects can
+    be located under <systemitem>scPosImage</systemitem>,
+    <systemitem>scRole</systemitem>, <systemitem>scCashRegister</systemitem>,
+    <systemitem>scWorkstation</systemitem> objects, and linked by the
+    <systemitem>scConfigFileDn</systemitem> attribute of the
+    <systemitem>scWorkstation</systemitem> object with priority increasing from
+    the former to the latter.
+<!--FIXME-->
+   </para>
+   <para>
+    For terminals that should use a role, put a specific or a default
+    <systemitem>scCashRegister</systemitem> under the
+    <systemitem>scRole</systemitem> as in the legacy mode (see
+    <xref linkend="sec.slepos_term.ldap.cashreg"/>.
+   </para>
+  </sect2>
+
+  <sect2 xml:id="enabling_roles">
+   <title>Enabling Roles</title>
+   <para>
+    To enable roles for a given <systemitem>scLocation</systemitem>, set
+    appropriate values in the <systemitem>scAllowRoles</systemitem> and
+    <systemitem>scAllowGlobalRoles</systemitem> attributes of the relevant
+    <systemitem>scLocation</systemitem> object. The attributes have the
+    following effects:
+   </para>
+   <table>
+    <title>Effects of <systemitem>scAllowRoles</systemitem> and <systemitem>scAllowGlobalRoles</systemitem> Attributes</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         <systemitem>scAllowRoles</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         <systemitem>scAllowGlobalRoles</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Effect
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>TRUE</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         <literal>TRUE</literal>
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Role-based mode, all roles enabled.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>TRUE</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         <literal>FALSE</literal>
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Role-based mode, only roles under <systemitem>scLocation</systemitem>
+         are used.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>FALSE</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         <literal>TRUE</literal>
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Non-role-based legacy mode (SLEPOS10, NLPO9 like).
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>FALSE</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         <literal>FALSE</literal>
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Non-role-based legacy mode (SLEPOS10, NLPO9 like).
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>
+   <para>
+    To set the <systemitem>scAllowRoles</systemitem> attribute, use:
+   </para>
+<screen>posAdmin --DN &dnbranch; --modify --scLocation --scAllowRoles <replaceable>FALSE</replaceable></screen>
+   <para>
+    Proceed accordingly for other cases.
+   </para>
+<!--FIXME-->
+   <para>
+    If roles are enabled, relevant role list files are created in the
+    <filename>/srv/tftpboot/KIWI</filename> directory. The booting terminal
+    uses these files to show the list of available roles. Then the booting
+    terminal reports the selected role back to the &branchserv; in the
+    <filename>hwtype.<replaceable>MAC</replaceable>.<replaceable>hash</replaceable></filename>
+    file. The file is processed by the <command>posleases2ldap</command>
+    command to create the
+    <filename>/srv/tftpboot/KIWI/config.<replaceable>MAC</replaceable></filename>
+    according to the data specified in the <systemitem>scRole</systemitem> and
+    update or create a new <systemitem>scWorkstation</systemitem> registration
+    in the LDAP.
+   </para>
+   <para>
+    The terminal then reads the
+    <filename>config.<replaceable>MAC</replaceable></filename> file and
+    continues the booting sequence accordingly.
+   </para>
+   <para>
+    Effectively, each <systemitem>scRole</systemitem> object behaves as a whole
+    LDAP in the previous legacy mode, enabling different behavior for the same
+    terminal type according to the role selected.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="cha.slepos_api">
+  <title>API Description</title>
+
+  <para>
+   The API allows third-party terminal-based applications to perform operations
+   on the &branchserv; or &admserv;, such as getting lists of available
+   roles and IDs or changing these.
+  </para>
+
+  <para>
+   All communication between the client and the server is performed via the
+   TFTP protocol. The terminal is identified by its MAC address to get
+   information about the current terminal configuration. The client downloads
+   the <filename>KIWI/&confmac;</filename> file.
+  </para>
+
+  <sect2>
+   <title>The <filename>KIWI/&confmac;</filename> file</title>
+   <para>
+    The <filename>KIWI/&confmac;</filename> file consists of
+    <literal><replaceable>VARIABLE</replaceable>=<replaceable>value</replaceable></literal>
+    pairs. It should contain at least these variables:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      <systemitem>HWTYPE</systemitem>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <systemitem>POS_ID</systemitem>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <systemitem>POS_ROLE</systemitem>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <systemitem>IMAGE</systemitem>
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2>
+   <title>Getting Lists of Available Roles and IDs</title>
+   <para>
+    To get a list of available IDs, the <filename>KIWI/idlist</filename> file
+    should be read. This file has a one ID per line format.
+   </para>
+   <para>
+    To get the list of available roles, the following files should be read in
+    the presented order. The file found first should be used:
+   </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para>
+      <filename>KIWI/rolelist.<replaceable>MAC</replaceable></filename>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>KIWI/rolelist.<replaceable>encoded
+      hwtype</replaceable></filename>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>KIWI/rolelist</filename>
+     </para>
+    </listitem>
+   </orderedlist>
+   <para>
+    The encoded hwtype is the original hwtype string with all characters not
+    matching the regular expression <literal>[-_A-Za-z0-9]</literal> changed to
+    their hex values in the <literal>%<replaceable>xx</replaceable></literal>
+    format. For example <literal>a b</literal> is encoded as
+    <literal>a%20b</literal>.
+   </para>
+   <para>
+    The format of the list of available roles is as follows:
+   </para>
+<screen><replaceable>dn</replaceable>|<replaceable>scRoleName</replaceable>|<replaceable>scRoleDescription</replaceable></screen>
+  </sect2>
+
+  <sect2 xml:id="sec.api.rolechange">
+   <title>Changing ID and/or Role</title>
+   <procedure>
+    <step>
+     <para>
+      The client uploads the
+      <filename>upload/hwtype.<replaceable>MAC</replaceable>.<replaceable>HASH</replaceable></filename>
+      file. <replaceable>HASH</replaceable> is the MD5 checksum of the file
+      content. The file consists of
+      <literal><replaceable>NAME</replaceable>=<replaceable>value</replaceable></literal>
+      pairs. It should use only values where a change is requested. Supported
+      names are:
+     </para>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para>
+        <systemitem>POS_ID</systemitem>
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        <systemitem>POS_ROLE</systemitem>
+       </para>
+      </listitem>
+     </itemizedlist>
+     <note>
+      <title>Clearing the ID</title>
+      <para>
+       There is a difference between <literal>POS_ID=</literal> (which clears
+       the ID) and missing <systemitem>POS_ID</systemitem> (which keeps it
+       unchanged).
+      </para>
+     </note>
+    </step>
+    <step>
+     <para>
+      The client waits until the uploaded file disappears, which the client
+      checks by trying to download the file.
+     </para>
+    </step>
+    <step>
+     <para>
+      The client reads
+      <filename>KIWI/config.<replaceable>MAC</replaceable></filename>.
+      <literal>POS_HWTYPE_ERR_HASH == <replaceable>HASH</replaceable></literal>
+      means that an arror occured. The <literal>POS_ERR</literal> variable
+      contains information about the error. If there are no errors and the
+      <literal>POS_ID</literal> variable contains the assigned ID,
+      <literal>POS_ROLE</literal> contains the assigned role and
+      <literal>IMAGE</literal> is not empty, the change has been successful.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+ </sect1>
+ <sect1>
+  <title>Using Role Related Hooks</title>
+
+  <para>
+   When booting an image for the first time, the &kiwi; boot code runs,
+   where users can hook in custom shell script code in several places to extend
+   the boot workflow according to their needs. The following Role-related hooks
+   can be used for modifying the boot process of the terminal (for example to
+   replace the role/ID selection dialog).
+   <remark>emap: I would expect a list of hooks here.</remark>
+  </para>
+
+  <para>
+   In general, a hook that only sets the variables to fixed values can be
+   replaced by putting the variables in the kernel command line.
+  </para>
+
+  <note>
+   <title>Hooks Used by Netboot Images</title>
+   <para>
+    Certain &kiwi; hooks are used by &slepos; netboot images therefore they
+    cannot be used for customization. The following hooks are used by netboot:
+   </para>
+<screen>
+init.sh
+postLoadConfiguration.sh
+postdownload.sh
+postpartition.sh
+preException.sh
+preLoadConfiguration.sh
+preNetworkRelease.sh
+preswap.sh
+   </screen>
+  </note>
+
+  <sect2>
+   <title><filename>hooks/roles.sh</filename></title>
+   <para>
+    This hook is called after downloading the role configuration. It can either
+    take over the boot process completely (use the roles API and reboot at the
+    end) or set variables that affect the boot process.
+   </para>
+   <para>
+    It takes the following inputs:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term><option>$IDLIST</option>
+     </term>
+     <listitem>
+      <para>
+       Path to a locally stored Id list file (the file may be empty or
+       missing).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>$ROLELIST</option>
+     </term>
+     <listitem>
+      <para>
+       Path to a locally stored role list file (the file may be empty).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>$POS_ROLLBACK</option>
+     </term>
+     <listitem>
+      <para>
+       Path to a locally stored roll back file (the file may be empty).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>$CONFIG</option>
+     </term>
+     <listitem>
+      <para>
+       Path to locally stored configuration file (the file may be empty).
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <para>
+    The hook can overwrite the <filename>$CONFIG</filename> file with a new
+    configuration. It can also set the following variables:
+   </para>
+   <variablelist>
+    <varlistentry>
+     <term><option>POS_DISABLE_BOOT_HOTKEY</option>
+     </term>
+     <listitem>
+      <para>
+       Disables the <literal>Press C to change configuration</literal> message
+       if not empty.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>POS_FORCE_ROLE_SELECTION</option>
+     </term>
+     <listitem>
+      <para>
+       If not empty, forces the role selection and new registration (instead of
+       using the role from <filename>$CONFIG</filename>).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>POS_SELECTED_ID</option>
+     </term>
+     <listitem>
+      <para>
+       Selected ID.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>POS_SELECTED_ID_TIMEOUT</option>
+     </term>
+     <listitem>
+      <para>
+       Non-empty value indicates that the ID selection has been timed out and
+       the value should be selected by the server.
+       <remark>emap: Should this rather read: ...indicates when the ID selection will time out...? Same for the ROLE_TIMEOUT below.</remark>
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>POS_SELECTED_ROLE</option>
+     </term>
+     <listitem>
+      <para>
+       Selected role DN.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>POS_SELECTED_ROLE_TIMEOUT</option>
+     </term>
+     <listitem>
+      <para>
+       Non-empty value indicates that the role selection has been timed out and
+       the value should be selected by the server.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term><option>POS_DISABLE_ROLE_DIALOG</option>
+     </term>
+     <listitem>
+      <para>
+       If non-empty, do not show the role dialog. This should be selected if
+       the hook itself sets the values of the <option>POS_SELECTED_*</option>
+       variables.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+
+  <sect2>
+   <title><filename>hooks/selectRole.sh</filename></title>
+   <para>
+    This hook can replace the role selection dialog. It is only called when the
+    machine is newly registered or when the role selection was forced. It is
+    not called during normal boot with existing
+    <filename>&confmac;</filename>. It can show an alternative role
+    selection dialog and/or set the variables <option>POS_SELECTED_*</option>
+    and <option>POS_DISABLE_ROLE_DIALOG</option>, which are described above.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="cha.slepos_sec">
+  <title>Securing Your Setup</title>
+
+  <para>
+   A &sleposreg; setup includes various components that should be secured
+   against intentional and unintentional tampering with the data and against
+   software misbehavior. Securing your setup involves several different
+   aspects:
+  </para>
+
+  <variablelist>
+   <varlistentry>
+    <term>Physical Server Security</term>
+    <listitem>
+     <para>
+      First and foremost, every server component of the &slepos; setup must
+      be secured against unauthorized access. Physically isolating the servers
+      from other machines is one aspect of providing physical security.
+      For details, refer to <xref linkend="sec.slepos_sec.phys"/>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Network Security</term>
+    <listitem>
+     <para>
+      All servers connected with each other over potentially insecure networks,
+      for example, &admserv; and &branchserv;, need to be secured against
+      unauthorized access via the networks they are connected to. For details,
+      refer to <xref linkend="sec.slepos_sec.nw"/>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Data Security</term>
+    <listitem>
+     <para>
+      Both the &admserv; and the &branchserv;s contain vital data that
+      need to be protected to maintain a fully functional and secure setup. The
+      most important part is securing the LDAP directory on the &admserv;,
+      which is used to maintain the system structure, configuration and
+      deployment method for all &branchserv;s and &pos; terminals, and
+      other important data. For details, refer to
+      <xref linkend="sec.slepos_sec.data"/>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>Application Security</term>
+    <listitem>
+     <para>
+      When physical, network and data security are provided, tighten the
+      security of your setup even further by using &aa;. &aa; profiles
+      are used to confine applications and keep them from performing
+      unnecessary file or directory accesses and this helps to make sure that
+      every profiled application only does what it was designed to do and
+      cannot become a security risk. For more details on &aa; usage on
+      &slepos;, refer to <xref linkend="sec.slepos_sec.apps"/>.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+
+  <sect2 xml:id="sec.slepos_sec.phys">
+   <title>Physical Server Security</title>
+   <para>
+    Your instance of &slepos; is set up in a highly secure corporate
+    environment using third-party security solutions and various other security
+    measures, but you still need to make sure that nobody gains unauthorized
+    physical access to your severs and can log in to tamper with your setups.
+   </para>
+   <para>
+    The following list provides a few basic security-related things you should
+    bear in mind when creating your setup:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      Keep your severs in a separate server room that is only accessible to a
+      few authorized people gaining access only via key cards, key codes, PIN
+      numbers, finger print authentication, etc.
+      <remark>emap: Moved line from repetitive para up here and I deleted "or ideally just you" since it's not realistic to give only one person access a server room. Holidays, sickness...</remark>
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Use BIOS and boot loader passwords to prevent anyone from manipulating
+      the boot process of your servers.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2 xml:id="sec.slepos_sec.nw">
+   <title>Network Security</title>
+   <para>
+    Even if your &slepos; network is secured against the Internet (using
+    third-party security solutions and firewalls), secure your severs against
+    unauthorized access from inside:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      All servers should only allow access from the &rootuser; account.
+     </para>
+    </listitem>
+    <listitem>
+      <para>
+	Make sure to enable a strong encryption method like WPA2 when a Wi-Fi connection is used for communication between the terminals and the branch servers or between the servers in the SLEPOS infrastructure.
+      </para>
+    </listitem>
+    <listitem>
+     <para>
+      Create one single user account via &yast;, namely the &rootuser;
+      account.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Do not export or import any file systems on these servers, for example,
+      do not allow NFS or Samba shares on your servers.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    &slepos; provides some security against data manipulation via the
+    network:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      LDAP-related network traffic can be configured via secure SSL/TLS
+      channels.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Image data is exchanged between servers via rsync and md5sums are
+      calculated and checked to provide data integrity.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2 xml:id="sec.slepos_sec.data">
+   <title>Data Security</title>
+   <para>
+    The most vital data of your &slepos; setup is stored in the LDAP
+    directory on the &admserv;. Whoever gains control over this setup data
+    can manipulate the setup of any server or terminal in your setup.
+    Therefore, limit the list of users with access to the LDAP directory to the
+    bare minimum and make sure they obtain the least possible privileges only.
+    Use LDAP Access Control Lists (ACL) as part of the LDAP server
+    configuration to restrict access to your LDAP data.
+   </para>
+   <para>
+    The configuration of your OpenLDAP server is located under
+    <filename>/etc/openldap/slapd.conf</filename>. For more information on how
+    this configuration file is generated and maintained, refer to
+    <xref linkend="ad_bsx2uir" xrefstyle="SectTitleOnPage"/>.
+   </para>
+   <para>
+    ACLs allow you to specify separate access controls to different parts of
+    the configuration. You can create different ACLs for user password data,
+    server configuration data, and configuration of different locations, and so
+    forth.
+   </para>
+   <para>
+    Before creating ACLs, perform an analysis of users and privileges needed to
+    run your configuration. These may depend on the type of setup you have
+    chosen and may vary. As an example, let us assume you run the following
+    setup:
+   </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      A central &admserv; managed by the global administrator role.
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      Independent &branchserv;s managed by local administrators.
+     </para>
+    </listitem>
+   </itemizedlist>
+   <para>
+    Thus, you need to make sure that both, your user configuration on the
+    &admserv; and the ACLs in the LDAP server configuration reflect these
+    roles and provide suitable privileges to these user roles without providing
+    too many privileges.
+   </para>
+   <para>
+    The following example includes creating effective ACLs and a user setup as
+    outlined above. Modify both the ACLs and the user configuration to match
+    your own setup:
+   </para>
+   <procedure>
+    <step>
+     <para>
+      Create ACLs similar to the following and make sure you replace the
+      example entries by the ones matching your setup. Ensure the more general
+      rules are specified <emphasis>after</emphasis> the more specific ones.
+      The first matching rule is evaluated and the following rules are ignored:
+     </para>
+<screen>
+access to dn.base="" by * read <co xml:id="co.sec.acl0"/>
+access to * attrs=userPassword 
+    by anonymous auth 
+    by self write <co xml:id="co.sec.acl1"/>
+access to dn.regex="^.*(cn=.*,ou=.*,o=myorg,c=us)$"
+    by dn.regex="^.*,$1$" write
+    by users read <co xml:id="co.sec.acl2"/> 
+access to *
+    by self write 
+    by users read <co xml:id="co.sec.acl3"/>
+  </screen>
+     <calloutlist>
+      <callout arearefs="co.sec.acl0">
+       <para>
+        Allow read access to the Root-DSE.
+       </para>
+      </callout>
+      <callout arearefs="co.sec.acl1">
+       <para>
+        Allow unauthenticated clients to use the
+        <literal>userPassword</literal> attribute for authentication.
+        Authenticated clients (users) are allowed to change their own password.
+       </para>
+      </callout>
+      <callout arearefs="co.sec.acl2">
+       <para>
+        Allow access to any DN matching the regular expression. Using the
+        <literal>$</literal>, you limit the matches to those strings that
+        contain nothing beyond the last character. All DNs matching the regular
+        expression are granted write access, and authenticated users may read
+        the objects, but not write to them.
+       </para>
+      </callout>
+      <callout arearefs="co.sec.acl3">
+       <para>
+        Allow access to anything. Entries themselves may write to their
+        entries, authenticated users may read them, but not modify the entries.
+       </para>
+      </callout>
+     </calloutlist>
+    </step>
+    <step>
+     <para>
+      For each location, create a location user. For example, create a user for
+      each branch location. This user is then granted (write) access to all
+      LDAP data concerning his location, but cannot change the data of the
+      other locations.
+     </para>
+<screen>
+posAdmin --base &dnbranch; --add --scPOSUser --cn <replaceable>mybranchuser</replaceable> --userPassword <replaceable>"locationPassword"</replaceable> 
+</screen>
+    </step>
+    <step>
+     <para>
+      Now the <command>--user</command> option can be set to the following in
+      all <command>posAdmin</command> commands concerning the
+      <literal>&dnbranch;</literal> location:
+     </para>
+<screen>--user cn=<replaceable>mybranchuser</replaceable>,&dnbranch;
+    </screen>
+     <para>
+      The default LDAP user can now be replaced by this user, especially for
+      the <command>posInitBranchserver</command> command.
+     </para>
+<screen>
+Enter the DN of the LDAP user for administration tasks [default: cn=admin,&dnorg;]
+</screen>
+<screen>cn=<replaceable>mybranchuser</replaceable>,&dnbranch;
+    </screen>
+    </step>
+   </procedure>
+   <tip>
+    <title>For More Information</title>
+    <para>
+     For more details on the syntax of the <filename>slapd.conf</filename>
+     configuration file and the ACLs, refer to the manual pages of
+     <command>slapd.conf(5)</command>, <command>slapd.access(5)</command>, and
+     <command>slapacl(8)</command>. The <command>slapacl</command> command
+     allows you to verify that your ACLs work as planned.
+    </para>
+   </tip>
+  </sect2>
+
+  <sect2 xml:id="sec.slepos_sec.apps">
+   <title>Application Security</title>
+   <para>
+    Any piece of software used in your setup probably contains some inherent
+    security vulnerabilities, which mostly slip by unnoticed as the respective
+    functions may not be used routinely. To protect your setup from these
+    vulnerabilities, &sls; and &slepos; come with the &aa; protection
+    framework. &aa; provides profiles for some of the most important
+    applications that specify which files these programs are allowed to read,
+    write and execute. By using these profiles, you ensure that a program does
+    what it is supposed to do and nothing else.
+   </para>
+   <para>
+    Use &aa; to protect each of your servers. If you need additional
+    profiles, use the &yast; &aa; tools to generate new profiles. To
+    learn more about &aa;, refer to the &aa; documentation included in
+    the &secguide; available at
+    <link xlink:href="http://www.suse.com/documentation/sles11/"/>.
+   </para>
+  </sect2>
+
+  <sect2 xml:id="encrypted_partitions">
+   <title>Using Encrypted Partitions on Terminals</title>
+   <para>
+    Image passwords can be defined for both system partition (partition
+    containing system image) and data partition. Since the former is image- and
+    version-related and the latter is data partition-related, the location
+    differs in LDAP and setup.
+   </para>
+   <para>
+    There are two possible configurations, with passwords present on
+    &branchserv; only and with passwords stored also on a USB flash drive.
+   </para>
+   <para>
+    If passwords are stored on the &branchserv; only, the configuration is
+    more secure, but network connection to the &branchserv; is needed to
+    mount the encrypted partitions and the service partition cannot be
+    encrypted. For the best security, do not use the service partition and
+    related features (such as Wi-Fi). If the service partition is used, kernel,
+    initrd, Wi-Fi credentials and other files stored on the service partition
+    are unencrypted.
+   </para>
+   <para>
+    If the passwords are also stored on a USB flash drive, the setup is less secure,
+    manual setup is needed, but booting without network access to the
+    &branchserv; is possible. For more information, see
+    <xref linkend="usbpasswd"/>
+   </para>
+   <para>
+    To enable system partition encryption (to use an encrypted image), add a
+    version of the respective <systemitem>scPosImage</systemitem> via the
+    <systemitem>scImageVersion</systemitem> object, with the following
+    attributes: <option>scVersion=<replaceable>X.Y.Z</replaceable>,
+    scDisabled=FALSE, scPassword=<replaceable>password</replaceable></option>
+   </para>
+   <para>
+    It is not possible to enter a password via the
+    <systemitem>scPosImageVersion</systemitem> attribute of the
+    <systemitem>scPosImage</systemitem> object. Password protected image
+    versions must be added via <systemitem>scImageVersion</systemitem> objects.
+    Image versions defined via <systemitem>scPosImageVersion</systemitem> and
+    <systemitem>scPosVersion</systemitem> are used together. In case of
+    conflict, the <systemitem>scPosVersion</systemitem> object takes
+    precedence.
+   </para>
+   <para>
+    For example:
+   </para>
+<screen>
+ posAdmin --base cn=<replaceable>minimal</replaceable>,cn=<replaceable>default</replaceable>,cn=<replaceable>global</replaceable>,&dnorg; --add --scImageVersion --scDisabled FALSE --scVersion <replaceable>2.1.5</replaceable> --scPassword <replaceable>'secret'</replaceable>
+</screen>
+   <para>
+    For more information about the <systemitem>scImageVersion</systemitem>
+    object, see <xref linkend="ad_scimageversion"/>.
+   </para>
+
+   <note>
+     <title>Encrypting the System Partition</title>
+     <para>
+      To enable encryption for the system partition, you must use an encrypted client image. It can be created in KIWI by specifying the <systemitem>luks="<replaceable>PASSWORD</replaceable>"</systemitem> attribute in the <systemitem>config.xml</systemitem> configuration file. For example:</para>
+<screen>&lt;type checkprebuilt="true" boot="netboot/suse-SLES12" fsnocheck="true"
+filesystem="ext3" compressed="true" image="pxe" luks="linux"&gt;
+</screen>
+     </note>
+     
+   <para>
+    To enable encryption for a data partition, define the partition via the
+    <systemitem>scPartition</systemitem> object placed under the appropriate
+    <systemitem>scHarddisk</systemitem> object with the following attributes:
+    <option>scPartNum=0, scPartType=83, scPartMount='/',
+    scPassword=<replaceable>password</replaceable></option>. For an explanation
+    of the <systemitem>scPartition</systemitem> parameters, see
+    <xref linkend="ad_scpartition"/>.
+   </para>
+   <para>
+    It is not possible to enter a partition password using the
+    <systemitem>scPartitionsTable</systemitem> attribute, and these two
+    approaches are mutually exclusive. The partition table defined via
+    <systemitem>scPartition</systemitem> object has higher priority than the
+    definition via <systemitem>scPartitionsTable</systemitem>. If an
+    <systemitem>scPartition</systemitem> object is present,
+    <systemitem>scPartitionsTable</systemitem> is ignored.
+   </para>
+   <para>
+    A password for the root (<literal>scPartMount='/'</literal>) partition
+    supplied via this mechanism is ignored since for the root partition the
+    image password is used.
+   </para>
+   <para>
+    For example:
+   </para>
+<screen>
+posAdmin --base cn=<replaceable>sda</replaceable>,cn=<replaceable>cshr4152</replaceable>,cn=<replaceable>global</replaceable>,&dnorg; --add --scPartition --scPartNum <replaceable>0</replaceable> --scPartSize <replaceable>2000</replaceable> --scPartMount <replaceable>'x'</replaceable> --scPartType <replaceable>82</replaceable> --description <replaceable>'swap'</replaceable>
+</screen>
+<screen>
+posAdmin --base cn=<replaceable>sda</replaceable>,cn=<replaceable>cshr4152</replaceable>,cn=<replaceable>global</replaceable>,&dnorg; --add --scPartition --scPartNum <replaceable>1</replaceable> --scPartSize <replaceable>4000</replaceable> --scPartMount <replaceable>'/'</replaceable> --scPartType <replaceable>83</replaceable> --description <replaceable>'root partition'</replaceable>
+</screen>
+<screen>
+posAdmin --base cn=<replaceable>sda</replaceable>,cn=<replaceable>cshr4152</replaceable>,cn=<replaceable>global</replaceable>,&dnorg; --add --scPartition --scPartNum <replaceable>3</replaceable> --scPartSize <replaceable>12000</replaceable> --scPartMount <replaceable>'/data'</replaceable> --scPassword <replaceable>'secret'</replaceable> --scPartType <replaceable>83</replaceable> --description <replaceable>'data'</replaceable>
+</screen>
+   <para>
+    For more information about the <systemitem>scPartition</systemitem> object,
+    see <xref linkend="ad_scpartition"/>.
+   </para>
+   <note>
+<!--fix for bug #831181-->
+    <title>Using an Un-Encrypted Image Again</title>
+    <para>
+     If you deploy an encrypted image to the terminal and then change the
+     default image to a non-encrypted image and reboot the terminal, you will
+     be asked for the luks password. Select <literal>No</literal> and the
+     dialog disappears.
+    </para>
+   </note>
+   <sect3 xml:id="usbpasswd">
+    <title>Storing Passwords on a USB Flash Drive</title>
+    <para>
+     It is recommended to create a USB flash drive to enable local boot with
+     encrypted data partition without connection to the &branchserv;. The
+     disk should be kept in a secure place. To create the disk, follow these
+     steps:
+    </para>
+    <procedure>
+     <step>
+      <para>
+       Insert a USB flash drive formatted with Ext3 when the system is running.
+      </para>
+     </step>
+     <step>
+      <para>
+       Create a fstab entry for it:
+      </para>
+<screen>
+mkdir /usb_key
+echo "/dev/sdb1 /usb_key ext3 defaults,nofail 1 2" &gt;&gt; /etc/fstab
+  </screen>
+     </step>
+     <step>
+      <para>
+       Mount it:
+      </para>
+<screen>
+mount /usb_key
+  </screen>
+     </step>
+     <step>
+      <para>
+       Create a keyfile:
+      </para>
+<screen>
+dd if=/dev/random of=/usb_key/keyfile count=1 bs=512
+  </screen>
+     </step>
+     <step>
+      <para>
+       Add the keyfile to the second slot of the luks container:
+      </para>
+<screen>
+cryptsetup luksAddKey /dev/sda3 /usb_key/keyfile
+  </screen>
+      <para>
+       And enter the first slot password (found in LDAP or
+       <filename>config.mac</filename>). <filename>/dev/sda3</filename> is the
+       encrypted data partition.
+      </para>
+     </step>
+     <step>
+      <para>
+       Add the crypttab entry:
+      </para>
+<screen>
+echo "luks_sda3 /dev/sda3 /usb_key/keyfile luks" &gt;/etc/crypttab
+  </screen>
+     </step>
+    </procedure>
+    <para>
+     After the local boot, the encrypted partition will be mounted
+     automatically. For details, see <command>man crypttab</command> and
+     <command>fstab</command>.
+    </para>
+   </sect3>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="terminal_kernel_options">
+  <title>Specifying Kernel Command Line Options for Selected Terminals</title>
+
+  <para>
+   To specify kernel command line options for selected terminals, the
+   <systemitem>scPxeFileTemplate</systemitem> object must be added to the LDAP
+   database. This object can be placed in the same position as
+   <systemitem>scConfigFileTemplate</systemitem> and
+   <systemitem>scConfigFileSyncTemplate</systemitem> (typically under the
+   <systemitem>scCashRegister</systemitem> object).
+  </para>
+
+  <para>
+   For example, if the test terminal is registered via
+   <systemitem>scCashRegister</systemitem>
+   <literal>cn=cashreg1,cn=global,&dnorg;</literal>, you can create
+   <systemitem>scPxeFileTemplate</systemitem> <literal>pxetest</literal> under
+   this <systemitem>scCashRegister</systemitem> with the command:
+  </para>
+
+<screen>posAdmin
+--base cn=<replaceable>cashreg1</replaceable>,cn=global,&dnorg;
+--add --scPxeFileTemplate --cn <replaceable>pxetest</replaceable> --scMust <replaceable>TRUE</replaceable>
+--scKernelParameters <replaceable>'vga=785, RELOAD_IMAGE=yes'</replaceable></screen>
+
+  <para>
+   After <command>posleases2ldap</command> is run and the machine registered,
+   there should be a specific PXE file in the
+   <filename>/srv/tftpboot/boot/pxelinux.cfg</filename> directory. The name of
+   the file is derived from the MAC address of the machine, prefixed with
+   <literal>01</literal> and with digit pairs separated with
+   <literal>-</literal>, for example:
+   <filename>01-00-11-25-a7-d6-1e</filename>.
+  </para>
+
+  <para>
+   The file should contain the line <literal>'append <replaceable>default
+   parameters</replaceable>, vga=785, RELOAD_IMAGE=yes'</literal>, where
+   <replaceable>default parameters</replaceable> are the same parameters as
+   those in the default PXE file in the same directory as well as any other
+   kernel parameters specified in other
+   <systemitem>scPxeFileTemplate</systemitem> objects or created via a specific
+   kernel or initrd in the <systemitem>scDistributionContainer</systemitem>.
+  </para>
+
+  <para>
+   The order of parameters is determined by the objects under which they are
+   specified. Linux and initrd are specified first, then parameters from
+   <systemitem>scPxeFileTemplate</systemitem> objects located under
+   <systemitem>scPosImage</systemitem>, <systemitem>scRole</systemitem>,
+   <systemitem>scCashRegister</systemitem>,
+   <systemitem>scConfigFileDn</systemitem> attributes of
+   <systemitem>scWorkstation</systemitem> and under
+   <systemitem>scWorkstation</systemitem> itself.
+  </para>
+
+  <sect2 xml:id="defaultkernelpar">
+   <title>Specifying Kernel Parameters for All Terminals</title>
+   <para>
+    To specify kernel paramters for all terminals on all branches at once,
+    place the <systemitem>scPxeFileTemplate</systemitem> under the default
+    distribution container (the
+    <systemitem>scDistributionContainer</systemitem> with
+    <literal>cn=default</literal>). To specify kernel parameters for all
+    terminals on a single branch, place the
+    <systemitem>scPxeFileTemplate</systemitem> under
+    <systemitem>scLocation</systemitem> or under the TFTP service object of
+    this branch.
+   </para>
+   <para>
+    Such PXE objects will then be considered default and will be written into
+    <filename>/srv/tftpboot/boot/pxelinux.cfg/default</filename> and used by
+    all terminals on the given &branchserv;. ata
+    <remark>emap: Should this read Data?</remark>
+    in this file are regenerated during each main cycle of
+    <command>posleases2ldap</command> and during the &branchserv;
+    initialization by <command>posInitBranchserver</command>.
+   </para>
+   <para>
+    &slepos; uses some standard default PXE parameters (from the
+    <systemitem>TFTP_DEFAULT_KERNEL_PARAMETERS</systemitem> line in the default
+    configuration file), which are appended under
+    <systemitem>scLocation</systemitem> during the initialization of the
+    &branchserv; by <command>posInitBranchserver</command> as an
+    <systemitem>scPxeFileTemplate</systemitem> object named
+    <literal>posdefaults</literal>.
+   </para>
+   <para>
+    If a terminal also uses a specific PXE parameter object and a specific PXE
+    file (01-M-A-C..) is generated, the default parameters from the default PXE
+    are also present there. However, they have lower priority (they are written
+    before the specific parameters).
+   </para>
+  </sect2>
+ </sect1>
+ <sect1>
+  <title>Configure &kiwi; to Use the FTP Protocol</title>
+
+  <para>
+<!--On &slepos; 11 SP1 tftp was the only supported download protocol.
+  However,-->
+   &kiwi; needs atftp only for loading the kernel and initrd. For
+   downloading the actual image the FTP protocol can be used.
+  </para>
+
+  <para>
+   To enable FTP, follow these steps:
+  </para>
+
+  <procedure>
+   <step>
+    <para>
+     Create a <systemitem>scPxeFileTemplate</systemitem> under the relevant
+     object (used during registration of the terminal that needs this
+     functionality) of <systemitem>scRole</systemitem> or
+     <systemitem>scCashRegister</systemitem> or
+     <systemitem>scPosImage</systemitem>. Default kernel parameters can also be
+     used. For more information, see <xref linkend="defaultkernelpar"/>. Set
+     the following parameters: <literal>scMust TRUE</literal>,
+     <literal>scKernelParameters kiwiservertype=ftp</literal>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Add the <systemitem>scService</systemitem> object under
+     <systemitem>scBranchserver</systemitem> with <literal>scServiceName
+     ftp</literal>, <literal>scDnsName ftp</literal> and
+     <literal>scServiceStatus TRUE</literal>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Make sure that the needed ports are open on the network interface, where
+     terminals are connected. The FTP/21 port must be open. The open passive
+     port range (default 30000:30400) must match the pure-FTP configuration in
+     <filename>/etc/SLEPOS/template/pure-ftpd.conf.template</filename>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Reinitialize the &branchserv; if the pure-FTP server has not yet been
+     initialized.
+    </para>
+   </step>
+   <step>
+    <para>
+     Boot the terminal.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
+ <sect1 xml:id="app.slepos_lang">
+  <title>Changing the Server Language</title>
+
+  <para>
+   If you need to change the language that was defined during the initial
+   installation of a &sleposreg; &admserv; or &branchserv;, you can do
+   so by restarting &yast; and selecting a different system language.
+  </para>
+
+  <sect2 role="General" xml:id="bww8g0o">
+   <title>Changing the Language Selection</title>
+   <para>
+    To change the language of your Administration or &branchserv;:
+   </para>
+   <remark>emap: Rather strange that something this simple is explained here in detail. I wouldn't expect this issue to arise often. A reference to other documention should be more than enough.</remark>
+   <procedure xml:id="b2jluyi">
+    <step xml:id="bww8g0p">
+     <para>
+      Start &yast;.
+     </para>
+    </step>
+    <step xml:id="bww8g0q">
+     <para>
+      In the &yast; control center, select <menuchoice>
+      <guimenu>System</guimenu> <guimenu>Choose Language</guimenu>
+      </menuchoice>.
+     </para>
+    </step>
+    <step xml:id="bww8g0r">
+     <para>
+      Select the desired language, then click <guimenu>Accept</guimenu>.
+     </para>
+     <para>
+      The language selected in &yast; applies to the operating system,
+      including &yast; and the desktop environment. If your system needs
+      additional packages to support the new language, you can install them
+      with &yast;.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+
+  <sect2 xml:id="b4cc1om">
+   <title>Installing a Language RPMs</title>
+   <para>
+    To install the RPMs required to support the selected language on the
+    server:
+   </para>
+   <procedure xml:id="b4cc1yi">
+    <step xml:id="bww8g0s">
+     <para>
+      In the &yast; control center, select <guimenu> Software
+      Management</guimenu>.
+     </para>
+     <para>
+      The &yast; package manager dialog appears (see
+      <xref linkend="b3rcrmx"/>).
+     </para>
+     <figure pgwide="0" xml:id="b3rcrmx">
+      <title>&yast; Package Manager</title>
+      <mediaobject>
+       <imageobject role="fo">
+        <imagedata fileref="software_selection_details_3.png" width="75%" format="PNG"/>
+       </imageobject>
+       <imageobject role="html">
+        <imagedata fileref="software_selection_details_3.png" width="75%" format="png"/>
+       </imageobject>
+      </mediaobject>
+     </figure>
+    </step>
+    <step xml:id="bww8g0u">
+     <para>
+      Use the
+      <menuchoice><guimenu>Filter</guimenu><guimenu>Languages</guimenu></menuchoice>
+      option to verify that the required language support for the &admserv;
+      or &branchserv; features is installed on your system.
+     </para>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para>
+        If the language is selected, it is already installed on your system and
+        you do not need to select it.
+       </para>
+      </listitem>
+      <listitem>
+       <para>
+        If the language is not selected, it is not installed on your system.
+        Select the required language for installation.
+       </para>
+      </listitem>
+     </itemizedlist>
+    </step>
+    <step xml:id="bww8g0y">
+     <para>
+      Click <guimenu>Accept</guimenu> to install the selected language support.
+     </para>
+    </step>
+    <step xml:id="bww8y1g">
+     <para>
+      Exit &yast;.
+     </para>
+    </step>
+   </procedure>
+  </sect2>
+ </sect1>
+</chapter>

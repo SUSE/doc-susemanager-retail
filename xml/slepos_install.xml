@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_inst">
+ <title>&slepos; Installation</title>
+ <info/>
+ <para>
+  &slepos; is distributed as an add-on product for &sls; 11 systems. To
+  install &slepos; 11, install the &sls; 11 base system first. You can
+  choose to install the &slepos; add-on together with your base system
+  during the initial installation process, or you can install the &slepos;
+  add-on on top of an already installed base system at any later time.
+ </para>
+ <sect1>
+  <title>Installation During the Initial Installation Process</title>
+
+  <para>
+   To install &slepos; add-on together with your base system during the
+   initial installation process, follow these steps:
+  </para>
+
+  <procedure>
+   <step>
+    <para>
+     Start &sls; 11 installation as usual. For more information, see the
+     &sls; documentation.
+    </para>
+   </step>
+   <step>
+    <para>
+     To include the &slepos; add-on product, check the <guimenu>Include
+     Add-On Products from Separate Media</guimenu> option in the
+     <guimenu>Installation Mode</guimenu> dialog in the <guimenu>System
+     Analysis</guimenu> step and click <guimenu>Next</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Click <guimenu>Add</guimenu>. If you are installing &slepos; from a CD
+     medium, select <guimenu>CD</guimenu> as the source type. If you are
+     installing from a different source, such as NFS or HTTP, choose the
+     appropriate source type. Click <guimenu>Next</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     If you are installing from CD, insert the &slepos; add-on product CD.
+     If you are installing from a different source, provide the necessary
+     source. Click <guimenu>Continue</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Confirm the &slepos; license agreement and click
+     <guimenu>Next</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     The &slepos; add-on product is displayed in the overview. Click
+     <guimenu>Next</guimenu> and continue with the installation as usual.
+    </para>
+   </step>
+   <step>
+    <para>
+     In the <guimenu>Entering Migration Data</guimenu> step of the
+     installation, you can enter &slepos; migration data. Select the appropriate
+     <guimenu>Path to Archive File</guimenu> or <guimenu>Path to Back-up
+     Directory</guimenu> and click <guimenu>Next</guimenu>. For more
+     information about &slepos; migration, see
+     <xref linkend="cha.slepos_migration"/>.
+    </para>
+   </step>
+   <step>
+    <para>
+     In the <guimenu>Server Pattern Selection</guimenu> step of the
+     installation, select the &slepos; patterns appropriate for the type of
+     server you are installing. For &admserv;, select the <guimenu>Admin
+     Server (AS)</guimenu> pattern. For &branchserv;, select the
+     <guimenu>Branch Server (BS)</guimenu> pattern. For &imgserv;, select
+     the <guimenu>Image Server (IS)</guimenu> pattern.
+    </para>
+    <para>
+     You can combine patterns to install a server with multiple functions. For
+     example, for an &admserv; with image building capabilities, select both
+     <guimenu>Admin Server (AS)</guimenu> and <guimenu>Image Server
+     (IS)</guimenu> patterns. For an &admserv; and &branchserv;
+     combination, select both <guimenu>Admin Server (AS)</guimenu> and
+     <guimenu>Branch Server (BS)</guimenu> patterns.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
+ <sect1>
+  <title>Installation On Top of an Already Installed System</title>
+
+  <para>
+   To install &slepos; on top of an already installed base system, follow
+   these steps:
+  </para>
+
+  <procedure>
+   <step>
+    <para>
+     Start &yast; and select <menuchoice> <guimenu>Software</guimenu>
+     <guimenu>Add-On Products</guimenu> <guimenu>Add</guimenu> </menuchoice>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Select media type to be used for installation. If you are installing
+     &slepos; from a CD medium, select <guimenu>CD</guimenu> as the source
+     type. If you are installing from a different source, such as NFS or HTTP,
+     choose the appropriate source type. Click <guimenu>Next</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     If you are installing from CD, insert the &slepos; add-on product CD.
+     If you are installing from a different source, provide the necessary
+     source. Click <guimenu>Continue</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Confirm the &slepos; license agreement and click
+     <guimenu>Next</guimenu>.
+    </para>
+   </step>
+   <step>
+    <para>
+     In the <guimenu>Entering Migration Data</guimenu>, you can enter &slepos;
+     migration data. Select the appropriate <guimenu>Path to archive
+     file</guimenu> or <guimenu>Path to backup directory</guimenu> and click
+     <guimenu>Next</guimenu>. For more information about &slepos; migration, see
+     <xref linkend="cha.slepos_migration"/>.
+    </para>
+   </step>
+   <step>
+    <para>
+     In the <guimenu>Server Pattern Selection</guimenu> step of the
+     installation, select the &slepos; patterns appropriate for the type of
+     server you are installing. For &admserv;, select the <guimenu>Admin
+     Server (AS)</guimenu> pattern. For &branchserv;, select the
+     <guimenu>Branch Server (BS)</guimenu> pattern. For &imgserv;, select
+     the <guimenu>Image Server (IS)</guimenu> pattern.
+    </para>
+    <para>
+     You can combine patterns to install a server with multiple functions. For
+     example, for an &admserv; with image building capabilities, select both
+     <guimenu>Admin Server (AS)</guimenu> and <guimenu>Image Server
+     (IS)</guimenu> patterns. For an &admserv; and &branchserv;
+     combination, select both <guimenu>Admin Server (AS)</guimenu> and
+     <guimenu>Branch Server (BS)</guimenu> patterns.
+    </para>
+   </step>
+  </procedure>
+ </sect1>
+ <sect1>
+  <title>Upgrading &slepos; 11 to &slepos; 11 SP2</title>
+
+  <para>
+   Upgrading &slepos; 11 to &slepos; 11 SP2 consists of two steps:
+  </para>
+
+  <itemizedlist mark="bullet" spacing="normal">
+   <listitem>
+    <para>
+     upgrading &sls; 11 to &sls; 11 SP2,
+    </para>
+   </listitem>
+   <listitem>
+    <para>
+     upgrading &slepos; 11 to &slepos; 11 SP2.
+    </para>
+   </listitem>
+  </itemizedlist>
+
+  <para>
+   These two steps can be performed either together or separately. For
+   information on the &sls; 11 upgrade, consult the &sls; 11 SP2 Installation Quick Start
+   guide.
+  </para>
+
+  <para>
+   If you want to upgrade &slepos; 11 at the same time as &sls; 11, check the
+   <guimenu>Include Add-On Product from Separate Media</guimenu> option during
+   selection of the installation mode. You will be asked to select the &slepos; 11
+   SP2 installation source.
+  </para>
+
+  <para>
+   If you want to upgrade &slepos; 11 after the &sls; 11 upgrade, use the &yast;
+   <guimenu>Add-On Products</guimenu> module and add &slepos; 11 SP2 as an add-on.
+   Network upgrade is not supported in this scenario and results in
+   installation failure during the second installation stage because of DNS
+   resolving failure. You can work around this limitation by switching to a
+   second console
+   (<keycombo><keycap function="control"/><keycap>F2</keycap></keycombo>), logging in
+   as root and starting DNS server manually with the <command>rcnamed
+   start</command> command.
+  </para>
+
+  <para>
+   During the upgrade installation, you will be asked to select a &slepos;
+   pattern. If you do not want to change the installed pattern, click
+   <guimenu>Next</guimenu>.
+  </para>
+
+  <sect2>
+   <title>&slepos; Configuration After Upgrade</title>
+   <para>
+    The &admserv; does not need to be configured after upgrading. Only
+    the &branchserv; needs reconfiguration after an upgrade. The
+    non-interactive reconfiguration is triggered via the
+    <command>posInitBranchserver -r -n</command> command.
+   </para>
+  </sect2>
+ </sect1>
+</chapter>

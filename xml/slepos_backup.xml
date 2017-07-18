@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_backup">
+ <title>Backup and Restore</title>
+
+ <para>
+  All system information (system structure, the configuration and deployment
+  method for each &branchserv; and &pos; terminal, image information, and
+  so forth) is stored in an LDAP directory on the &admserv;. This
+  information must be backed up regularly to avoid data loss in case of storage
+  failure and administration errors. The following sections discuss several
+  methods for backing up and restoring the LDAP directory in &sleposreg; so
+  you can decide which method suits your needs best.
+ </para>
+
+ <warning>
+  <title>Risk of Data Loss</title>
+  <para>
+   Before starting to reconfigure your &sleposreg; system, take precautions
+   against data loss and execute at least a logical online backup to a local
+   file as described in <xref linkend="sec.backup.online"/>.
+  </para>
+ </warning>
+
+ <sect2 xml:id="sec.backup.offline.physical">
+  <title>Offline Physical Backup</title>
+  <para>
+   An offline backup must be executed on the &admserv; and does not put any
+   load on the LDAP server. The drawback is that the LDAP server is not
+   available during the time of the backup.
+  </para>
+  <para>
+   To perform a physical file backup of the LDAP directory, follow these steps:
+  </para>
+  <procedure xml:id="ad_b2jlhmb">
+   <step xml:id="ad_bt0m03p">
+    <para>
+     Stop the LDAP server with <command>rcldap stop</command>.
+    </para>
+   </step>
+   <step xml:id="ad_bt0m0mi">
+    <para>
+     Copy all the files in the <filename>/var/lib/ldap/</filename> directory to
+     an archive directory using <command>cp</command>, <command>tar</command>
+     or any other command line tool for archiving or compressing files.
+    </para>
+   </step>
+   <step xml:id="ad_bt0m2i3">
+    <para>
+     After the copy completes, start the LDAP server with <command>rcldap
+     start</command>.
+    </para>
+   </step>
+  </procedure>
+  <para>
+   <xref linkend="ad_b2jlhme"/>, describes how to restore a physical backup.
+  </para>
+ </sect2>
+
+ <sect2 xml:id="sec.backup.offline.logical">
+  <title>Offline Logical Backup</title>
+  <para>
+   To perform a logical backup of the LDAP directory (database dump):
+  </para>
+  <procedure xml:id="ad_b2jlhmc">
+   <step xml:id="ad_bt0m34v">
+    <para>
+     Stop the LDAP server with <command>rcldap stop</command>.
+    </para>
+   </step>
+   <step xml:id="ad_bt0m34w">
+    <para>
+     Run the following command:
+    </para>
+<screen>slapcat &gt; "ldap.$(date '+%F-%T')"</screen>
+    <para>
+     This generates a file in LDAP Data Interchange Format (LDIF file) named
+     <filename>ldap.&nbsp;<replaceable>datetime</replaceable></filename>
+     <remark>emap: The space after ldap. should really be there? Quite unusual for a filename in Linux.</remark>
+     where <replaceable>datetime</replaceable> is the current date and time.
+     LDIF files are structured ASCII files that can be viewed, for example,
+     with <command>less</command>. The resulting output file can be archived,
+     backed up on offline media, and restored with the
+     <command>slapadd</command> command as described in
+     <xref linkend="sec.backup.restore"/>.
+    </para>
+   </step>
+   <step xml:id="ad_bt0m34x">
+    <para>
+     After the backup completes, start the LDAP server with: <command>rcldap
+     start</command>.
+    </para>
+   </step>
+  </procedure>
+  <para>
+   <xref linkend="ad_b2jlhme"/> describes how to restore a logical backup.
+  </para>
+ </sect2>
+
+ <sect2 xml:id="sec.backup.online">
+  <title>Online Backup</title>
+  <para>
+   An online backup uses the LDAP server to extract all data. This has the
+   advantage that the server is available at all times and the backup can be
+   stored to a remote machine that has an LDAP client, using an authenticated
+   LDAP bind. Of course, the LDAP communication can also be secured with SSL.
+   <remark>emap: Maybe mention the load this creates on the LDAP server because no load was the advantage of the offline backup. Just to put the two methods in perspective.</remark>
+  </para>
+  <procedure>
+   <step>
+    <para>
+     To create an LDIF file similar to the one created during an offline
+     logical backup, proceed as follows:
+    </para>
+<screen>ldapsearch -x -D <replaceable>adminDN</replaceable><co xml:id="co.admindn"/> -w <replaceable>adminPassword</replaceable><co xml:id="co.adminpasswd"/> -H ldap://<replaceable>LDAPServer</replaceable>/<co xml:id="co.ldapserv"/> -b <replaceable>baseDN</replaceable><co xml:id="co.basedn"/> &gt; "ldap.$(date '+%F-%T')"</screen>
+    <calloutlist>
+     <callout arearefs="co.admindn">
+      <para>
+       DN of the administrator user (for example,
+       <literal>cn=admin,&dnorg;</literal>).
+      </para>
+     </callout>
+     <callout arearefs="co.adminpasswd">
+      <para>
+       The administrator password (for example, <literal>secret</literal>).
+      </para>
+     </callout>
+     <callout arearefs="co.ldapserv">
+      <para>
+       LDAP server name or IP address.
+      </para>
+     </callout>
+     <callout arearefs="co.basedn">
+      <para>
+       Base DN (distinguished name) of the LDAP structure (for example,
+       <literal>&dnorg;</literal>).
+      </para>
+     </callout>
+    </calloutlist>
+   </step>
+   <step>
+    <para>
+     To use LDAP with SSL, enter the following instead:
+    </para>
+<screen>ldapsearch -x -D <replaceable>adminDN</replaceable> -w <replaceable>adminPassword</replaceable> -H ldaps://<replaceable>LDAPServer</replaceable>/ -b <replaceable>baseDN</replaceable> &gt; "ldap.$(date '+%F-%T')"</screen>
+   </step>
+  </procedure>
+  <para>
+   <xref linkend="ad_b2jlhmf"/> describes how to restore an online backup.
+  </para>
+ </sect2>
+
+ <sect2 xml:id="sec.backup.restore">
+  <title>Restoring Data</title>
+  <procedure xml:id="ad_b2jlhme">
+   <title>Restoring an Offline Backup</title>
+   <para>
+    To restore offline backups, you need to stop the LDAP server and restart it
+    afterward.
+   </para>
+   <step xml:id="ad_bt0m4vu">
+    <para>
+     Stop the LDAP server with <command>rcldap stop</command>.
+    </para>
+   </step>
+   <step xml:id="ad_bt0m59u">
+    <para>
+     If you did a physical file backup, restore the files in
+     <filename>/var/lib/ldap</filename> by copying them back or extracting them
+     from the archive you created.
+    </para>
+    <para>
+     If you did a logical backup, run the <command>slapadd</command> command to
+     restore the logical database dump:
+    </para>
+<screen>slapadd -l <replaceable>backupfile</replaceable></screen>
+    <para>
+     where <replaceable>backupfile</replaceable> is the file created by
+     <command>slapcat</command>.
+    </para>
+   </step>
+   <step>
+    <para>
+     Run <command>/usr/lib/SLEPOS/posACLUpgrade.pl</command> to regenerate
+     missing LDAP ACL.
+    </para>
+   </step>
+   <step xml:id="ad_bt0m6pd">
+    <para>
+     Start the LDAP server with <command>rcldap start</command>.
+    </para>
+   </step>
+  </procedure>
+  <procedure xml:id="ad_b2jlhmf">
+   <title>Restoring an Online Backup</title>
+   <para>
+    To restore an online backup, the LDAP server must be running.
+   </para>
+   <step>
+    <para>
+     In case the LDAP database has been corrupted, remove the database files in
+     <filename>/var/lib/ldap/</filename> before restoring the online backup.
+     The LDAP server can run with an empty database.
+    </para>
+   </step>
+   <step xml:id="ad_bt0m7ck">
+    <para>
+     Restore the backup file created via <command>ldapsearch</command> with
+     either the command:
+    </para>
+<screen>ldapadd -x -D <replaceable>adminDN</replaceable> -w <replaceable>adminPassword</replaceable> -H ldap://<replaceable>LDAPServer</replaceable> -f <replaceable>backupfile</replaceable></screen>
+    <para>
+     or for secure LDAP communication with SSL:
+    </para>
+<screen>ldapadd -x -D <replaceable>adminDN</replaceable> -w <replaceable>adminPassword</replaceable> -H ldaps://<replaceable>LDAPServer</replaceable> -f <replaceable>backupfile</replaceable></screen>
+   </step>
+   <step>
+    <para>
+     Run <command>/usr/lib/SLEPOS/posACLUpgrade.pl</command> to regenerate
+     missing LDAP ACL.
+    </para>
+   </step>
+  </procedure>
+ </sect2>
+</sect1>

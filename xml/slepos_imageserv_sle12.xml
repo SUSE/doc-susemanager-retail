@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_imageserv_sle12">
+ <title>Setting Up a &sle; 12-Based &imgserv;</title>
+
+<para>
+It is recommended to use a dedicated machine for setting up a &sle; 12-based &imgsrv;. For a list of system requirements, refer to the &sls; 12 documentation at <link xlink:href="https://www.suse.com/documentation/sles-12/book_sle_deployment/data/sec_x86_sysreqs.html"/>.
+</para>
+
+<para>
+&slepos; 12 &imgsrv; is delivered as an extension to &sls; 12 SP2. There are two options for installing the &imgsrv;:
+</para>
+
+<itemizedlist>
+<listitem>
+  <para>
+   When performing a new &sls; installation, select <guimenu>&imgsrv;</guimenu> from the list of extensions.
+   </para>
+  </listitem>
+  <listitem>
+    <para>
+      If &sls; is already installed, you can use the &yast; registration module to install the &imgsrv;.
+     </para>
+    </listitem>
+</itemizedlist>
+
+<para>
+In both cases, make sure to install the <guimenu>SLEPOS_Image_Server</guimenu> pattern. For further information, refer to the &sls; 12 documentation at <link xlink:href="https://www.suse.com/documentation/sles-12/index.html"/>.
+ </para>
+
+ <note>
+   <title>/var/lib/SLEPOS/ on Btrfs Subvolume</title>
+   <para>
+     The <filename>/var/lib/SLEPOS/</filename> directory can be hundreds of megabytes in size. If the directory does not reside on a Btrfs subvolume, zypper will include it into snapshots. To prevent this from happening  and save disk space, make sure that the directory is placed on a Btrfs subvolume.
+    </para>
+   </note>
+
+</sect1>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scService">
+ <title>scService</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>cn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      name of the service
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scDnsName</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The name of entry in the DNS table under which the service is available.
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scServiceName</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Name of the service. Supported services are DNS, DHCP, TFTP, FTP and
+      posleases.
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scServiceStartScript</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      File name of the init script in <literal>/etc/init.d</literal>
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scServiceStatus</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Enable service (<literal>TRUE</literal> or <literal>FALSE</literal>,
+      default <literal>TRUE</literal>)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>ipHostNumber</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may
+     </para>
+    </entry>
+    <entry>
+     <para>
+      listening IP address for the service
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scDhcpDynLeaseTime</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      DHCP service specific. Lease time for dynamic leases (first boot)
+      (default 300)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scDhcpFixedLeaseTime</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      DHCP service specific. Lease time for fixed leases (final registration)
+      (default 14400)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPosleasesChecktime</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      posleases service specific. For how long should posleases2ldap pause
+      before checking uploads. (seconds)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPosleasesMaxNotify</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      posleases service specific. Maximum number of booted image notifications
+      (maximum of <systemitem>scNotifiedImage</systemitem> entries)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPosleasesTimeout</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      posleases service specific. How often should posleases2ldap update
+      internal cache. (seconds)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scServiceEmail</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Where should the service send an e-mail to
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

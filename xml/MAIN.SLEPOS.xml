@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<?xml-stylesheet href="urn:x-suse:xslt:profiling:docbook50-profile.xsl"
+                 type="text/xml"
+                 title="Profiling step"?>
+<?provo dirname="slepos11/"?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en" xml:id="book.slepos">
+ <title>&slepos; Guide</title>
+ <info><productname>&slepos;</productname>
+  <productnumber>11 SP3 and &slepos; 12 &imgsrv;</productnumber><date>
+<?dbtimestamp format="B d, Y" ?></date>
+  <xi:include href="common_copyright_gfdl.xml" parse="xml"/>
+ </info>
+ <xi:include href="slepos_intro.xml" parse="xml"/>
+ <xi:include href="slepos_overview.xml" parse="xml"/>
+ <xi:include href="slepos_install.xml" parse="xml"/>
+<!-- <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="slepos_wireless.xml"/>-->
+ <xi:include href="slepos_imageserv.xml" parse="xml"/>
+ <xi:include href="slepos_adminserv.xml" parse="xml"/>
+ <xi:include href="slepos_branchserv.xml" parse="xml"/>
+ <xi:include href="slepos_terminals.xml" parse="xml"/>
+ <xi:include href="slepos_management.xml" parse="xml"/>
+ <xi:include href="slepos_imagebuilding.xml" parse="xml"/>
+ <xi:include href="slepos_imagebuilding_sle12.xml" parse="xml"/>
+ <xi:include href="slepos_customization.xml" parse="xml"/>
+ <xi:include href="slepos_ldap.xml" parse="xml"/>
+ <xi:include href="slepos_migration.xml" parse="xml"/>
+ <xi:include href="slepos_troubleshooting.xml" parse="xml"/>
+ <xi:include href="slepos_lastchanges.xml" parse="xml"/>
+<!--APPENDIX:-->
+ <xi:include href="slepos_a_directorystructure.xml" parse="xml"/>
+ <xi:include href="slepos_a_servercommands.xml" parse="xml"/>
+ <xi:include href="slepos_a_deprecated.xml" parse="xml"/>
+ <xi:include href="common_legal.xml" parse="xml"/>
+</book>

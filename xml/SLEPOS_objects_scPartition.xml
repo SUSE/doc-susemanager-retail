@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scPartition">
+ <title>scPartition</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPartNum</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Defines the order of partitions (not the partition number shown by fdisk,
+      the real partiton number is determined by KIWI during terminal boot)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPartType</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The type of partition (82 or S for swap, 83 or L for a Linux partition)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>description</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may
+     </para>
+    </entry>
+    <entry>
+     <para>
+      partition <systemitem>description</systemitem>
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPartMount</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The mount point of the partition. Use <literal>/</literal> for the root
+      partition. Use x for a partition without a mount point (for example a swap
+      partition)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPartSize</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Size of partition in (binary) megabytes. For the last partition, size can
+      be specified as x, which results in all remaining available space to be
+      used
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPassword</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Image or partition password. In case of partition password * means random
+      password will be generated each boot. Userful for swap partitions
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

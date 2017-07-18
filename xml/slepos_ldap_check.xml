@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="ldap_validation">
+ <title>LDAP Validation and Checking</title>
+
+ <para>
+  &slepos; contains LDAP validation and checking tools. Simple validation and
+  checking is automatically performed during each <command>posAdmin</command>
+  addition or modification call. Full validation is performed during &slepos; XML
+  import or on demand via the following command:
+ </para>
+
+<screen>posAdmin --validate</screen>
+
+ <para>
+  There is an important difference between LDAP validation during the XML import
+  and validation invoked by the <command>posAdmin --validate</command> command.
+  If important LDAP objects are found missing during the XML import, the
+  missing objects are reported, but the import continues without a failure. In
+  contrast, calling <command>posAdmin --validate</command> returns an error the
+  first time a file is missing and stops validation.
+ </para>
+
+ <para>
+  Additionally, XML and LDIF files can be validated against the &slepos;
+  database. LDIF files can be validated using the following command:
+ </para>
+
+<screen>posAdmin --validateLDIF --file <replaceable>filename</replaceable></screen>
+
+ <para>
+  XML can be validated using the following command:
+ </para>
+
+<screen>posAdmin --validateXML --file <replaceable>filename</replaceable></screen>
+</sect1>

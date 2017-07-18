@@ -1,0 +1,1329 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created by diasvg.py -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="35.192cm"
+   height="57.100cm"
+   viewBox="0.950 -0.050 36.142 57.050"
+   id="svg3293"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="slrs_decision_a.svg">
+  <metadata
+     id="metadata3603">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3601" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1146"
+     id="namedview3599"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="604.93758"
+     inkscape:cy="48.15058"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3293" />
+  <rect
+     x="4.000"
+     y="0.000"
+     width="10.000"
+     height="4.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3295" />
+  <rect
+     x="4.000"
+     y="0.000"
+     width="10.000"
+     height="4.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3297" />
+  <text
+     x="9.000"
+     y="1.380"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3299">
+load NETBOOT</text>
+  <text
+     x="9.000"
+     y="2.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3301">
+kernel and initrd</text>
+  <text
+     x="9.000"
+     y="2.980"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3303">
+via PXE or from CD/USB</text>
+  <rect
+     x="4.000"
+     y="5.000"
+     width="10.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3305" />
+  <rect
+     x="4.000"
+     y="5.000"
+     width="10.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3307" />
+  <text
+     x="9.000"
+     y="6.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3309">
+run linuxrc</text>
+  <rect
+     x="4.000"
+     y="8.000"
+     width="10.000"
+     height="3.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3311" />
+  <rect
+     x="4.000"
+     y="8.000"
+     width="10.000"
+     height="3.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3313" />
+  <text
+     x="9.000"
+     y="9.280"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3315">
+try to download</text>
+  <text
+     x="9.000"
+     y="10.080"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3317">
+idlist/rolelist files</text>
+  <rect
+     x="4.000"
+     y="12.000"
+     width="10.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3319" />
+  <rect
+     x="4.000"
+     y="12.000"
+     width="10.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3321" />
+  <text
+     x="9.000"
+     y="13.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3323">
+hooks/roles.sh</text>
+  <polygon
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,15.000 14.000,17.000 9.000,19.000 4.000,17.000 "
+     id="polygon3325" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,15.000 14.000,17.000 9.000,19.000 4.000,17.000 "
+     id="polygon3327" />
+  <text
+     x="9.000"
+     y="17.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3329">
+get config.MAC</text>
+  <polygon
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,20.000 14.822,22.000 9.000,24.000 3.178,22.000 "
+     id="polygon3331" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,20.000 14.822,22.000 9.000,24.000 3.178,22.000 "
+     id="polygon3333" />
+  <text
+     x="9.000"
+     y="21.780"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3335">
+interrupt boot</text>
+  <text
+     x="9.000"
+     y="22.580"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3337">
+with C hotkey</text>
+  <polygon
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,27.000 14.000,29.000 9.000,31.000 4.000,29.000 "
+     id="polygon3339" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,27.000 14.000,29.000 9.000,31.000 4.000,29.000 "
+     id="polygon3341" />
+  <text
+     x="9.000"
+     y="28.780"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3343">
+rollback</text>
+  <text
+     x="9.000"
+     y="29.580"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3345">
+selected</text>
+  <rect
+     x="4.000"
+     y="33.000"
+     width="10.000"
+     height="3.500"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3347" />
+  <rect
+     x="4.000"
+     y="33.000"
+     width="10.000"
+     height="3.500"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3349" />
+  <text
+     x="9.000"
+     y="34.130"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3351">
+only in roles mode:</text>
+  <text
+     x="9.000"
+     y="34.930"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3353">
+hooks/selectRole.sh</text>
+  <text
+     x="9.000"
+     y="35.730"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3355">
+select ID/role</text>
+  <rect
+     x="4.000"
+     y="38.000"
+     width="10.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3357" />
+  <rect
+     x="4.000"
+     y="38.000"
+     width="10.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3359" />
+  <text
+     x="9.000"
+     y="39.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3361"
+     style="font-size:0.69561776px">
+upload hwtype.MAC(.HASH)</text>
+  <rect
+     x="4.000"
+     y="41.000"
+     width="10.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3363" />
+  <rect
+     x="4.000"
+     y="41.000"
+     width="10.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3365" />
+  <text
+     x="9.000"
+     y="42.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3367">
+get config.MAC</text>
+  <polygon
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,44.000 14.000,47.000 9.000,50.000 4.000,47.000 "
+     id="polygon3369" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,44.000 14.000,47.000 9.000,50.000 4.000,47.000 "
+     id="polygon3371" />
+  <text
+     x="9.000"
+     y="46.780"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3373">
+did we get the </text>
+  <text
+     x="9.000"
+     y="47.580"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3375">
+requested config?</text>
+  <polygon
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,51.000 14.000,54.000 9.000,57.000 4.000,54.000 "
+     id="polygon3377" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,51.000 14.000,54.000 9.000,57.000 4.000,54.000 "
+     id="polygon3379" />
+  <text
+     x="9.000"
+     y="53.780"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3381">
+confirm</text>
+  <text
+     x="9.000"
+     y="54.580"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3383">
+the config we got</text>
+  <polygon
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.000,34.722 35.556,37.000 31.000,39.278 26.444,37.000 "
+     id="polygon3385" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.000,34.722 35.556,37.000 31.000,39.278 26.444,37.000 "
+     id="polygon3387" />
+  <text
+     x="31.000"
+     y="36.780"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3389">
+same image</text>
+  <text
+     x="31.000"
+     y="37.580"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3391">
+deployed?</text>
+  <rect
+     x="27.000"
+     y="41.000"
+     width="8.000"
+     height="3.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3393" />
+  <rect
+     x="27.000"
+     y="41.000"
+     width="8.000"
+     height="3.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3395" />
+  <text
+     x="31.000"
+     y="42.280"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3397">
+download, verify</text>
+  <text
+     x="31.000"
+     y="43.080"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3399">
+and deploy the image</text>
+  <rect
+     x="27.000"
+     y="45.000"
+     width="8.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3401" />
+  <rect
+     x="27.000"
+     y="45.000"
+     width="8.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3403" />
+  <text
+     x="31.000"
+     y="46.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3405">
+    <tspan
+       style="font-size:0.69561776px"
+       id="tspan3609">
+install local GRUB boot</tspan>
+  </text>
+  <rect
+     x="27.000"
+     y="49.000"
+     width="8.100"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3407" />
+  <rect
+     x="27.000"
+     y="49.000"
+     width="8.100"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3409" />
+  <text
+     x="31.050"
+     y="50.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3411">
+    <tspan
+       style="font-size:0.69561776px"
+       id="tspan3605">
+upload bootversion.MAC</tspan>
+  </text>
+  <rect
+     x="27.000"
+     y="52.000"
+     width="8.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3413" />
+  <rect
+     x="27.000"
+     y="52.000"
+     width="8.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3415" />
+  <text
+     x="31.000"
+     y="53.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3417">
+    <tspan
+       style="font-size:0.69561776px"
+       id="tspan3607">
+run the deployed image</tspan>
+  </text>
+  <line
+     x1="9.000"
+     y1="4.000"
+     x2="9.000"
+     y2="4.464"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3419" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,4.839 8.750,4.339 9.000,4.464 9.250,4.339 "
+     id="polygon3421" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,4.839 8.750,4.339 9.000,4.464 9.250,4.339 "
+     id="polygon3423" />
+  <line
+     x1="9.000"
+     y1="7.000"
+     x2="9.000"
+     y2="7.464"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3425" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,7.839 8.750,7.339 9.000,7.464 9.250,7.339 "
+     id="polygon3427" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,7.839 8.750,7.339 9.000,7.464 9.250,7.339 "
+     id="polygon3429" />
+  <line
+     x1="9.000"
+     y1="11.000"
+     x2="9.000"
+     y2="11.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3431" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,11.888 8.750,11.388 9.000,11.513 9.250,11.388 "
+     id="polygon3433" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,11.888 8.750,11.388 9.000,11.513 9.250,11.388 "
+     id="polygon3435" />
+  <line
+     x1="9.000"
+     y1="14.000"
+     x2="9.000"
+     y2="14.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3437" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,14.888 8.750,14.388 9.000,14.513 9.250,14.388 "
+     id="polygon3439" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,14.888 8.750,14.388 9.000,14.513 9.250,14.388 "
+     id="polygon3441" />
+  <line
+     x1="9.000"
+     y1="19.000"
+     x2="9.000"
+     y2="19.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3443" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,19.888 8.750,19.388 9.000,19.513 9.250,19.388 "
+     id="polygon3445" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,19.888 8.750,19.388 9.000,19.513 9.250,19.388 "
+     id="polygon3447" />
+  <line
+     x1="9.000"
+     y1="24.000"
+     x2="9.000"
+     y2="26.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3449" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,26.888 8.750,26.388 9.000,26.513 9.250,26.388 "
+     id="polygon3451" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,26.888 8.750,26.388 9.000,26.513 9.250,26.388 "
+     id="polygon3453" />
+  <line
+     x1="9.000"
+     y1="31.000"
+     x2="9.000"
+     y2="32.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3455" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,32.888 8.750,32.388 9.000,32.513 9.250,32.388 "
+     id="polygon3457" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,32.888 8.750,32.388 9.000,32.513 9.250,32.388 "
+     id="polygon3459" />
+  <line
+     x1="9.000"
+     y1="36.500"
+     x2="9.000"
+     y2="37.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3461" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,37.888 8.750,37.388 9.000,37.513 9.250,37.388 "
+     id="polygon3463" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,37.888 8.750,37.388 9.000,37.513 9.250,37.388 "
+     id="polygon3465" />
+  <line
+     x1="9.000"
+     y1="40.000"
+     x2="9.000"
+     y2="40.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3467" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,40.888 8.750,40.388 9.000,40.513 9.250,40.388 "
+     id="polygon3469" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,40.888 8.750,40.388 9.000,40.513 9.250,40.388 "
+     id="polygon3471" />
+  <line
+     x1="9.000"
+     y1="43.000"
+     x2="9.000"
+     y2="43.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3473" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,43.888 8.750,43.388 9.000,43.513 9.250,43.388 "
+     id="polygon3475" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,43.888 8.750,43.388 9.000,43.513 9.250,43.388 "
+     id="polygon3477" />
+  <line
+     x1="9.000"
+     y1="50.000"
+     x2="9.000"
+     y2="50.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3479" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="9.000,50.888 8.750,50.388 9.000,50.513 9.250,50.388 "
+     id="polygon3481" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="9.000,50.888 8.750,50.388 9.000,50.513 9.250,50.388 "
+     id="polygon3483" />
+  <rect
+     x="16.000"
+     y="28.000"
+     width="8.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3485" />
+  <rect
+     x="16.000"
+     y="28.000"
+     width="8.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3487" />
+  <text
+     x="20.000"
+     y="29.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3489">
+get rollback config</text>
+  <line
+     x1="14.000"
+     y1="29.000"
+     x2="15.513"
+     y2="29.000"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3491" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="15.888,29.000 15.388,29.250 15.513,29.000 15.388,28.750 "
+     id="polygon3493" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="15.888,29.000 15.388,29.250 15.513,29.000 15.388,28.750 "
+     id="polygon3495" />
+  <line
+     x1="31.000"
+     y1="39.278"
+     x2="31.000"
+     y2="40.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3497" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.000,40.888 30.750,40.388 31.000,40.513 31.250,40.388 "
+     id="polygon3499" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.000,40.888 30.750,40.388 31.000,40.513 31.250,40.388 "
+     id="polygon3501" />
+  <line
+     x1="31.000"
+     y1="44.000"
+     x2="31.000"
+     y2="44.464"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3503" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.000,44.839 30.750,44.339 31.000,44.464 31.250,44.339 "
+     id="polygon3505" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.000,44.839 30.750,44.339 31.000,44.464 31.250,44.339 "
+     id="polygon3507" />
+  <line
+     x1="31.000"
+     y1="47.000"
+     x2="31.038"
+     y2="48.513"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3509" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.047,48.888 30.785,48.395 31.038,48.513 31.285,48.382 "
+     id="polygon3511" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.047,48.888 30.785,48.395 31.038,48.513 31.285,48.382 "
+     id="polygon3513" />
+  <line
+     x1="31.050"
+     y1="51.000"
+     x2="31.024"
+     y2="51.514"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3515" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.006,51.888 30.781,51.376 31.024,51.514 31.280,51.401 "
+     id="polygon3517" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.006,51.888 30.781,51.376 31.024,51.514 31.280,51.401 "
+     id="polygon3519" />
+  <polyline
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="14.821,22.000 14.821,22.000 31.000,22.000 31.000,30.513 "
+     id="polyline3521" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.000,30.888 30.750,30.388 31.000,30.513 31.250,30.388 "
+     id="polygon3523" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.000,30.888 30.750,30.388 31.000,30.513 31.250,30.388 "
+     id="polygon3525" />
+  <line
+     x1="24.000"
+     y1="29.000"
+     x2="30.513"
+     y2="29.000"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3527" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="30.888,29.000 30.388,29.250 30.513,29.000 30.388,28.750 "
+     id="polygon3529" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="30.888,29.000 30.388,29.250 30.513,29.000 30.388,28.750 "
+     id="polygon3531" />
+  <polyline
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="14.000,54.000 14.000,54.000 25.000,54.000 25.000,29.487 "
+     id="polyline3533" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="25.000,29.112 25.250,29.612 25.000,29.487 24.750,29.612 "
+     id="polygon3535" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="25.000,29.112 25.250,29.612 25.000,29.487 24.750,29.612 "
+     id="polygon3537" />
+  <line
+     x1="14.000"
+     y1="47.000"
+     x2="24.513"
+     y2="47.000"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3539" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="24.888,47.000 24.388,47.250 24.513,47.000 24.388,46.750 "
+     id="polygon3541" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="24.888,47.000 24.388,47.250 24.513,47.000 24.388,46.750 "
+     id="polygon3543" />
+  <polyline
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="4.000,54.000 1.000,54.000 1.000,32.000 8.513,32.000 "
+     id="polyline3545" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="8.888,32.000 8.388,32.250 8.513,32.000 8.388,31.750 "
+     id="polygon3547" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="8.888,32.000 8.388,32.250 8.513,32.000 8.388,31.750 "
+     id="polygon3549" />
+  <polyline
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="4.000,17.000 1.000,17.000 1.000,26.000 8.513,26.000 "
+     id="polyline3551" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="8.888,26.000 8.388,26.250 8.513,26.000 8.388,25.750 "
+     id="polygon3553" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="8.888,26.000 8.388,26.250 8.513,26.000 8.388,25.750 "
+     id="polygon3555" />
+  <polyline
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="35.556,37.000 36.000,37.000 36.000,48.000 31.512,48.000 "
+     id="polyline3557" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.137,48.000 31.637,47.750 31.512,48.000 31.637,48.250 "
+     id="polygon3559" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.137,48.000 31.637,47.750 31.512,48.000 31.637,48.250 "
+     id="polygon3561" />
+  <rect
+     x="27.000"
+     y="31.000"
+     width="8.000"
+     height="2.000"
+     fill="#FFFFFF"
+     stroke="none"
+     stroke-width="0"
+     id="rect3563" />
+  <rect
+     x="27.000"
+     y="31.000"
+     width="8.000"
+     height="2.000"
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="rect3565" />
+  <text
+     x="31.000"
+     y="32.180"
+     fill="#000000"
+     text-anchor="middle"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3567">
+    <tspan
+       style="font-size:0.69561776px"
+       id="tspan3611">
+use values from config</tspan>
+  </text>
+  <line
+     x1="31.000"
+     y1="33.000"
+     x2="31.000"
+     y2="34.235"
+     stroke="#000000"
+     stroke-width="0.100"
+     id="line3569" />
+  <polygon
+     fill="#000000"
+     stroke="none"
+     stroke-width="0.100"
+     points="31.000,34.610 30.750,34.110 31.000,34.235 31.250,34.110 "
+     id="polygon3571" />
+  <polygon
+     fill="none"
+     stroke="#000000"
+     stroke-width="0.100"
+     points="31.000,34.610 30.750,34.110 31.000,34.235 31.250,34.110 "
+     id="polygon3573" />
+  <text
+     x="1.3548971"
+     y="16.573618"
+     font-size="0.80"
+     font-style="normal"
+     font-weight="400"
+     id="text3575"
+     style="font-size:0.80000001px;font-style:normal;font-weight:400;text-anchor:start;fill:#000000;font-family:sans">Failed</text>
+  <text
+     x="9.600"
+     y="19.600"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3577">
+OK</text>
+  <text
+     x="15.100"
+     y="21.425"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3579">
+No</text>
+  <text
+     x="9.500"
+     y="24.975"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3581">
+C pressed</text>
+  <text
+     x="13.950"
+     y="28.288"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3583">
+Yes</text>
+  <text
+     x="9.400"
+     y="31.587"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3585">
+No</text>
+  <text
+     x="14.050"
+     y="46.513"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3587">
+Yes</text>
+  <text
+     x="9.800"
+     y="50.462"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3589">
+No</text>
+  <text
+     x="14.100"
+     y="53.462"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3591">
+OK</text>
+  <text
+     x="1.0785007"
+     y="54.655167"
+     font-size="0.80"
+     font-style="normal"
+     font-weight="400"
+     id="text3593"
+     style="font-size:0.80000001px;font-style:normal;font-weight:400;text-anchor:start;fill:#000000;font-family:sans">
+    <tspan
+       style="font-size:0.69561774px;letter-spacing:0.00028984px"
+       id="tspan3613">Not</tspan>
+  </text>
+  <text
+     x="35.100"
+     y="36.150"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3595">
+Yes</text>
+  <text
+     x="31.500"
+     y="39.800"
+     fill="#000000"
+     text-anchor="start"
+     font-size="0.80"
+     font-family="sans"
+     font-style="normal"
+     font-weight="400"
+     id="text3597">
+No</text>
+  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+     x="5.4187193"
+     y="1950.8145"
+     id="text3156"
+     sodipodi:linespacing="125%"
+     transform="matrix(0.02898407,0,0,0.02898407,0.95,-0.84569815)"><tspan
+       sodipodi:role="line"
+       id="tspan3158"
+       x="5.4187193"
+       y="1950.8145" /></text>
+  <text
+     x="1.0910366"
+     y="55.261837"
+     font-size="0.80"
+     font-style="normal"
+     font-weight="400"
+     id="text3593-6"
+     style="font-size:0.80000001px;font-style:normal;font-weight:400;text-anchor:start;fill:#000000;font-family:sans">
+    <tspan
+       style="font-size:0.69561774px;letter-spacing:0.00028984px"
+       id="tspan3613-0">confirmed</tspan>
+  </text>
+</svg>

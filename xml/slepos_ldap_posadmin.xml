@@ -1,0 +1,1266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+ xml:id="sect.posadmin">
+ <title>Using posAdmin to Manage the LDAP Directory</title>
+
+ <para> In a &sleposreg; system, <filename>posAdmin</filename> is a
+  command line tool used to add, modify, remove, or query &branchserv;
+  and &pos; terminal information in the LDAP directory. For an overview
+  of the LDAP directory structure and a reference of all &slepos;
+  elements represented in the LDAP directory, refer to <xref
+   linkend="cha.slepos_ldap"/>. </para>
+
+ <para> Starting with an overview of mandatory LDAP objects and general
+  command line options for <command>posAdmin</command>, the following
+  sections explain how to define objects for Branches and &pos;
+  terminals and how to manage image objects with
+   <filename>posAdmin</filename>. Find out which
+   <filename>posAdmin</filename> options to use for modifying, removing or
+  querying LDAP entries and how to update hardware information for specific
+  &pos; terminals, if needed. </para>
+
+ <note>
+  <title>Must and May Attributes for LDAP Objects</title>
+  <para> Each LDAP object has two types of attributes: must and may
+   attributes. The must attributes are the minimum requirements for an
+   object. The may attributes are optional. This table lists only those may
+   attributes that are relevant to &slepos;. <remark>emap: what table
+    lists these? Add reference or maybe move this note to the location of
+    the table? Or: The following sections only deal with attributes that
+    are...</remark>
+  </para>
+  <!--FIXME-->
+ </note>
+
+ <sect2 xml:id="ad_bw6vfmg">
+  <title>Mandatory LDAP Objects</title>
+  <para> When you run the <filename>posInitAdminserver</filename> command
+   to configure the LDAP directory on the &admserv;, the following
+   objects are automatically created: </para>
+  <itemizedlist mark="bullet" spacing="normal">
+   <listitem>
+    <para> Country, </para>
+   </listitem>
+   <listitem>
+    <para> Organization, </para>
+   </listitem>
+   <listitem>
+    <para> Locator Object <literal>scHardware</literal> (see <xref
+      linkend="ad_buw4wh0"/>), </para>
+   </listitem>
+   <listitem>
+    <para> Global Container <literal>scRefObjectContainer</literal> (see
+      <xref linkend="ad_btxam6w"/>), </para>
+   </listitem>
+   <listitem>
+    <para> Default Distribution Container
+      <literal>scDistributionContainer</literal> (see <xref
+      linkend="ad_btxarm9"/>), </para>
+   </listitem>
+   <listitem>
+    <para>
+     <literal>scPosImage</literal> object (see <xref linkend="ad_b58oz2l"
+     />) for the minimal image. </para>
+   </listitem>
+  </itemizedlist>
+  <para> With these objects in place, you must then use posAdmin to create
+   the following mandatory objects in the LDAP tree: </para>
+  <variablelist>
+   <varlistentry>
+    <term>Branch Objects:</term>
+    <listitem>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para> One or more <literal>organizationalUnit</literal> objects
+        (see <xref linkend="ad_bsxk4te"/>) to represent your
+        organization&rsquo;s structure. </para>
+      </listitem>
+      <listitem>
+       <para> An <literal>scLocation</literal> object (see <xref
+         linkend="ad_bsxkk8v"/>) for each site where a &branchserv; is
+        located. </para>
+      </listitem>
+      <listitem>
+       <para> An <literal>scServerContainer</literal> (see <xref
+         linkend="ad_bsxlcvy"/>) to contain all the &branchserv;
+        objects for a given site. </para>
+      </listitem>
+      <listitem>
+       <para> An <literal>scBranchServer</literal> object (see <xref
+         linkend="ad_bsxlcvy"/>) and its associated configuration objects
+        for each &branchserv; in your system. </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><literal>scPosImage</literal> Objects:</term>
+    <listitem>
+     <para> &pos; image objects for the system image files which the
+      &branchserv; should distribute to &pos; terminals. See <xref
+       linkend="sec.slepos_term.ldap.posimage"/> for more information.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>&pos; Terminal Objects</term>
+    <listitem>
+     <para> For example, <literal>scCashRegister</literal> objects (see
+       <xref linkend="sec.slepos_term.ldap.cashreg"/>) and their associated
+      configuration objects for each type of &pos; terminal in your
+      system: </para>
+     <itemizedlist mark="bullet" spacing="normal">
+      <listitem>
+       <para>
+        <literal>scHarddisk</literal> (see <xref
+         linkend="sec.slepos_term.ldap.harddisk"/>) or
+         <literal>scRamDisk</literal> (see <xref
+         linkend="sec.slepos_term.ldap.ramdisk"/>), </para>
+      </listitem>
+      <listitem>
+       <para>
+        <literal>scPxeFileTemplate</literal> (see <xref
+         linkend="scPxeFileTemplate"/>), </para>
+      </listitem>
+      <listitem>
+       <para>
+        <literal>scConfigFileTemplate</literal> (optional, see <xref
+         linkend="sec.slepos_term.ldap.conffiletemp"/>), </para>
+      </listitem>
+      <listitem>
+       <para>
+        <literal>scConfigFileSyncTemplate</literal> (optional, see <xref
+         linkend="sec.slepos_term.ldap.conffilesynctemp"/>). </para>
+      </listitem>
+     </itemizedlist>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+  <important>
+   <title>LDAP Objects and &branchserv;/&pos; Terminals</title>
+   <para> Some administrative tasks in your &slepos; system depend on
+    the existence of certain LDAP objects: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> Before you can run <filename>posInitBranchserver</filename> and
+      deploy the &branchserv;, you must have created the
+       <systemitem>scBranchServer</systemitem> object and its supporting
+      organizational structure. </para>
+    </listitem>
+    <listitem>
+     <para> Before you boot the &pos; terminals, you must create the
+       <systemitem>scPosImage</systemitem> objects in the LDAP database.
+      The images must be activated before you boot the &pos; terminals.
+      The terminals require an activated <literal>scPosImage</literal>
+      object before they can download the corresponding physical image from
+      the &branchserv;. Activate either by setting the
+       <systemitem>scPosImageVersion</systemitem> attribute of the relevant
+       <systemitem>scPosImage</systemitem> object to
+       <literal>active</literal> or by creating a non-disabled
+       <systemitem>scImageVersion</systemitem> object. For more information
+      on activating images, see <xref linkend="image_activation"/>. </para>
+    </listitem>
+   </itemizedlist>
+  </important>
+  <para> When you boot the &pos; terminals,
+    <filename>posleases2ldap</filename> automatically creates a Workstation
+   object (<systemitem>scWorkstation</systemitem>) in the LDAP directory
+   for every Point of Service terminal that registers on the
+   &branchserv;. For information on this process, see <xref
+    linkend="ad_cntrlhw"/>. </para>
+  <para> As soon as the <systemitem>scWorkstation</systemitem> objects
+   exist in the directory, you can define attributes specific to particular
+   workstations. For example, you can assign a specific system image
+    (<systemitem>scPosImage</systemitem>) object to a workstation. For
+   instructions on this procedure, see <xref linkend="ad_buw3kgj"/>.
+  </para>
+ </sect2>
+
+ <sect2 xml:id="ad_bsxjx6n">
+  <title>General Command Options</title>
+  <para> Find an overview of general posAdmin command line options in <xref
+    linkend="ad_b58p3nr"/>. </para>
+  <table xml:id="ad_b58p3nr">
+   <title>posAdmin: General Command Line Options</title>
+   <tgroup cols="2">
+    <colspec colnum="1" colname="1"/>
+    <colspec colnum="2" colname="2"/>
+    <thead>
+     <row rowsep="1" xml:id="ad_buifnza">
+      <entry colname="1">
+       <para> Option </para>
+      </entry>
+      <entry colname="2">
+       <para> Description </para>
+      </entry>
+     </row>
+    </thead>
+    <tbody>
+     <row rowsep="0" xml:id="ad_buifnzb">
+      <entry colname="1">
+       <para>
+        <command>--user</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> Specifies a user name. Options <option>--user</option> and
+         <option>--password</option> are not mandatory. If not used,
+        user name and password are read from the configuration file. </para>
+      </entry>
+     </row>
+     <row>
+      <entry>
+       <para>
+        <command>--password</command>
+       </para>
+      </entry>
+      <entry>
+       <para> Specifies a password. Used primarily together with
+         <command>--user</command> for user authentication. For example, </para>
+       <screen>posAdmin --user cn=admin,&dnorg; --password secret</screen>
+       <para> If you use the <option>--user</option> option on the command
+        line without password, you are prompted for a password. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_buifnzc">
+      <entry colname="1">
+       <para>
+        <command>--base</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> Specifies a base context in the LDAP directory. When you add
+        a new location (branch), you specify an organization or
+        organizational unit as a base. For example, </para>
+       <screen>--base &dnorg; --base &dnunit;</screen>
+       <para> In some cases, you can use an abbreviation or a common name
+        for the base. This is only possible if the common name is a unique
+        value in the directory. For example: </para>
+       <screen>--base <replaceable>&myou;</replaceable></screen>
+       <para> If posAdmin cannot determine the base (no base or more than
+        one base is found), it exits with an error message. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_buifnzd">
+      <entry colname="1">
+       <para>
+        <command>--help</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> Displays the basic command options. </para>
+      </entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
+ </sect2>
+
+ <sect2 xml:id="ad_bsxnfrd">
+  <title>Modifying LDAP Entries</title>
+  <para> The modify option enables you to modify, add, or delete attributes
+   of existing LDAP objects. Only may attributes can be added or deleted. </para>
+  <para> To add or to modify attributes, specify the element, an attribute
+   value pair, and a DN. The main difference between command arguments in
+   add, remove, and modify operations is that the add operation specifies
+   the base DN of the directory element below which the new entry should be
+   created with the <command>--base</command> option. The modify and remove
+   operations identify the target element with the <command>--DN</command>
+   option. </para>
+  <!--FIXME, clarity, the add operation using the base option is not
+  the operation of adding the atribute using the modify option :)))
+  need to rephrase that somehow-->
+  <para> If an operation is not finished successfully, posAdmin returns an
+   error message. </para>
+  <para>
+   <xref linkend="ad_b58rjr1" xrefstyle="TableXRef"/> summarizes the
+   posAdmin command options for modifying LDAP objects. </para>
+  <table xml:id="ad_b58rjr1">
+   <title>posAdmin Options for Modifying LDAP Objects</title>
+   <tgroup cols="3">
+    <colspec colnum="1" colname="1"/>
+    <colspec colnum="2" colname="2"/>
+    <colspec colnum="3" colname="3"/>
+    <thead>
+     <row rowsep="1" xml:id="ad_bsxnjln">
+      <entry colname="1">
+       <para> Attribute </para>
+      </entry>
+      <entry colname="2">
+       <para> Type </para>
+      </entry>
+      <entry colname="3">
+       <para> Explanation </para>
+      </entry>
+     </row>
+    </thead>
+    <tbody>
+     <row rowsep="0" xml:id="ad_bsxnjlo">
+      <entry colname="1">
+       <para>
+        <command>--DN</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> must </para>
+      </entry>
+      <entry colname="3">
+       <para> Distinguished name of the element to modify. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_bsxnjlp">
+      <entry colname="1">
+       <para>
+        <command>--</command>
+        <replaceable>object</replaceable>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> must </para>
+      </entry>
+      <entry colname="3">
+       <para> Object with must or may attributes to be modified, for
+        example: <systemitem>scWorkstation</systemitem>. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_bsxnjlq">
+      <entry colname="1">
+       <para>
+        <command>--</command>
+        <replaceable>attribute</replaceable>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> must </para>
+      </entry>
+      <entry colname="3">
+       <para> Attribute, for example:
+         <systemitem>scPosImageVersion</systemitem>. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_bsxnjlr">
+      <entry colname="1">
+       <para>
+        <command>--</command>
+        <replaceable>value</replaceable>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> If a value is given, the attribute is modified; otherwise,
+        the attribute entry is deleted. </para>
+      </entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
+  <para> The following command removes an image reference in terminal
+    <literal>CR01</literal> (<systemitem>scPosImageDn</systemitem> value
+   under <systemitem>scWorkstation</systemitem> object): </para>
+  <screen>posAdmin
+--modify --scWorkstation --scPosImageDn --DN cn=<replaceable>CR01</replaceable>,&dnbranch;
+</screen>
+  <para> The following command removes both image reference and image
+   version in terminal <literal>CR01</literal>
+    (<systemitem>scPosImageDn</systemitem> and
+    <systemitem>scPosImageVersion</systemitem> values under
+    <systemitem>scWorkstation</systemitem> object): </para>
+  <screen>posAdmin
+--modify --scWorkstation --scPosImageDn --scPosImageVersion
+--DN cn=<replaceable>CR01</replaceable>,&dnbranch;
+</screen>
+  <para> The following command adds a new or modifies an existing image
+   reference: </para>
+  <screen>posAdmin
+--modify --scWorkstation --scPosImageDn cn=<replaceable>myMinimal</replaceable>,cn=<replaceable>myTestImages</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--DN cn=<replaceable>CR01</replaceable>,&dnbranch;
+</screen>
+  <para> The following command adds a new or modifies an existing image
+   reference and image version: </para>
+  <screen>posAdmin
+--modify --scWorkstation --scPosImageDn cn=<replaceable>myMinimal</replaceable>,cn=<replaceable>myTestImages</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+--scPosImageVersion <replaceable>2.1.0</replaceable>;<replaceable>active</replaceable> --DN cn=<replaceable>CR01</replaceable>,&dnbranch;
+</screen>
+  <para> The option <option>--multival</option> is used to add, remove, or
+   modify values of attributes with multiple subvalues. Only one such
+   subvalue can be modified by a single <command>posAdmin</command>
+   command. Other subvalues are preserved. </para>
+  <para> The following command adds image version
+    <literal>2.1.1;active</literal> to the image
+    <literal>myMinimal</literal>
+    (<systemitem>scPosImageVersion</systemitem> value under
+    <systemitem>scPosImage</systemitem> object): </para>
+  <screen>posAdmin
+--modify --multival --scPosImage --scPosImageVersion '=&gt;<replaceable>2.1.1</replaceable>;<replaceable>active</replaceable>'
+--DN cn=<replaceable>myMinimal</replaceable>,cn=<replaceable>myTestImages</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+</screen>
+  <para> The following command removes image version
+    <literal>2.0.4;active</literal> (if it exists): </para>
+  <screen>posAdmin
+--modify --multival --scPosImage --scPosImageVersion '<replaceable>2.0.4</replaceable>;<replaceable>active</replaceable>=&gt;'
+--DN cn=<replaceable>myMinimal</replaceable>,cn=<replaceable>myTestImages</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+</screen>
+  <para> The following command modifies image version
+    <literal>2.0.4;active</literal> to <literal>2.0.4;passive</literal>
+   (assuming it exists): </para>
+  <screen>posAdmin
+--modify --multival --scPosImage --scPosImageVersion '<replaceable>2.0.4</replaceable>;<replaceable>active</replaceable>=&gt;<replaceable>2.0.4</replaceable>;<replaceable>passive</replaceable>'
+--DN cn=<replaceable>myMinimal</replaceable>,cn=<replaceable>myTestImages</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+</screen>
+  <para> The following commands manipulate
+    <systemitem>scIdPool</systemitem> values. For example, to add
+    <literal>priId0</literal> to a new subvalue, use: </para>
+  <screen>
+posAdmin --DN &dnbranch; --modify --multival
+--scLocation --scIdPool '=&gt;priId0'
+ </screen>
+  <para> To add <literal>secId1</literal> and <literal>secId2</literal>
+   together to one new subvalue, use: </para>
+  <screen>
+posAdmin --DN &dnbranch; --modify --multival
+--scLocation --scIdPool '=&gt;secId1;secId2'
+ </screen>
+  <para> The <systemitem>scIdPool</systemitem> should then be represented
+   as: </para>
+  <screen>
+priId0
+secId1;secId2
+ </screen>
+  <para> To remove <literal>secId1</literal> and <literal>secId2</literal>,
+   use: </para>
+  <screen>
+posAdmin --DN &dnbranch; --modify --multival
+--scLocation --scIdPool 'secId1;secId2=&gt;'
+</screen>
+  <para> Because of the nature of multivalue attributes, it is not possible
+   to manipulate IDs within the same subvalue separately. To only remove
+    <literal>secId1</literal>, use: </para>
+  <screen>
+posAdmin --DN &dnbranch; --modify --multival
+--scLocation --scIdPool 'secId1;secId2=&gt;secId2'
+</screen>
+  <para> To see what IDs are present and how they are inserted, use
+    <command>posAdmin</command>: </para>
+  <screen>
+ posAdmin --base &dnunit; \
+--query --scLocation --scIdPool
+</screen>
+ </sect2>
+
+ <sect2 xml:id="ad_bsxnnef">
+  <title>Removing LDAP Entries</title>
+  <para> To remove an object from the LDAP directory, use the
+    <command>--remove</command> option and the <command>--DN</command>
+   attribute with the unique name of the object to delete. If the referred
+   object has subentries, you must add the <command>--recursive</command>
+   option. </para>
+  <para>
+   <xref linkend="ad_b58rnx4" xrefstyle="TableXRef"/> summarizes the
+   posAdmin command options for deleting LDAP objects. </para>
+  <table xml:id="ad_b58rnx4">
+   <title>posAdmin Options for Deleting LDAP Objects</title>
+   <tgroup cols="3">
+    <colspec colnum="1" colname="1"/>
+    <colspec colnum="2" colname="2"/>
+    <colspec colnum="3" colname="3"/>
+    <thead>
+     <row rowsep="1" xml:id="ad_bsxnp30">
+      <entry colname="1">
+       <para> Option </para>
+      </entry>
+      <entry colname="2">
+       <para> Type </para>
+      </entry>
+      <entry colname="3">
+       <para> Description </para>
+      </entry>
+     </row>
+    </thead>
+    <tbody>
+     <row rowsep="0" xml:id="ad_bsxnp31">
+      <entry colname="1">
+       <para>
+        <command>--DN</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> must </para>
+      </entry>
+      <entry colname="3">
+       <para> Distinguished name of the object to delete. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_bsxnp32">
+      <entry colname="1">
+       <para>
+        <command>--recursive</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> Option to delete an object with all sub-objects. </para>
+      </entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
+  <para> The following command removes all images in the distribution
+   container (<systemitem>scDistributionContainer</systemitem> object)
+    <literal>myTestImages</literal> including the container itself: </para>
+  <screen>posAdmin
+--remove --recursive  --DN cn=<replaceable>myTestImages</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+</screen>
+  <para> The following command removes the image
+    (<systemitem>scPosImage</systemitem> object)
+    <literal>myMinimal</literal> in the distribution container
+    <literal>myTestImages</literal>: </para>
+  <screen>posAdmin
+--remove --DN cn=<replaceable>myMinimal</replaceable>,cn=<replaceable>myTestImages</replaceable>,cn=<replaceable>global</replaceable>,&dnorg;
+</screen>
+  <para> The following command removes registered terminal
+    (<systemitem>scWorkstation</systemitem> object) CR01: </para>
+  <screen>posAdmin
+--remove --DN cn=<replaceable>CR01</replaceable>,&dnbranch;
+</screen>
+  <para> Terminals can be also removed according to the time of their last
+   boot, which is stored in the <systemitem>scLastBootTime</systemitem> of
+   the scWorkstation object. To delete workstations that were not booted in
+   last T seconds, use: <command>pos ws-remove --no-boot-in-last</command>
+   <replaceable>T</replaceable>. To delete workstations that were not
+   booted since specified date, use: <command>pos ws-remove
+    --no-boot-since</command>
+   <replaceable>datetime</replaceable>, where
+    <replaceable>datetime</replaceable> is a date/time string compatible
+   with the Linux <command>date</command> command, for example <literal>2013-08-13
+    15:21:14</literal>. If <systemitem>scLastBootTime</systemitem> is
+   empty, the workstaton will never be deleted. </para>
+  <para> Under normal conditions, workstations are additionaly checked
+   whether they are online or not, and deleted only if offline and older
+   than specified. To override this check, use <command>--force</command>
+   parameter. On the other hand, if you only want to test which
+   workstations will be removed, use <option>--dry-run</option> parameter.
+  </para>
+ </sect2>
+
+ <sect2 xml:id="ad_bsxnum3">
+  <title>Querying LDAP Objects</title>
+  <para> To query LDAP, use the <command>--query</command> option,
+    <command>--DN</command> path option, an object option such as
+    <command>--scLocation</command> or <command>
+   --scBranchServer</command>, and, if desired, an attribute value pair(s).
+   Also, there are the <command>--list</command> and
+    <command>--full</command> switches that control how and what data is
+   displayed, with treeview and queried attributes only as default. </para>
+  <para>
+   <xref linkend="ad_b58rp9u" xrefstyle="TableXRef"/> summarizes the
+   posAdmin command options for querying the LDAP database. </para>
+  <table xml:id="ad_b58rp9u">
+   <title>posAdmin 0ptions for Querying the LDAP Database</title>
+   <tgroup cols="3">
+    <colspec colnum="1" colname="1"/>
+    <colspec colnum="2" colname="2"/>
+    <colspec colnum="3" colname="3"/>
+    <thead>
+     <row rowsep="1" xml:id="ad_bsxnvii">
+      <entry colname="1">
+       <para> Option </para>
+      </entry>
+      <entry colname="2">
+       <para> Type </para>
+      </entry>
+      <entry colname="3">
+       <para> Description </para>
+      </entry>
+     </row>
+    </thead>
+    <tbody>
+     <row rowsep="0" xml:id="ad_bsxnvij">
+      <entry colname="1">
+       <para>
+        <command>--base</command>
+        <replaceable>base</replaceable>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> The base option sets the base in which to search for objects.
+        The default base is the organization (&dnorg;). </para>
+      </entry>
+     </row>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <command>--DN</command>
+        <replaceable>regexp</replaceable>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> Regular expression for distinguished name of the queried
+        element. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_bsxnvik">
+      <entry colname="1">
+       <para>
+        <command>--</command>
+        <replaceable>object</replaceable>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> Object to be queried, e.g.,
+         <systemitem>--scLocation</systemitem>. </para>
+      </entry>
+     </row>
+     <row rowsep="0" xml:id="ad_bsxnvil">
+      <entry colname="1">
+       <para>
+        <command>--</command>
+        <replaceable>attribute</replaceable>
+        <replaceable>regexp</replaceable>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> Show only objects whose attribute value conforms to the
+        regular expression. </para>
+       <para> The --<replaceable>attribute</replaceable> options can also
+        be used without specified values. In such a case, all objects are
+        shown, but only the specified attributes are printed in the output
+        (other attributes are ommited). </para>
+      </entry>
+     </row>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <command>--list</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> Displays the result as a list, not as a tree (useful for
+        script processing). </para>
+      </entry>
+     </row>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <command>--full</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> Displays all attributes and all their values
+         (<option>--attribute --value</option> filtering still takes
+        place). Also enables display of DN for each object. </para>
+      </entry>
+     </row>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <command>--showDN</command>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para> may </para>
+      </entry>
+      <entry colname="3">
+       <para> Displays all DNs of found objects also in the tree view.
+       </para>
+      </entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>
+  <para> For example, to list all locations in the &dnunit;
+   organizational unit showing all data, use: </para>
+  <screen>
+posAdmin --base &dnunit; \
+--query --scLocation
+</screen>
+  <para> To list all locations in the &dnunit; organizational unit
+   showing only <systemitem>ipNetworkNumber</systemitem>, use: </para>
+  <screen>
+posAdmin --base &dnunit; \
+--query --scLocation --ipNetworkNumber
+</screen>
+  <para> To list all locations in the &dnunit; organizational unit with
+   the <systemitem>ipNetworkNumber</systemitem>
+   <literal>192.168.1.0</literal>, use: </para>
+  <screen>
+posAdmin --base &dnunit; \
+--query --scLocation --ipNetworkNumber <replaceable>192.168.1.0</replaceable>
+</screen>
+  <para> To list all IDs in all locations in the &dnunit;
+   organizational unit, use: </para>
+  <screen>
+posAdmin --base &dnunit; \
+--query --scLocation --scIdPool
+</screen>
+  <para> To find out if there is a workstation registered with ID equal to
+    <literal>terminal1</literal>, use: </para>
+  <screen>
+posAdmin --query --scWorkstation --cn terminal1
+</screen>
+  <para> To find if there is any workstation registered with ID containing
+   the <literal>terminal</literal> substring and ending with two or three
+   digits and having mac address composed of digits only, use: </para>
+  <screen>
+posAdmin --query --scWorkstation --cn '.*terminal.*\D*\d{2,3}' --macAddress '(\d\d:){5}\d\d'
+</screen>
+  <para> To find all roles under role containers <literal>roles1</literal>
+   or <literal>roles2</literal> and show all their attributes, use: </para>
+  <screen>
+posAdmin --query --DN '.*,cn=(roles1|roles2),.*' --scRole --full
+</screen>
+  <para> To get a plain list consisting only of DNs of all cash registers
+   using a raid scheme, use: </para>
+  <screen>
+posAdmin --query --scCashRegister --scRaidScheme '.*'  --list | grep DN: | cut -d ' ' -f2
+</screen>
+ </sect2>
+
+ <sect2 xml:id="posadmin_xml">
+  <title>posAdmin XML Interface</title>
+  <para> Adding &slepos; LDAP objects via <command>posAdmin</command>
+   can be a time consuming and confusing process prone to errors. To
+   address this inconvenience, &slepos; is introducing a new XML
+   interface for <command>posAdmin</command>. With the XML interface, it is
+   possible to export LDAP data to an XML file and import data from an XML
+   file into the LDAP database. <remark>emap: Maybe this should be
+    mentioned earlier before explaining the more cumbersome
+    approach?</remark>
+   <!--FIXME - think about it!-->
+  </para>
+  <para> The XML approach has the following advanages: </para>
+  <itemizedlist mark="bullet" spacing="normal">
+   <listitem>
+    <para> Ability to define more than one LDAP object at a time. </para>
+   </listitem>
+   <listitem>
+    <para> Improved readability of object definitions for human
+     administrators and scripts. </para>
+   </listitem>
+   <listitem>
+    <para> Implementation of precise validation checks performed before
+     actually writing to the LDAP database. </para>
+   </listitem>
+  </itemizedlist>
+  <sect3>
+   <title>Exporting LDAP Database to XML</title>
+   <para> To export the complete LDAP database to an XML file, use: </para>
+   <screen>posAdmin --export --type XML --file <replaceable>filename</replaceable></screen>
+   <para> You can also export a database subtree by using the
+     <option>--base</option> option with the appropriate baseDN parameter: </para>
+   <screen>posAdmin --export --type XML --file <replaceable>filename</replaceable> --base <replaceable>baseDN</replaceable></screen>
+  </sect3>
+  <sect3>
+   <title>Importing XML to LDAP Database</title>
+   <para> To import the &slepos; XML file into the LDAP database use: </para>
+   <screen>posAdmin --import --type XML --file <replaceable>filename</replaceable></screen>
+   <para> The XML import is performed in three steps: </para>
+   <orderedlist spacing="normal">
+    <listitem>
+     <para> Validation of the XML file (see <xref linkend="xml_validation"
+      />). </para>
+    </listitem>
+    <listitem>
+     <para> Validation of &slepos; data with imported data applied (see
+       <xref linkend="ldap_validation"/>). </para>
+    </listitem>
+    <listitem>
+     <para> If both checks are succesful, the LDAP database is updated. In
+      case of any error, the import is interrupted and an explanatory
+      message displayed. </para>
+    </listitem>
+   </orderedlist>
+  </sect3>
+  <sect3 xml:id="slepos_xml_datamodif">
+   <title>Using XML to Modify LDAP Data</title>
+   <para> &slepos; XML supports four types of modification of LDAP
+    data: </para>
+   <!--some note on type definition-->
+   <variablelist>
+    <varlistentry>
+     <term>insert</term>
+     <listitem>
+      <para> Use to add new data if the existing LDAP data should not be
+       modified. </para>
+      <para> If data being added already exist in the LDAP database, they
+       are skipped and the import continues. This is the default
+       modification type. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>replace</term>
+     <listitem>
+      <para> Use to add new data or to replace existing LDAP data. </para>
+      <para> If data being added already exist in the LDAP database, LDAP
+       data is overwritten. XML must specify all required attributes. If an
+       element uses <literal>replace</literal>
+       <option>modifyType</option>, all its children must also use
+        <literal>replace</literal>
+       <option>modifyType</option>. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>update</term>
+     <listitem>
+      <para> Use update to modify existing LDAP data. </para>
+      <para> XML does not need to specify all required attributes.
+       Attributes with nonempty tags are replaced in LDAP data. Attributes
+       with empty tags are deleted from LDAP data. Unspecified attributes
+       will not be changed. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>delete</term>
+     <listitem>
+      <para> Use to delete LDAP data. </para>
+      <para> If data does not exist in the LDAP database, the operation is
+       skipped. If an element uses <literal>delete</literal>
+       <option>modifyType</option>, all its children must use
+        <literal>delete</literal>
+       <option>modifyType</option>. </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <para> The following example adds a new global role
+     <literal>role2</literal>, deletes the description of
+     <literal>role1</literal>, changes the global image name
+     <literal>graphical</literal> to <literal>graphical-updated</literal>
+    and deletes the global image <literal>testImage</literal>, all using
+    one XML file: </para>
+   <screen>
+&lt;?xml version="1.0" encoding="utf-8" standalone="no"?&gt;
+&lt;slepos xmlversion="0.2" xmlns="http://www.suse.com/SLEPOS" xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
+    &lt;!-- add scRole role2 as global role. Not specified modifyType defaults to insert --&gt;
+    &lt;scRole dn="cn=role2,cn=global,o=myorg,c=us"&gt;
+        &lt;attributes&gt;
+            &lt;scRoleName&gt;ramdisk role&lt;/scRoleName&gt;
+            &lt;scRoleDescription&gt;use ramdisk&lt;/scRoleDescription&gt;
+        &lt;/attributes&gt;
+    &lt;/scRole&gt;
+
+    &lt;!-- delete description of role1 --&gt;
+    &lt;scRole dn="cn=role1,cn=global,o=myorg,c=us" modifyType="update"&gt;
+        &lt;attributes&gt;
+            &lt;scRoleDescription /&gt;
+        &lt;/attributes&gt;
+    &lt;/scRole&gt;
+
+    &lt;!-- update image name graphical to graphical-updated --&gt;
+    &lt;scPosImage dn="cn=graphical,cn=default,cn=global,o=myorg,c=us" modifyType="update"&gt;
+        &lt;attributes&gt;
+            &lt;scImageName&gt;graphical-updated&lt;/scImageName&gt;
+        &lt;/attributes&gt;
+    &lt;/scPosImage&gt;
+
+    &lt;!-- delete testImage --&gt;
+    &lt;scPosImage dn="cn=testImage,cn=default,cn=global,o=myorg,c=us" modifyType="delete"&gt;
+        &lt;attributes /&gt;
+    &lt;/scPosImage&gt;
+&lt;/slepos&gt;
+</screen>
+  </sect3>
+  <sect3 xml:id="slepos_xml_format">
+   <!--FIXME TODO check and fix from here to the end-->
+   <title>&slepos; XML Format</title>
+   <para> Example of <systemitem>scLocation</systemitem> object in
+    &slepos; XML: </para>
+   <screen>
+  &lt;?xml version="1.0" encoding="utf-8" standalone="no"?&gt;
+
+  &lt;slepos xmlversion="0.2" xmlns:slepos="http://www.suse.com/SLEPOS" xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
+    &lt;organization dn="o=myorg,c=us"&gt;
+        &lt;attributes /&gt;
+      &lt;organizationalUnit dn="ou=myorgunit"&gt;
+        &lt;attributes&gt;
+          &lt;description&gt;My organizational unit&lt;/description&gt;
+        &lt;/attributes&gt;
+        &lt;scLocation dn="cn=mybranch"&gt;
+          &lt;attributes&gt;
+            &lt;ipNetworkNumber&gt;192.168.125.0&lt;/ipNetworkNumber&gt;
+            &lt;ipNetmaskNumber&gt;255.255.255.0&lt;/ipNetmaskNumber&gt;
+            &lt;scDhcpRange&gt;192.168.125.10,192.168.125.50&lt;/scDhcpRange&gt;
+            &lt;scDhcpFixedRange&gt;192.168.125.51,192.168.125.151&lt;/scDhcpFixedRange&gt;
+            &lt;scDefaultGw&gt;192.168.125.253&lt;/scDefaultGw&gt;
+            &lt;scDynamicIp&gt;TRUE&lt;/scDynamicIp&gt;
+            &lt;scWorkstationBaseName&gt;CR&lt;/scWorkstationBaseName&gt;
+            &lt;scEnumerationMask&gt;00&lt;/scEnumerationMask&gt;
+            &lt;scDhcpExtern&gt;FALSE&lt;/scDhcpExtern&gt;
+            &lt;userPassword&gt;password&lt;/userPassword&gt;
+            &lt;scDnsMapFunc&gt;direct&lt;/scDnsMapFunc&gt;
+            &lt;scIpMapFunc&gt;transform:([0-9.]+)&lt;/scIpMapFunc&gt;
+          &lt;/attributes&gt;
+        &lt;/scLocation&gt;
+      &lt;/organizationalUnit&gt;
+    &lt;/organization&gt;
+  &lt;/slepos&gt;
+</screen>
+   <para> &slepos; XML data is always encapsulated by the
+     <systemitem>&lt;slepos&gt;&lt;/slepos&gt;</systemitem>
+    tags specifying &slepos; and XInclude namespaces. </para>
+   <para> The <systemitem>&lt;attributes&gt;</systemitem> element
+    must always be present even if it defines no attributes. </para>
+   <para> Each objectClass element (for example
+     <systemitem>&lt;scLocation&gt;</systemitem>) has an optional
+    parameter <option>modifyType</option> with the following possible
+    values: <literal>insert</literal>, <literal>replace</literal>,
+     <literal>update</literal>, and <literal>delete</literal>. If not
+    specified, <option>modifyType</option> defaults to
+     <literal>insert</literal>. </para>
+   <para> You can find an example of a &slepos; XML configuration for a
+    combined server (&admserv; and &branchserv; on a single
+    machine) in
+     <filename>/usr/share/doc/packages/POS_Contrib/SLEPOS-XML/</filename>. </para>
+   <sect4>
+    <title>Specifying LDAP Distinguished Names (DNs)</title>
+    <para> In &slepos; XML, each element representing an LDAP object
+     class has a mandatory attribute DN. The content of the DN attribute
+     depends on the position of the element: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para> If the element is directly under the
+        <literal>&lt;slepos:slepos&gt;</literal> element, the DN
+       attribute must contain the full DN of the entry this element is
+       representing. The only exception is when the
+        <literal>&lt;slepos:slepos&gt;</literal> element specifies
+       its <systemitem>baseDN</systemitem> attribute. In such a case, the
+       DN attribute is specified in relation to the
+        <systemitem>baseDN</systemitem> attribute. </para>
+     </listitem>
+     <listitem>
+      <para> In all other cases, the DN attribute must be specified
+       relative to its parent. </para>
+     </listitem>
+    </itemizedlist>
+    <para> In the provided example, the DN of organization is
+      <literal>o=myorg,c=us</literal> and because it is the direct child of
+      <systemitem>&lt;slepos:slepos&gt;</systemitem>, the complete
+     DN is specified. In comparison, the
+      <systemitem>scLocation</systemitem>'s complete DN is
+      <literal>cn=mybranch,ou=myorgunit,o=myorg,c=us</literal>, but we
+     specify only the first part of its DN, so attribute dn is
+      <literal>cn=mybranch</literal>. </para>
+   </sect4>
+   <sect4>
+    <title>Handling <systemitem>scConfigFileTemplate</systemitem>
+     objects</title>
+    <para> The <systemitem>scConfigFileTemplate</systemitem> objects in
+     LDAP contain actual data of given configuration files. &slepos;
+     XML files do not include this data directly. The respective
+     configuration files are created during the export in the same
+     directory as the &slepos; XML file. Their file names are in the
+     following format:
+       <filename><replaceable>xml_file_name</replaceable>-<replaceable>entry_dn</replaceable>.conf</filename>
+     and are written as <systemitem>scConfigFileData</systemitem> attribute
+     to XML. </para>
+    <para> During import, it is checked if the
+      <systemitem>scConfigFileData</systemitem> attributes link to existing
+     files. If yes, the given files are loaded and inserted as
+      <systemitem>scConfigFileData</systemitem> objects, otherwise
+      <systemitem>scConfigFileData</systemitem> are left intact.
+     <!--Note: scConfigMd5 attribute is alway ommited during export and recomputed during import.
+Note: SLEPOS XML supports XML XInclude tags, note that included XMLs must not contain &lt;slepos:slepos&gt; tags and also rule of first DN do not apply.
+FIXME -->
+    </para>
+   </sect4>
+  </sect3>
+  <sect3 xml:id="xml_validation">
+   <title>&slepos; XML validation</title>
+   <para> Validation of &slepos; XML is done via the command: </para>
+   <screen>posAdmin --validateXML --file <replaceable>filename</replaceable> [--schema &lt;filename&gt;]</screen>
+   <para>
+    <!--FIXME TODO unclear!!--> It performs XML validation against the
+    &slepos; XML RelaxNG schema. If the <option>--schema</option>
+    parameter is not specified, the validation schema is generated from the
+    &slepos; LDAP schema. </para>
+  </sect3>
+  <sect3>
+   <title>Evaluation of Modifications and Limitations</title>
+   <para> Modifications are evaluated in the order of the elements in the
+    XML file. This is important when the same data is modified multiple
+    times in one XML file. The same rules apply as for adding to LDAP. For
+    example, it is allowed to insert and delete the very same data in one
+    XML file, which results in no change in LDAP. Inserting two or more
+    elements with the same DN means that the first element is written to
+    LDAP but others are skipped. Because of this way of evaluation, it is
+    not possible to change the <literal>delete</literal> or
+     <literal>replace</literal> modification types in children elements. </para>
+   <para> &slepos; XML modification currently does not allow moving or
+    renaming of entries (the moddn/modrdn LDAP operation). </para>
+  </sect3>
+  <sect3>
+   <title>Compatibility and Converting of Different XML Versions</title>
+   <para> In &slepos;, both versions 0.1 and 0.2 of &slepos; XML
+    are supported. Note that the <command>posAdmin</command> XML export
+    produces &slepos; XML version 0.2. &slepos; ships with XSL
+    template for converting &slepos; XML 0.1 to 0.2. This template is
+    stored in
+     <filename>/etc/SLEPOS/template/XML/SLEPOSxml0.1to0.2.xslt</filename>. </para>
+   <para> Use the following command to convert the XML file: </para>
+   <screen>
+xsltproc -o <replaceable>newXMLFile</replaceable> /etc/SLEPOS/template/XML/SLEPOSxml0.1to0.2.xslt <replaceable>oldXMLFile</replaceable>
+ </screen>
+  </sect3>
+ </sect2>
+
+ <sect2 xml:id="posadmingui">
+  <title>&slepos; posAdmin Graphical User Interface</title>
+  <para> The &slepos; posAdmin-GUI is a graphical tool to simplify the
+   configuration of branch servers, images and cash registers. posAdmin-GUI
+   uses the &yast; graphical library to provide a familiar look and
+   feel. posAdmin GUI is included in the additional &slepos; package
+    <systemitem>POS_Server-AdminGUI</systemitem>. </para>
+  <para> The <command>posAdmin-GUI</command> command can be started if the
+    <systemitem>POS_Server-AdminGUI</systemitem> package and its
+   requirements are installed. The initialized &slepos; environment is
+   not a requirement. GUI is started by the <command>posAdmin-GUI</command>
+   command (specifically <filename>/usr/sbin/posAdmin-GUI.pl</filename>).
+   The <command>posAdmin-GUI</command> command accepts one optional
+   parameter containing the file name of the XML file generated by
+   posAdmin-GUI or the XML file exported from LDAP. However, posAdmin-GUI
+   works only with one BranchServer (scLocation) object, using the exported
+   XML file with more scLocations results in no BranchServer (scLocation)
+   data loaded. Only global images (scPosImage), cash registers
+   (scCashRegister) and roles (scRole) are loaded. </para>
+  <para> The posAdmin GUI work flow is divided into 4 stages: BranchServer
+   specific configuration, Images, Cash Registers and Final stage. </para>
+  <sect3>
+   <title>BranchServer configuration</title>
+   <para> The first stage covers the &branchserv;
+     (<systemitem>scLocation</systemitem>,
+     <systemitem>scNetworkcard</systemitem>,
+     <systemitem>scService</systemitem>, ...) and roles configuration. This
+    stage is further divided into several parts: </para>
+   <variablelist>
+    <varlistentry>
+     <term>Company details and its organizational structure</term>
+     <listitem>
+      <para> Organization, country, organizational units and location
+       details together create the LDAP Distinguished Name (DN) for the
+       &branchserv;'s <systemitem>scLocation</systemitem> object.
+       To add organizational units, click
+        <guimenu>Add nested OU</guimenu>. The DN is created by concatenating
+       entered data "from the bottom" &mdash; location as the first up
+       to the organization and the country. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Enablement of the external DHCP, local and global roles</term>
+     <listitem>
+      <para> The <guimenu>External DHCP</guimenu> check box sets
+        <systemitem>scDhcpExtern</systemitem> attribute to
+        <literal>TRUE</literal> to disable the &slepos; managed DHCP
+       service. </para>
+      <para> To enable the role-based approach, <guimenu>Use
+        roles</guimenu> must be activated. Activating only <guimenu>Use global
+        roles</guimenu> does not enable roles. If <guimenu>Use
+        global roles</guimenu> and <guimenu>Use roles</guimenu> are
+       activated, the role-based mode and all roles (defined under global and
+       location) are enabled. If <guimenu>Use roles</guimenu> is activated
+       and <guimenu>Use global roles</guimenu> is not activated, the
+       role-based mode is enabled, but only the roles defined under the
+       location are used. If <guimenu>Use roles</guimenu> is not activated,
+       roles are not enabled. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Roles configuration</term>
+     <listitem>
+      <para> Individual roles can be configured in the roles configuration
+       window accessible after clicking the <guimenu>Roles
+        configuration</guimenu> button. The roles configuration window
+       presents option to configure the ID pool (the
+        <systemitem>scIdPool</systemitem> attribute). Individual IDs are
+       separated by semi-colon ';'. Then you can add, edit or remove roles. </para>
+      <para> To add a role ensure you have selected <guimenu>&lt;add
+        new role&gt;</guimenu> in the list of roles, select local or
+       global role, enter the role name and click <guimenu>Add
+        role</guimenu>. </para>
+      <para> To modify a role, select the role in the role list, update any
+       role attributes and click <guimenu>Update role</guimenu>. </para>
+      <para> To remove a role, select the role in the role list and click
+        <guimenu>Remove role</guimenu>. </para>
+      <para> For each role, the file templates can be managed by clicking
+        <guimenu>Manage file templates</guimenu>. When done editing, click
+        <guimenu>Return to BS configuration</guimenu> to return. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>File templates configuration</term>
+     <listitem>
+      <para> Static file templates
+        (<systemitem>scConfigFileTemplate</systemitem>), dynamic file
+       templates (<systemitem>scConfigFileSyncTemplate</systemitem>) and
+       PXE file templates (<systemitem>scPxeFileTemplate</systemitem>) can
+       be configured here. </para>
+      <para> To add a template, ensure you have selected
+        <guimenu>&lt;add new template&gt;</guimenu> in list of
+       templates, then select the type of template and fill in required
+       information. The <guimenu>Source file</guimenu> points to the file
+       on the server to load, the <guimenu>Target file</guimenu> is the
+       path where to put the loaded file in the deployed workstation. </para>
+      <para> To modify a template, select the template in template list,
+       update any attributes and click <guimenu>Update template</guimenu>. </para>
+      <para> To remove a template, select the template in the template list
+       and click <guimenu>Remove template</guimenu>. </para>
+      <para> When you are done, click <guimenu>Return</guimenu> to return
+       to the previous configuration window. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Configuration of the &branchserv; services and
+      network</term>
+     <listitem>
+      <para> The &branchserv; services configuration usually needs
+       little adjusting. It preloads services default configurations which
+       should suit almost all use cases. Note: service specific parameters
+       cannot contain arbitrary settings. They refer to LDAP attributes, so
+       only attributes present in the &slepos; LDAP schema can be
+       entered. The usage model is similar to the Roles and File templates
+       configuration. </para>
+      <para> The &branchserv; network configuration covers the
+       configuration of the network to which the workstations are connected
+       (branch internal network). There is no need to define network cards
+       facing WAN, VPN, etc. The &branchserv; host name refers to the
+       common name (cn) attribute of the
+        <systemitem>scBranchServer</systemitem> object in LDAP and means
+       the host name of the &branchserv; in the branch internal network.
+       The &branchserv; network address refers to
+        <systemitem>ipNetworkNumber</systemitem>, the network mask refers
+       to <systemitem>ipNetmaskNumber</systemitem>, the default gateway
+       refers to <systemitem>scDefaultGw</systemitem>, the DHCP fixed IP
+       range refers to <systemitem>scDhcpFixedRange</systemitem>, the DHCP
+       dynamic IP range refers to
+       <systemitem>scDhcpRange</systemitem>attribute of the
+        <systemitem>scLocation</systemitem> object class. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Advanced options after enabling "Advanced mode"</term>
+     <listitem>
+      <para> The advanced mode is enabled by checking the <guimenu>Advanced
+        mode</guimenu> check box. The following attributes are available in
+       the advanced mode: the IP mapping function
+        (<systemitem>scIpMapFunc</systemitem>), the DNS mapping function
+        (<systemitem>scDnsMapFunc</systemitem>), the associated domain
+        (<systemitem>associatedDomain</systemitem>), the enumeration mask
+        (<systemitem>scEnumerationMask</systemitem>), the workstation base
+       name (<systemitem>scWorkstationBaseName</systemitem>) and the server
+       container (the common name of the
+        <systemitem>scServerContainer</systemitem> object). </para>
+      <para> All values are either imported from the provided XML or filled
+       with &slepos; defaults. </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect3>
+  <sect3>
+   <title>Images configuration</title>
+   <para> Images configuration lists all registered local and global
+    images. To add a new image, make sure <guimenu>&lt;add new
+     image&gt;</guimenu> is selected in the image list. </para>
+   <para> All fields corresponds to LDAP attributes of the
+     <guimenu>scPosImage</guimenu> LDAP object: the image name
+     (<systemitem>scImageName</systemitem>), the image version
+     (<systemitem>scImageVersion</systemitem>), the image file
+     (<systemitem>scImageFile</systemitem>). The password for encrypted
+    images can be entered after enabling the advanced mode, which also
+    reveals DHCP options for the remote boot
+     (<systemitem>scDhcpOptionsRemote</systemitem>), the DHCP options for
+    local boot (<systemitem>scDhcpOptionsLocal</systemitem>) and block size
+     (<systemitem>scBsize</systemitem>). The configuration of file
+    templates is also available for every image. </para>
+  </sect3>
+  <sect3>
+   <title>Cash register configuration</title>
+   <para> Cash register configuration lists all registered local, global
+    and role based (if enabled) cash registers. To add a new cash register,
+    make sure that <guimenu>&lt;add new image&gt;</guimenu> is
+    selected in the list of cash registers. </para>
+   <para> In the default mode, there is only one editable field, the
+     <guimenu>CashRegister name</guimenu>, which corresponds to the
+     <systemitem>scCashRegisterName</systemitem> attribute of the
+     <systemitem>scCashRegister</systemitem> LDAP object. The associated
+    image field is dynamically filled from the list of registered images. </para>
+   <para> An important part of the cash register configuration is disk
+    management, which is done in the <guimenu>Manage disks</guimenu>
+    window. The disk configuration differs for hard disks and RAM disks.
+    The posAdmin-GUI adapts itself according to the disk type. The RAM disk
+    configuration is simple by filling the device ID
+     (<systemitem>scDevice</systemitem> attribute of
+     <systemitem>scRamDisk</systemitem> object). The hard disk
+    configuration needs partitioning to be set up. The needed partitioning
+    related fields are the partition number
+     (<systemitem>scPartNum</systemitem>), the partition type
+     (<systemitem>scPartType</systemitem>), the partition mount point
+     (<systemitem>scPartMount</systemitem>), the partition size
+     (<systemitem>scPartSize</systemitem>) and the partition password
+     (<systemitem>scPassword</systemitem>). After filling these information
+    (see <xref linkend="sec.slepos_term.ldap.harddisk"/>) click
+     <guimenu>Add partition</guimenu>. After all partitions are added,
+    click <guimenu>Add disk</guimenu> or <guimenu>Update disk</guimenu>.
+   </para>
+  </sect3>
+  <sect3>
+   <title>Finalize</title>
+   <para> If posAdmin-GUI is running on a configured &admserv;, the
+     <guimenu>Update LDAP database</guimenu> button is enabled together
+    with the <guimenu>Create Offline Initialization File after LDAP is
+     updated</guimenu> check box. Using this you can directly update the
+    &slepos; LDAP with the new configured data and create the
+    package for offline/automated &branchserv; configuration. If
+    posAdmin-GUI is not running on the &admserv; or you do not want to
+    update LDAP immediately, you can export the configured data as a
+    &slepos; XML file by using the <guimenu>Create XML
+     configuration</guimenu> button. This XML file can be edited and
+    imported to &slepos; LDAP using the <command>posAdmin --import
+     --type XML --file &lt;filename&gt;</command> command and/or
+    used as a base for another &branchserv; and provided as a start
+    argument to posAdmin-GUI. </para>
+  </sect3>
+ </sect2>
+
+ <sect2 xml:id="ldapexternaltools">
+  <title>Editing LDAP Database Using External Tools</title>
+  <para> &slepos; LDAP database entries are variously interconnected
+   and sometimes contain automatically computed values. The posAdmin tool
+   is aware of that and it updates all related parts of the database when
+   necessary. However, when other tools are used, for example LDAP editors
+   like GQ or JXplorer, they are not aware of such dependencies. posAdmin
+   provides an LDAP refresh feature which recomputes and updates all
+   dependencies for every entry in the LDAP tree: </para>
+  <screen>posAdmin --refresh</screen>
+  <para> The <command>posAdmin --refresh</command> command should be called
+   after each modification of the LDAP database using 3rd party tools. This
+   feature can be safely called on a regular basis e.g. by using cron
+   daemon. </para>
+ </sect2>
+</sect1>

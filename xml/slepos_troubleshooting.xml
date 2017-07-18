@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+ xml:id="cha.slepos_trouble">
+ <title>Troubleshooting</title>
+ <info/>
+ <para> This section describes the analysis and correction of some specific
+  error situations in a &sleposreg; system. </para>
+ <sect1 xml:id="verbosity">
+  <title>Debugging &slepos; Commands</title>
+  <para> You can set the verbosity level for console output and log files
+   of all &slepos; commands and tools in the same way, with the
+    <systemitem>POS_FORCE_VERBOSITY</systemitem> environment variable. </para>
+  <para> The verbosity level for the console output can be specified with
+     <option>--verbose=<replaceable>level</replaceable></option> or
+    <option>-v <replaceable>level</replaceable></option>. The verbosity
+   level for the log files can be specified with
+     <option>--syslog=<replaceable>level</replaceable></option>. The
+    <replaceable>level</replaceable> can have the following values:
+    <literal>emerg</literal> (panic conditions), <literal>alert</literal>
+   (conditions needing immediate correction), <literal>crit</literal>
+   (critical conditions), <literal>err</literal> (errors),
+    <literal>warn</literal> (warnings), <literal>notice</literal>
+   (conditions requiring special handling), <literal>info</literal>
+   (informational messages), or <literal>debug</literal> (debugging
+   messages). </para>
+  <remark>emap: and explanation of the different settings would be good, or
+   a reference to further information. Some values are fairly obvious, but
+   only give an idea of the output/log, while others remain quite
+   obscure.</remark>
+  <remark>jfriedl: TODO, I agree, some investigation is needed</remark>
+ </sect1>
+ <sect1>
+  <title>Collecting &slepos; Data for Bug Reporting</title>
+  <para> For easy collection of &slepos; log files, configuration files
+   and LDAP directory content for bug reporting, the
+    <command>save_poslogs</command> tool is provided. For more information,
+   see <xref linkend="save_poslogs"/>. </para>
+ </sect1>
+ <sect1 role="General" xml:id="ad_bt0n4jj">
+  <title>Server Infrastructure</title>
+  <para> The setup and operating procedures for &slepos; servers in
+   most of the cases are easy. However, the distributed nature of the
+   system might provide some challenges. The following section describes
+   frequently encountered difficulties with name resolution. </para>
+  <sect2 xml:id="ad_bt0n6ic">
+   <title>Name Resolution</title>
+   <para> Care must be taken to ensure that the system can resolve its own
+    name to its IP address on the branch network, especially when
+    configuring the &branchserv;s with
+     <command>posInitBranchserver</command>. </para>
+   <para> If the system has only one network interface or if the eth0
+    interface is the branch network interface, the correct resolution is
+    done through the <filename>/etc/hosts</filename> file, where &yast;
+    adds the correct entries. Otherwise, add the corresponding line to
+     <filename>/etc/hosts</filename> manually or make sure that DNS can
+    resolve the host name. </para>
+   <sect3 xml:id="ad_bswkf42">
+    <title>Symptoms</title>
+    <para> If the DHCP server configuration file
+      <filename>/etc/dhcpd.conf</filename> is not created properly,
+      <command>poscheckip</command> returns the following error code: </para>
+    <screen># poscheckip
+# echo $?
+1</screen>
+    <para> If the <filename>dhcpd.conf</filename> file is created properly,
+      <command>poscheckip</command> returns the correct host name, address,
+     netmask and domain as follows: </para>
+    <screen># poscheckip
+bs      192.168.150.1   255.255.255.0   Lab.HQ.myorg.us
+# echo $?
+0</screen>
+   </sect3>
+   <sect3 xml:id="ad_bswkf43">
+    <title>Tips</title>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para> Make sure that <filename>/etc/named.conf</filename> lists the
+       right parent. Configure the DNS server as forwarder. <remark>emap:
+        more than one DNS server in the network? I guess there'd be a fall
+        back server. Just wondering if singular wouldn't be better to use
+        here.</remark></para>
+     </listitem>
+     <listitem>
+      <para> Add the host name to <filename>/etc/hosts</filename>. </para>
+     </listitem>
+     <listitem>
+      <para> When using DHCP to configure the external (WAN) network
+       interface of the &branchserv;, set the DHCP client on the
+       &branchserv; to modify <filename>named.conf</filename> instead
+       of <filename>resolv.conf</filename> in
+        <filename>/etc/sysconfig/network/config</filename>. The variables
+       are <replaceable>MODIFY_RESOLV_CONF_DYNAMICALLY</replaceable> and
+        <replaceable>MODIFY_NAMED_CONF_DYNAMICALLY</replaceable>. The
+       template file is prepared for this. </para>
+     </listitem>
+    </itemizedlist>
+   </sect3>
+  </sect2>
+  <sect2>
+   <title>Problems with Terminals after &branchserv; Change</title>
+   <para> When a &branchserv; is changed or reinstalled, but some
+    terminals are still registered in the LDAP (for example, there are some
+     <literal>scWorkstation</literal> objects under a respective
+     <literal>scLocation</literal>), these terminals will not boot
+    correctly. You need to re-create their
+     <filename>config.&lt;MAC&gt;</filename> files manually. </para>
+   <para> To do this, run <command>pos dump-all</command> on the
+    &branchserv;. The command will create the needed files for all the
+    affected terminals. </para>
+  </sect2>
+  <sect2 xml:id="trouble.passwd">
+   <title>Problems with Changing the &branchserv; Password</title>
+   <para> If it is not possible to change the &branchserv; password
+    using the <command>posInitBranchServer -p</command> command, you can
+    change it manually: </para>
+   <para> On the <emphasis>Admin server</emphasis>, change the password in
+    the LDAP database. Enter the following command in the command line
+    (replace the &mybranch;, &myou;, &myo; and &myc;
+    variables with your configured values): </para>
+   <para>
+    <command>ldappasswd</command>
+    <option>-x -d</option>
+    <literal>localhost -D "cn=admin,o=&myo;,c=&myc;" -w</literal>
+     "<replaceable>admin_password</replaceable>"
+     <literal>"cn=&mybranch;,ou=&myo;,o=&myo;,c=&myc;"</literal>
+    <option>-s</option> "<replaceable>new_branch_password</replaceable>" </para>
+   <!--FIXME "?"-->
+   <para> On a <emphasis>Branch Server</emphasis>, follow the same
+    procedures as in <xref linkend="sec.adminserv.config.passwd"/>, but
+    with a new &branchserv; password and configuration file
+     <filename>/etc/SLEPOS/branchserver.conf</filename>. </para>
+  </sect2>
+ </sect1>
+ <sect1 role="General" xml:id="ad_bt0n54c">
+  <title>Operation</title>
+  <para> The following sections describe frequently encountered
+   difficulties with system operation. </para>
+  <sect2>
+   <title>Image Building</title>
+   <para> &imgcreator; or &kiwi; cannot determine which user groups
+    (GIDs) are to be created in post-installation scripts by the selected
+    packages. If there is a conflict between GIDs added in the user
+    configuration and GIDs added by post-installation scripts, image
+    building will fail. </para>
+   <sect3>
+    <title>Symptoms</title>
+    <para> Image building fails with a message like <literal>groupadd: GID
+       <replaceable>100</replaceable> is not unique</literal> or similar.
+    </para>
+   </sect3>
+   <sect3>
+    <title>Tip</title>
+    <para> When configuring users to be created on the target system, avoid
+     conflicting GIDs. </para>
+   </sect3>
+  </sect2>
+  <sect2 xml:id="ad_bty5plk">
+   <title>Image Distribution</title>
+   <para> The <command>possyncimages</command> tool distributes the boot
+    and client images from the &admserv; to the &branchserv;. It
+    uses the rsync service to let the &branchserv;s only download the
+    files that need to be updated. </para>
+   <para> Enough space should be configured to keep at least two
+    generations of image files. This redundancy ensures that there is a
+    valid image available at all times. </para>
+   <para> rsync updates existing files, creates new files, and even deletes
+    files that do not exist in the original download directory on the
+    &admserv;. </para>
+   <sect3 xml:id="ad_bswkrit">
+    <title>Symptoms</title>
+    <para> The error message <literal>rsync: error writing 4 unbuffered
+      bytes -exiting: Broken Pipe</literal> indicates that the
+     &branchserv; does not have enough disk space left to download all
+     the images. Adequate space is required for both the staging area in
+      <filename>/srv/SLEPOS/</filename> and the service area in
+      <filename>/srv/tftpboot</filename>. </para>
+   </sect3>
+   <sect3 xml:id="ad_bswkriu">
+    <title>Tips</title>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para> Make sure that <filename>config.MAC</filename> files are
+       regenerated (via the <command>pos dump-all</command> command on the
+       &branchserv; or via the <systemitem>scConfigUpdate</systemitem>
+       attribute under the relevant <systemitem>scWorkstation</systemitem>
+       set to <literal>TRUE</literal>) after new images have been
+       distributed and especially after old images have been deleted.
+      </para>
+     </listitem>
+     <listitem>
+      <para> Make sure that there is enough space for new images even
+       before old images have been deleted or delete old images before
+       uploading new ones. </para>
+     </listitem>
+    </itemizedlist>
+   </sect3>
+  </sect2>
+  <sect2 xml:id="ad_bty5pmp">
+   <title>Point of Service Terminal Configuration</title>
+   <para> The process of registering new Point of Service terminals and
+    updating the configuration information usually works without
+    administrator intervention; however, it is a complex process. To
+    simplify this process, you must ensure the &admserv; always has a
+    valid image configuration. In LDAP, the image versions must be entered
+    and made active (see <xref linkend="sec.slepos_term.ldap.posimage"/>
+    for details), and the image files must be made available with the right
+    file name (<replaceable>image_name-version</replaceable>) and with the
+    right permissions (world-readable). </para>
+   <sect3 xml:id="ad_bswkriw">
+    <title>Symptoms</title>
+    <para> The error message <literal>No Imageversion is
+      available</literal> from <command>posleases2ldap</command> or
+      <command>pos dump-all</command> means that no valid image file for
+     the active version exists. Make sure that the image has been
+     transferred to the &branchserv; and that the version in LDAP has
+     an active flag attached. </para>
+   </sect3>
+   <sect3 xml:id="ad_bswkrix">
+    <title>Tip</title>
+    <para> Keep at least two generations of image files available and
+     active in LDAP at all times. The Point of Service downloads the latest
+     client image version available on the &branchserv;. </para>
+   </sect3>
+   <sect3 xml:id="b4c9xv4">
+    <title>Troubleshooting Terminal Bootup Problems</title>
+    <para> If the Point of Service terminal does not successfully boot,
+     check the following: </para>
+    <itemizedlist mark="bullet" spacing="normal">
+     <listitem>
+      <para> Verify that an <systemitem>scCashRegister</systemitem> object
+       exists for the Point of Service terminal. For more information, see
+        <xref linkend="sec.slepos_term.ldap.cashreg"
+        xrefstyle="SectTitleOnPage"/>. </para>
+     </listitem>
+     <listitem>
+      <para> Verify the configuration of the
+        <systemitem>scCashRegister</systemitem> object for the Point of
+       Service terminal. There must either be an scCashRegister object that
+       corresponds to the HWTYPE attribute in the Point of Service
+       terminal's <filename>&hwmac;</filename> file in the
+        <filename>/srv/tftpboot/upload/hwtype</filename> directory or a
+       default <systemitem>scCashRegister</systemitem> object that will
+       work for the Point of Service terminal. </para>
+     </listitem>
+     <listitem>
+      <para> Verify that the Point of Service image configured in the
+        <systemitem>scPosImageDn</systemitem> attribute of the
+        <systemitem>scCashRegister</systemitem> object is available in the
+        <filename>/srv/tftpboot/image/</filename> directory on the
+       &branchserv;. </para>
+     </listitem>
+     <listitem>
+      <para> Do not delete any of the default LDAP objects that are created
+       when you install &slepos;. In particular, do not delete the
+       global default minimal <systemitem>scPosImage</systemitem> object
+       that is created in the default Distribution Container, even if you
+       do not plan to use the minimal image. </para>
+     </listitem>
+     <listitem>
+      <para> Each type of Point of Service terminal hardware must have a
+       unique model name defined in the
+        <systemitem>scCashRegisterName</systemitem> attribute of the
+        <systemitem>scCashRegister</systemitem> object in LDAP. </para>
+      <para> If two terminals have the same hardware name defined in their
+       scPosImage objects, neither of them boots successfully, but an
+       HWtype error is displayed on the Branch Server. To resolve the
+       problem, change the <systemitem>scCashRegisterName</systemitem>
+       value for one of the Point of Service terminals. </para>
+     </listitem>
+     <listitem>
+      <para> Check the <filename>boot.kiwi</filename> log file of the
+       terminal which failed to boot. This log file is uploaded to the
+       &branchserv; when the terminal fails to boot. The file is
+       located in
+        <filename>upload/boot.kiwi.<replaceable>MAC</replaceable></filename>.
+       If kiwidebug is enabled, the log file is always uploaded before
+       starting the system image. </para>
+     </listitem>
+    </itemizedlist>
+   </sect3>
+  </sect2>
+  <sect2 xml:id="ad_bvmeqs0">
+   <title>Loading CDBoot Images</title>
+   <para> If there are multiple CD drives in the Point of Service terminal,
+    there is no way to designate a CD drive to use; the system chooses the
+    first one it finds. </para>
+   <sect3 xml:id="ad_bvmerrr">
+    <title>Symptoms</title>
+    <para> If the Point of Service terminal does not find the drive with
+     the boot CD, it returns BIOS errors. </para>
+   </sect3>
+   <sect3 xml:id="ad_bvmeryg">
+    <title>Solution</title>
+    <para> To solve the problem, insert the CD in the bootable CD drive.
+    </para>
+   </sect3>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="sec.slepos_issues">
+  <title>Known Issues</title>
+  <para> This section describes known issues of the &sleposreg; 11
+   system. </para>
+  <sect2>
+   <!--Bug 594883 - Image creator doesn't verify group name validity-->
+   <title>Image Creator Does Not Verify Group Name Validity</title>
+   <para> Image creator does not verify group name validity, therefore the
+    administrator must make sure to only use group names beginning with a
+    letter. </para>
+  </sect2>
+  <sect2>
+   <!--Bug 597344 - roles are not safely escaped-->
+   <title>Roles Are Not Safely Escaped</title>
+   <para> The role name and description must not contain
+     <literal>|</literal> and <literal>\n</literal> characters. Safe
+    characters for <systemitem>cn</systemitem> in LDAP are
+     <literal>[-_a-zA-Z0-9]</literal>. </para>
+  </sect2>
+ </sect1>
+</chapter>

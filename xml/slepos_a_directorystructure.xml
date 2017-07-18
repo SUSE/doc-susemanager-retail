@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appendix
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<appendix xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="app.slepos_files">
+ <title>&slepos; Files and Directory Structure</title>
+ <info/>
+ <para> This section provides a quick reference for the directory structure. </para>
+ <sect1 xml:id="ad_bv30ubr">
+  <title>&admserv; Directory Structure</title>
+
+  <variablelist>
+   <varlistentry>
+    <term>
+     <filename>/etc/openldap/slapd.d</filename>
+    </term>
+    <listitem>
+     <para> The <filename>LDAP</filename> directory contains the LDAP server configuration database
+      files which should not be edited directly. For modification, use the
+       <command>ldapmodify</command> with DN <literal>cn=admin,cn=config</literal> and your
+      &slepos; administration password. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/adminserver.conf</filename>
+    </term>
+    <listitem>
+     <para> The &admserv; directory contains the standard configuration file for the
+      &admserv;. On the &combserv;, both <filename>/etc/SLEPOS/adminserver.conf</filename>
+      and <filename>/etc/SLEPOS/branchserver.conf</filename> are used. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>keys</filename> directory contains the keys and certificates required to
+      secure LDAP communication between &admserv; and &branchserv;. </para>
+     <para> During installation of the &admserv;, &slepos; may automatically create and
+      install custom CA and generate self-signed certificates to secure communication between
+      &admserv; and &branchserv;. For more information on setting up LDAP SSL, see <xref
+       linkend="sec.adminserv.ldapinit"/>. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/ca/</filename>
+    </term>
+    <listitem>
+     <para> This directory contains the CA certificate, keys, and all related data. This directory
+      is managed by &yast; CA Management module, use the <command>yast2 ca-mgm</command> command
+      for management. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/ca/ca.crt</filename>
+    </term>
+    <listitem>
+     <para> This file contains the public key for the CA that signed the server certificate. This is
+      only copied to the <filename>rsync</filename> directory if you enable LDAP SSL during
+      installation of the &admserv;. The public key for the CA allows the &branchserv;s to
+      trust the &admserv;. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/ca/ca.key</filename>
+    </term>
+    <listitem>
+     <para> This files contains the CA&rsquo;s private key. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/certs/</filename>
+    </term>
+    <listitem>
+     <para> This directory contains the &admserv; certificate and keys. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/certs/server.crt</filename>
+    </term>
+    <listitem>
+     <para> This file contains the &admserv; certificate public key. This certificate is used to
+      secure LDAP communication between Administration and &branchserv;. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/certs/server.key</filename>
+    </term>
+    <listitem>
+     <para> This file contains the private key for the server certificate. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/rsync/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>rsync</filename> directory contains the configuration files for the rsync
+      service. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/rsync/rsyncd.conf</filename>
+    </term>
+    <listitem>
+     <para> This file contains the <filename>rsync</filename> configuration data for the
+      &admserv;. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>template</filename> directory contains the template files required for the
+      Administration and &branchserv; services. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/adminserver.conf.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for the &admserv; configuration file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/branchserver.conf.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for the &branchserv; configuration file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/branchslapd.conf.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for &branchserv;'s local LDAP configuration. The
+       <command>posInitBranchServer</command> script uses this template to create the openLDAP
+      server configuration file, <filename>/etc/openldap/slapd.conf</filename>. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/dhcpd.conf.header.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for the DHCP services. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/dns-zonefile.header.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for the DNS services. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/ldif.pos</filename>
+    </term>
+    <listitem>
+     <para> This file contains initial <filename>LDAP</filename> data for eDirectory.
+       <command>posInitEdir</command> imports this file into the &admserv;'s eDirectory server.
+      This file uses the structure of the <filename>ldap.pos.template</filename>, but is populated
+      with the names provided during installation. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/ldif.pos.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for the <filename>ldif.pos</filename> file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/slapd.conf.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for <filename>slapd</filename> configuration.
+       <filename>posInitAdminserver</filename> uses this template to create the openLDAP server
+      configuration file <filename>/etc/openldap/slapd.conf</filename>. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/XML/LDAPschema.xsl</filename>
+    </term>
+    <listitem>
+     <para> This is the XSL template for visualizing the &slepos; validation template in a Web
+      browser. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/XML/basic.xml</filename>
+    </term>
+    <listitem>
+     <para> This file contains initial LDAP data for openLDAP database. The
+       <command>posInitAdminserver</command> script imports this file into the &admserv;'s
+      openLDAP server. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/XML/validateSLEPOSXMLv0.1.rng</filename>
+    </term>
+    <listitem>
+     <para> This is the validation template for &slepos; XML v0.1. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/SLEPOS/certs/ca.crt</filename>
+    </term>
+    <listitem>
+     <para> This file contains the public key for the CA that signed the server certificate. This is
+      only copied to the <filename>rsync</filename> directory if you enable LDAP SSL during
+      installation of the &admserv;. The CA&rsquo;s public key allows the &branchserv;
+      to trust the &admserv;. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/SLEPOS/config/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>config</filename> directory contains hardware configuration files that are
+      distributed by the &admserv; over rsync. Ultimately, these configuration files are
+      distributed by the &branchserv; to the &pos; terminals over TFTP. </para>
+     <note>
+      <title>Referenced Configuration Files</title>
+      <para> Any configuration files referenced in the <literal>scConfigFileSyncTemplate</literal>
+       object must be located in <filename>/srv/SLEPOS/rsync/config/</filename>. </para>
+     </note>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/SLEPOS/image/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>image</filename> directory contains active client images that are
+      distributed by the &admserv; over rsync. Ultimately, these images are distributed by the
+      &branchserv; to Point of Service terminals over TFTP. </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+
+  <!--<varlistentry>
+    <term><filename>/srv/tftpboot/boot/</filename>
+    </term>
+    <listitem>
+     <para>
+      The <filename>boot</filename> directory contains the boot images and
+      configuration files required to boot &pos; terminals.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><filename>/srv/tftpboot/boot/linux</filename>
+    </term>
+    <listitem>
+     <para>
+      This file contains the default Linux kernel used to boot
+      the &pos; terminals via PXE.
+     </para>
+     <important>
+      <title>Preparations on the &branchserv;</title>
+      <para>
+       The kernel image must be copied to the
+       <filename>/srv/SLEPOS/rsync/boot/</filename>
+       directory before running <command>posSyncImages</command>
+       on the &branchserv;.
+      </para>
+     </important>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><filename>/srv/tftpboot/boot/linux.md5</filename>
+    </term>
+    <listitem>
+     <para>
+      The md5 sum of the <filename>linux</filename> file.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><filename>/srv/tftpboot/boot/initrd.gz</filename>
+    </term>
+    <listitem>
+     <para>
+      The <filename>initrd.gz</filename> links
+      the initrd image, which provides the second bootstrap
+      used to PXE boot the &pos; terminals.
+     </para>
+     <important>
+      <title>Preparations on the &branchserv;</title>
+      <para>
+       The initrd image must be copied to the
+       <filename>/srv/SLEPOS/boot/</filename> directory before running
+       <command>posSyncImages</command> on the &branchserv;. For more
+       information on this process, see <xref linkend="cha.slepos_adminserv"/>.
+      </para>
+     </important>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><filename>/srv/tftpboot/boot/initrd.md5</filename>
+    </term>
+    <listitem>
+     <para>
+      The md5 sum of the <filename>initrd.gz</filename> file.
+     </para>
+    </listitem>
+   </varlistentry>-->
+
+  <!--   <varlistentry>
+    <term><filename>/usr/share/kiwi/images/SLEPOS</filename>
+    </term>
+    <listitem>
+     <para>
+      This directory contains SLEPOS image templates, which are used
+      for creating customized image configurations. They are stored
+      in single subdirectories <filename><replaceable>template_name</replaceable>-<replaceable>version</replaceable></filename>.
+      Symlinks from <filename><replaceable>template_name</replaceable>-<replaceable>majorname</replaceable></filename>
+      to <filename><replaceable>template_name</replaceable>-<replaceable>version</replaceable></filename> are present
+      (for example a link from<filename>graphical-4</filename> to <filename>graphical-4.0.0</filename>.
+      Image Creator shows these templates in the <guimenu>Base on Template</guimenu> list.
+     </para>
+    </listitem>
+   </varlistentry>-->
+
+  <!--<varlistentry>
+    <term><filename>/srv/SLEPOS/image/<replaceable>image_filename</replaceable></filename>
+    </term>
+    <listitem>
+     <para>
+      This directory is the staging area for the client images. The
+      information used to build client images is stored in this directory
+      and its subdirectories.<remark>emap: same description as for /usr/share/kiwi/images/SLEPOS. What's the difference?</remark>
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>-->
+ </sect1>
+ <sect1 xml:id="ad_bv30ufc">
+  <title>&branchserv; Directory Structure</title>
+
+  <variablelist>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/branchserver.conf</filename>
+    </term>
+    <listitem>
+     <para> This file contains the LDAP base configuration. It is used on &branchserv; and
+      &combserv;. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/dhcpd/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>dhcpd</filename> directory contains DHCP configuration header and DHCP
+      configuration file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/dhcpd/dhcpd.conf</filename>
+    </term>
+    <listitem>
+     <para> Contains the current &slepos; DHCP configuration for registered terminals (with
+      fixed ip). </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/dhcpd/dhcpd.conf.header</filename>
+    </term>
+    <listitem>
+     <para> The header of the <filename>dhcp.conf</filename> file to which
+       <command>posleases2ldap</command> appends terminal specific data. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/dhcpd/dhcpd.conf.old</filename>
+    </term>
+    <listitem>
+     <para> The backup of the last used DHCP configuration. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>keys</filename> directory contains the keys and certificates required to
+      secure LDAP communication between Administration and &branchserv;s. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/certs/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>certs</filename> directory contains the &admserv; certificate and
+      keys. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/keys/certs/ca.crt</filename>
+    </term>
+    <listitem>
+     <para> This file contains the public key for the CA that signed the &admserv;'s server
+      certificate. This file is only distributed to &branchserv;s if you enable LDAP SSL during
+      installation of the &admserv;. The CA&rsquo;s public key allows the &branchserv;s
+      to trust the &admserv;. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/salt.key</filename>
+    </term>
+    <listitem>
+     <para> This file contains a randomly generated key used for password obfuscation in the
+      configuration files. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/SLEPOS/template/pxelinux.cfg.template</filename>
+    </term>
+    <listitem>
+     <para> This file contains the template for <filename>pxelinux.cfg</filename> files. The
+       <filename>pxelinux.cfg</filename> files are stored on the &branchserv;. They indicate
+      which kernel and RAM disk to load for the POS terminal. These files enable the
+      &branchserv; to distribute &slepos; images. </para>
+     <para> &slepos; automatically creates the <filename>pxelinux.cfg</filename> files based on
+      the distribution container configurations in the LDAP directory. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/etc/named.d/ldap_generated</filename>
+    </term>
+    <listitem>
+     <para> The directory contains generated dns configuration file
+      (<filename>named.conf</filename>) for the DNS service provided by &branchserv; for POS
+      terminals. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>tftpboot</filename> directory contains data for the TFTP and/or FTP
+      services. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><filename>/srv/tftpboot/KIWI/</filename> or <filename>/srv/tftpboot/CR</filename>
+    </term>
+    <listitem>
+     <para> Contains configuration files for all registered &pos; terminals on the current
+      &branchserv;. Also contains <filename>rollback.MAC</filename> files indexing rollback
+      information for given MAC addresses and, in the role-based case, rolelists and idlists.
+       <filename>/srv/tftpboot/CR</filename> is a symbolic link to
+       <filename>/srv/tftpboot/KIWI</filename> for backward compatibility. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/KIWI/<replaceable>MAC</replaceable>/</filename>
+    </term>
+    <listitem>
+     <para> Contains system configuration files for the individual &pos; terminals, such as
+       <filename>xorg.conf</filename>. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/KIWI/backup/</filename>
+    </term>
+    <listitem>
+     <para> Contains backups of all previously used configuration files. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/KIWI/rollback/</filename>
+    </term>
+    <listitem>
+     <para> Contains <filename>config.MAC.hash</filename> files used for restoring older
+      configurations. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>boot</filename> directory contains the boot images and configuration files
+      required to boot &pos; terminals. On the &branchserv;, this directory can also contain
+      boot images used for rolled back configurations. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/linux</filename>
+    </term>
+    <listitem>
+     <para> This file contains the default Linux kernel used to boot the &pos; terminals via
+      PXE. </para>
+     <important>
+      <title>Preparations on the &branchserv;</title>
+      <para> The kernel image must be copied to the <filename>/srv/SLEPOS/rsync/boot/</filename>
+       directory before running <command>posSyncImages</command> on the &branchserv;. </para>
+     </important>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/linux.md5</filename>
+    </term>
+    <listitem>
+     <para> The md5 sum of the <filename>linux</filename> file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/initrd.gz</filename>
+    </term>
+    <listitem>
+     <para> The <filename>initrd.gz</filename> links the initrd image, which provides the second
+      bootstrap used to boot the &pos; terminals using PXE. </para>
+     <important>
+      <title>Preparations on the &branchserv;</title>
+      <para> The initrd image must be copied to the <filename>/srv/SLEPOS/boot/</filename> directory
+       before running <command>posSyncImages</command> on the &branchserv;. For more information
+       on this process, see <xref linkend="cha.slepos_adminserv"/>. </para>
+     </important>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/initrd.md5</filename>
+    </term>
+    <listitem>
+     <para> The md5 sum of the <filename>initrd.gz</filename> file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/menu.c32</filename>
+    </term>
+    <listitem>
+     <para> This file is a link to <filename>/usr/share/syslinux/menu.c32</filename> to allow
+      presenting a PXE boot menu for selection of a specific boot images. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/memdisk</filename>
+    </term>
+    <listitem>
+     <para> This file is a link to <filename>/usr/share/syslinux/memdisk</filename> to allow booting
+      of specific images (e.g for BIOS update). </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/pxelinux.0</filename>
+    </term>
+    <listitem>
+     <para> This file is a link to <filename>/usr/share/syslinux/pxelinux.0</filename>, which is the
+      first boostrap image used to PXE boot the &pos; terminals. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/pxelinux.cfg/</filename>
+    </term>
+    <listitem>
+     <para> This directory contains the configuration files required to boot the &pos; terminals
+      using PXE. The file <filename>pxelinux.cfg</filename> indicates which kernel and
+      initrd image to load for the &pos; terminal. These files enable &branchserv;s to
+      distribute SLES images. </para>
+     <para> &branchserv; automatically creates the <filename>pxelinux.cfg</filename> files based
+      on the distribution container configurations and PXE objects in the LDAP directory. For more
+      information, see <xref linkend="cha.slepos_ldap"/>. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/pxelinux.cfg/default</filename>
+    </term>
+    <listitem>
+     <para> This file contains the default configuration data for &pos; terminal's PXE boot.
+      This configuration file is used by all &pos; terminals except those with specific kernel
+      or initrd, or with a specific PXE configuration (see <xref linkend="terminal_kernel_options"
+      />), or terminals that have been rolled back. </para>
+     <para> This file is created and modified by <command>posInitBranchserver</command>,
+       <command>pos dump-lists</command>, <command>pos dump-all</command> and in every
+       <command>posleases2ldap</command> loop. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/boot/pxelinux.config/01-<replaceable>dash_separated_MAC</replaceable></filename>
+    </term>
+    <listitem>
+     <para> These are specific PXE Linux files with custom configuration data. If you have a custom
+      distribution container, a machine using specific kernel parameters, or a rolled back machine,
+      the &branchserv; generates custom PXE Linux configuration files containing the kernel or
+      kernel parameters associated with the relevant machine. The file name for custom PXE Linux
+      configuration files is the lowercase, '<literal>-</literal>' separated MAC address of the
+      booting client, with <literal>01</literal> prefix. </para>
+     <para> For example, if the client MAC address is <literal>00:11:25:A7:D6:1E</literal>, the
+      file name of the corresponding PXE Linux configuration file is
+       <literal>01-00-11-25-a7-d6-1e</literal>. If the machine has registered with more MAC
+      addresses, specific PXE's are created for all those MAC addresses (one as a file and the rest
+      of them as links). </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/image/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>image</filename> directory contains the client images that are distributed
+      to &pos; terminals and their associated checksums. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/upload/</filename>
+    </term>
+    <listitem>
+     <para> Serves as the destination directory to upload
+        <filename>hwtype.<replaceable>MAC.HASH</replaceable></filename> files for newly registered
+      &pos; terminals. These files are used to create the &pos; terminal's workstation
+      object in LDAP. </para>
+     <para> This directory also stores the
+        <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+      files that the <command>posleases2ldap</command> daemon uses to provide image install
+      notification. When an image is successfully installed on a &pos; terminal, the
+       <command>linuxrc</command> script creates a
+        <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+      file in the <filename>/tftpboot/upload</filename> directory on the &branchserv;.
+       <command>posleases2ldap</command> then transfers the information to the
+       <systemitem>scNotifiedImage</systemitem> attribute in the
+       <systemitem>scWorkstation</systemitem> object in LDAP and deletes the
+        <filename><replaceable>bootversion</replaceable>.<replaceable>MAC</replaceable></filename>
+      file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/srv/tftpboot/upload/backup/</filename>
+    </term>
+    <listitem>
+     <para> Contains backup of all previously used hwtype and bootversion files. </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </sect1>
+ <sect1 xml:id="sec.kiwi.structure">
+  <title>&imgserv; Files and Directory Structure</title>
+
+  <!-- <sect1 id="sec.kiwi.structure">
+  <title>&kiwi; Files and Directory Structure</title>-->
+
+  <para> The <replaceable>template-version</replaceable> part of the following paths should be
+   replaced with the actual names of the image template directories in
+    <filename>/usr/share/kiwi/image/SLEPOS/</filename>. For example, for the graphical image version
+   4.0.0, the <replaceable>template-version</replaceable> should be replaced with
+    <literal>graphical-4.0.0</literal> or <literal>graphical-4</literal> (a symbolic link). </para>
+
+  <variablelist>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/images/SLEPOS</filename>
+    </term>
+    <listitem>
+     <para> This directory contains &slepos; image templates, which are used for creating
+      customized image configurations. They are stored in single subdirectories
+        <filename><replaceable>template_name</replaceable>-<replaceable>version</replaceable></filename>.
+      Symbolic links from
+        <filename><replaceable>template_name</replaceable>-<replaceable>majorname</replaceable></filename>
+      to
+       <filename><replaceable>template_name</replaceable>-<replaceable>version</replaceable></filename>
+      are present (for example a link from<filename>graphical-4</filename> to
+       <filename>graphical-4.0.0</filename>. Image Creator shows these templates in the
+       <guimenu>Base on Template</guimenu> list. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/config.xml</filename>
+    </term>
+    <listitem>
+     <para> This file is the main configuration file. It is used to define base names, image types,
+      profiles, options, and the package/pattern list. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/config/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>config</filename> directory contains optional shell scripts. These are
+      executed after all packages are installed. For example, you can include scripts here that
+      remove parts of a package. The name of the Bash script must match the package name listed in
+      the <filename>config.xml</filename> file. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/config.sh</filename>
+    </term>
+    <listitem>
+     <para>
+      <filename>config.sh</filename> contains an optional configuration script, executed at the end
+      of the installation. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/images.sh</filename>
+    </term>
+    <listitem>
+     <para> The <filename>images.sh</filename> file contains an optional configuration script,
+      executed at the beginning of the image creation process. It is still supported, but not used
+      in &slepos; images version 4 and later. It is now recommended to use
+        <filename>usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/root/build-custom</filename>
+      for this purpose. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/config-yast.xml</filename>
+    </term>
+    <listitem>
+     <para> The <filename>config-yast.xml</filename> file contains optional AutoYaST configuration
+      data. The file creates a profile <filename>/root/autoinst.xml</filename>, which can be used to
+      create a clone of an installation. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/root/</filename>
+    </term>
+    <listitem>
+     <para> The <filename>root</filename> directory contains files, directories, and scripts. It is
+      used to adapt the image environment after the installation of all package and lets you
+      customize your image with data that is not available as a package. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/usr/share/kiwi/image/SLEPOS/<replaceable>template-version</replaceable>/repo/</filename>
+    </term>
+    <listitem>
+     <para> This directory was used as the repository containing RPM packages directly accessible in
+      &imgcreat;. It is no longer used in &slepos; images version 4 and later. The
+      functionality can be however restored by creating the directory and adding the following to
+      the <filename>config.xml</filename>:
+      <!--Replace <replaceable>IMAGETYPE</replaceable> with either
+      <filename>minimal-<replaceable>VERSION</replaceable></filename> or
+      <filename>graphical-<replaceable>VERSION</replaceable></filename>.-->
+     </para>
+     <screen>
+&lt;repository type="rpm-dir"&gt;
+  &lt;source path="this://repo"/&gt;
+&lt;/repository&gt;
+     </screen>
+     <para> It is however recommended to consider other possibilities, like creating one central
+      repository for pos packages and use this repository in all images. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/var/lib/SLEPOS/dist/</filename>
+    </term>
+    <listitem>
+     <para> This directory holds SLES and SLEPOS repositories; it contains RPM packages selectable
+      in &imgcreat;. It is now deprecated and used only in cases when SMT is not used for
+      repository management. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/var/lib/SLEPOS/system/</filename>
+    </term>
+    <listitem>
+     <para> This directory contains the <filename>chroot</filename> directory used for
+      &kiwi;/&imgcreat; building of images, the <filename>images</filename> subdirectory
+      containing built images and <filename>
+       <replaceable>image_name</replaceable>
+      </filename> subdirectories with all &kiwi; configuration files. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/var/lib/SLEPOS/system/chroot/<replaceable>image_name</replaceable></filename>
+    </term>
+    <listitem>
+     <para> This directory is used by &kiwi;/&imgcreat; for building of the
+       <replaceable>image_name</replaceable> image. </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/var/lib/SLEPOS/system/images/<replaceable>image_name</replaceable></filename>
+    </term>
+    <listitem>
+     <para> This directory contains the build image <replaceable>image_name</replaceable>. For
+      example: </para>
+     <screen>
+initrd-netboot-suse-SLES11.i686-2.1.1.gz
+initrd-netboot-suse-SLES11.i686-2.1.1.kernel -&gt; initrd-netboot-suse-SLES11.i686-2.1.1.kernel.3.0.82-0.7-default
+initrd-netboot-suse-SLES11.i686-2.1.1.kernel.3.0.82-0.7-default
+initrd-netboot-suse-SLES11.i686-2.1.1.kernel.3.0.82-0.7-default.md5
+initrd-netboot-suse-SLES11.i686-2.1.1.md5
+initrd-netboot-suse-SLES11.i686-2.1.1.packages
+initrd-netboot-suse-SLES11.i686-2.1.1.splash.gz
+initrd-netboot-suse-SLES11.i686-2.1.1.splash.md5
+initrd-netboot-suse-SLES11.i686-2.1.1.verified
+image_name.i686-1.0.0
+image_name.i686-1.0.0.config
+image_name.i686-1.0.0.ext3 -&gt; image_name.i686-1.0.0
+image_name.i686-1.0.0.gz
+image_name.i686-1.0.0.md5
+image_name.i686-1.0.0.packages
+image_name.i686-1.0.0.verified
+</screen>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>
+     <filename>/var/lib/SLEPOS/system/<replaceable>image_name</replaceable></filename>
+    </term>
+    <listitem>
+     <para> This directory contains all &kiwi; configuration files for
+       <replaceable>image_name</replaceable>. For example: </para>
+     <screen>
+bootsplash.tar
+config.sh
+config.xml
+config.xml.POSsave
+root
+wlan.tar.gz
+</screen>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </sect1>
+</appendix>

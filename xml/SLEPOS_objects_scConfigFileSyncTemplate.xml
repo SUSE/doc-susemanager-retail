@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scConfigFileSyncTemplate">
+ <title>scConfigFileSyncTemplate</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>cn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Name of configuration file
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scBsize</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Block size for the TFTP download of the system image. Minimum 4096 for
+      image size up to 128MB, maximum 65464 for image size up to 2GB
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scConfigFile</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      File name of configuration file
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scConfigFileLocalPath</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The local source path of the configuration file on the Administration
+      Server. For example,
+      <literal>/srv/SLEPOS/config/X11/xorg.conf.mydata</literal>. This path
+      must be located in the rsync directory
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scMust</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Enable or disable the configuration file. (<literal>TRUE</literal> or
+      <literal>FALSE</literal>)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>description</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may
+     </para>
+    </entry>
+    <entry>
+     <para/>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scConfigMd5</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The MD5 checksum value of the configuration file, automatically generated
+      by posAdmin
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

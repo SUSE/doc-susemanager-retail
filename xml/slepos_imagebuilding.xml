@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" conformance=",doc,yes,4," xml:lang="en" xml:id="cha.slepos_buildingimages_sle11">
+ <title>Building &slepos; Images on &sls; 11-Based Image Server</title>
+ <info/>
+ <para>
+  &slepos; uses &kiwi; as the main tool for creating Point of Service
+  system images. &yast; also provides &imgcreat;, a GUI front-end to
+  &kiwi; for easy image building. It is recommended to use this graphical
+  front-end to build system images.
+ </para>
+ <xi:include href="slepos_imagebuilding_creator.xml" parse="xml"/>
+ <xi:include href="slepos_imagebuilding_kiwi.xml" parse="xml"/>
+</chapter>

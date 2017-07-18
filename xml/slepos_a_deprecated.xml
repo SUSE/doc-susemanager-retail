@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appendix
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<appendix xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="deprecated_elements">
+ <title>Deprecated Elements</title>
+ <info/>
+ <para>
+  This section lists deprecated scripts and LDAP structures that are being
+  superseded and may become unsupported in the future.
+ </para>
+ <sect1 xml:id="deprecated_scripts">
+  <title>Deprecated Scripts</title>
+
+  <variablelist>
+   <varlistentry>
+    <term><command>posldap2crconfig</command>
+    </term>
+    <listitem>
+     <para>
+      The functions of this script are superseded by
+      <command>posleases2ldap</command> and <command>pos</command> calls. For
+      more information, see <xref linkend="ad_bsx5ot0"/>.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </sect1>
+ <sect1 xml:id="deprecated_ldap">
+  <title>Deprecated LDAP Structures</title>
+
+  <variablelist>
+   <varlistentry>
+    <term><systemitem>scIdPool</systemitem>
+    </term>
+    <listitem>
+     <para>
+      It was possible to use this attribute to enter location's IDs by either
+      new multivalue or separated by semicolons (or both). Now, only the first
+      approach is supported, which means that there is only one ID per each
+      subvalue of the multivalued <systemitem>scIdPool</systemitem>attribute.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><systemitem>scPartitionsTable</systemitem>
+    </term>
+    <listitem>
+     <para>
+      This attribute is superseded by the <systemitem>scPartition</systemitem>
+      object, which additionaly allows to specify a password for data
+      (non-system) partition encryption. For more information, see
+      <xref linkend="encrypted_partitions"/>.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><systemitem>scPosImageVersion</systemitem>
+    </term>
+    <listitem>
+     <para>
+      Similar to <systemitem>scPartitionsTable</systemitem>, this attribute is
+      superseded by the <systemitem>scImageVersion</systemitem> object, which
+      additionally allows to specify a password for the system partition
+      encryption.
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </sect1>
+</appendix>

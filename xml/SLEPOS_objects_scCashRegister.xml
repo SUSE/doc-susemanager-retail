@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE table
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<table xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="SLEPOS_generated_scCashRegister">
+ <title>scCashRegister</title>
+ <tgroup cols="3">
+  <thead>
+   <row>
+    <entry>
+     <para>
+      Name
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Type
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Description
+     </para>
+    </entry>
+   </row>
+  </thead>
+  <tbody>
+   <row>
+    <entry>
+     <para>
+      <systemitem>cn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Common name of this object, from first part of DN
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scCashRegisterName</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      must,multivalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The model type of the Point of Service terminal. If this field is set to
+      "default", the current <systemitem>scCashRegister</systemitem> object is
+      used as the default Point of Service configuration. If a Point of Service
+      terminal does not have an <systemitem>scCashRegister</systemitem> object
+      for its specific hardware type, it will use the configuration defined in
+      the default <systemitem>scCashRegister</systemitem> object
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scDiskJournal</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Turn on disk journaling. This will only occur on diskfull systems.
+      (<literal>TRUE</literal> or <literal>FALSE</literal>)
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPosDeltaImageDn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,multivalue,deprecated
+     </para>
+    </entry>
+    <entry>
+     <para>
+      DN of delta image for a Point Of Service terminal
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scPosImageDn</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      The DN of the default system image defined for this Point of Service
+      terminal type
+     </para>
+    </entry>
+   </row>
+   <row>
+    <entry>
+     <para>
+      <systemitem>scRaidScheme</systemitem>
+     </para>
+    </entry>
+    <entry>
+     <para>
+      may,singlevalue
+     </para>
+    </entry>
+    <entry>
+     <para>
+      Definition of RAID. Only RAID type 1 is supported. The format of the
+      entry is: 1 disk1 disk2. The disks can be specified by name
+      (<literal>/dev/sda</literal>) or by id
+      (<literal>/dev/disk/by-id/ata-ST3160815AS_Z4A1ATWL</literal>). The values
+      are separated by spaces
+     </para>
+    </entry>
+   </row>
+  </tbody>
+ </tgroup>
+</table>

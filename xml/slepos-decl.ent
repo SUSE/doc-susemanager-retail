@@ -1,0 +1,44 @@
+<!-- ...................................................................... -->
+<!-- SLEPOS Entities                                                       -->
+<!-- ...................................................................... -->
+
+<!ENTITY myc      "us">
+<!ENTITY myo      "myorg">
+<!ENTITY myou     "myorgunit">
+<!ENTITY myou1    "myorgunit1">
+<!ENTITY myou2    "myorgunit2">
+<!ENTITY mysou    "mysuborgunit">
+<!ENTITY mysou1   "mysuborgunit1">
+<!ENTITY mysou2   "mysuborgunit2">
+<!ENTITY mybranch "mybranch">
+
+<!ENTITY dnorg    "o=<replaceable xmlns='http://docbook.org/ns/docbook'>&myo;</replaceable>,c=<replaceable xmlns='http://docbook.org/ns/docbook'>&myc;</replaceable>">
+<!ENTITY dnunit   "ou=<replaceable xmlns='http://docbook.org/ns/docbook'>&myou;</replaceable>,&dnorg;">
+<!ENTITY dnbranch "cn=<replaceable xmlns='http://docbook.org/ns/docbook'>&mybranch;</replaceable>,&dnunit;">
+
+<!ENTITY mypass    "<replaceable xmlns='http://docbook.org/ns/docbook'>mypassword</replaceable>">
+
+
+
+<!--
+o (organization)                 myorg
+ou (organizationalUnit)          myorgunit (alternative: myorgunit1,
+myorgunit2)
+nested ou (organizationalUnit)   mysuborgunit (alternative: mysuborgunit1,
+mysuborgunit2)
+cn (scLocation)                  mybranch or mycombobranch
+cn (scRefObjectContainer)        myimagecontainer, myservercontainer,
+myrolecontainer
+
+c (country code/name)            us
+userPassword (for BS)            mybranchpass
+Admin Password for LDAP          myadminpass
+
+
+Alternatively we can append number like myorgunit2, mybranch1, myrolecontainer3
+
+Jakub@ please change it in SLEPOS doc too.-->
+
+<!--                             End of file                       -->
+<!-- ............................................................. -->
+

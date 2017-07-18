@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook"
+ xmlns:xi="http://www.w3.org/2001/XInclude"
+ xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+ xml:id="cha.slepos_imgserv">
+ <title>Setting Up an &imgserv;</title>
+ <info/>
+ <para> The &imgserv; is the machine used for building custom image
+  files for &pos; systems. It is possible to combine the functions of
+  &admserv; and &imgserv; on a single machine. However, if you have
+  a large system and want to offload the image building function from the
+  &admserv;, you can set up a dedicated &imgserv; on a separate
+  machine. It is also recommended to separate the &imgserv; for
+  security reasons. Image building under root privileges can affect the
+  &admserv;. </para>
+ <para> To install a dedicated &imgserv;, select the <guimenu>Image
+   Server (IS)</guimenu> pattern during installation, but not the
+   <guimenu>Admin Server (AS)</guimenu> pattern. For a SLE12-based
+  installation, select the <guimenu>SLEPOS_Image_Server</guimenu> pattern.
+  For more information about the installation process, see <xref
+   linkend="cha.slepos_inst"/>. </para>
+
+ <note>
+   <title>/var/lib/SLEPOS/ on Btrfs Subvolume</title>
+   <para>
+     The <filename>/var/lib/SLEPOS/</filename> directory can be hundreds of megabytes in size. If the directory does not reside on a Btrfs subvolume, zypper will include it into snapshots. To prevent this from happening and save disk space, make sure that the directory is placed on a Btrfs subvolume.
+    </para>
+   </note>
+ 
+  <sect1 xml:id="imagetypes">
+
+  <title>Types of Images</title>
+
+  <para> To help get you started, &slepos; comes with a set of
+   pre-built image files that you can customize to set up your own system.
+   Every &pos; terminal requires two images: a boot image and a system
+   image. You can also create your own images using &imgcreat; or
+   &kiwi;. For more information, refer to <xref
+    linkend="cha.slepos_imgcreator"/> and <xref linkend="cha.slepos_kiwi"
+   />. </para>
+
+  <sect2 xml:id="imagetypes.boot">
+   <title>Boot Images</title>
+   <para> The boot images contain the kernel and a bootstrap image
+     (<literal>initrd</literal>), providing the minimum your &pos;
+    terminals need to initially start up from a bootable CD or USB flash
+    drive, or from the network (via remote boot technology). The following
+    boot image templates are available: </para>
+   <variablelist>
+    <varlistentry>
+     <term>netboot</term>
+     <listitem>
+      <para> The template creates all the files and directories (including
+       partitioning and boot loader installation) required to boot diskful
+       and diskless terminals from the network over PXE and DHCP. The
+       kernel and the <literal>initrd</literal> are stored at
+       &branchserv;s and they are downloaded to terminals using TFTP. </para>
+      <para> This is the only type of image that supports all &slepos;
+       features including the wireless support and encryption. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>isoboot</term>
+     <listitem>
+      <para> The template creates all the files and directories required to
+       boot diskless and preinstalled disk-equipped systems from CD or DVD.
+       This boot image must be combined with a system image to create a CD
+       or DVD that can be used to boot the &pos; terminal. </para>
+      <para> This type of image should be only used for terminals never
+       connected to network and &branchserv;. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>oemboot</term>
+     <listitem>
+      <para> The oemboot image has same functions as the isoboot image, but
+       is used for booting terminals from USB flash drives and similar
+       media. Should be only used for terminals never connected to network
+       and &branchserv;. </para>
+      <para> Additionally, oemboot image can be used for server
+       installation (&branchserv;, &admserv; or &combserv;
+       images). It deploys the OEM preload image onto the selected storage
+       device. </para>
+      <para>
+       <!--bnc#772090--> The oemboot image does not include features like
+       wireless support or encryption.
+       <!--and should be used for server images only (&branchserv;,
+       &admserv; or &combserv; images).-->
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </sect2>
+
+  <sect2>
+   <title>System Images</title>
+   <para> The following system image templates are specially designed for
+    the most common types of retail &pos; terminals: </para>
+   <variablelist>
+    <varlistentry>
+     <term>Minimal</term>
+     <listitem>
+      <para> The <filename>Minimal</filename> image contains only the
+       runtime environment for native-code applications (C and C++) and the
+       ncurses library for non-graphical user interface support. The
+       Minimal image supports only console-based applications. It is
+       stripped down to be as small as possible by using "delete packages"
+       feature. Deleted packages provide other packages with some
+       functionality, that is, as a consequence, not available in the
+       Minimal image by default. If such functionality is needed, depending
+       packages shall be installed. Support includes only building,
+       deployment and booting of the Minimal image. This template will be
+       available only in &imgcreat; and is considered experimental.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>JeOS</term>
+     <listitem>
+      <para> The <filename>JeOS</filename> image is slightly larger than
+       the Minimal image, however, it is fully supported. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Graphical</term>
+     <listitem>
+      <para> The <filename>Graphical</filename> image includes the features
+       of the <filename>Minimal</filename> image and essential graphical
+       interface capabilities (the X Window System and a lightweight Window
+       Manager), and the ability to run Java programs. It supports
+       console-based C/C++ applications, Java programs in a Java2 runtime
+       environment, X11 applications, and basic browser-based applications. </para>
+      
+      <para> The Java Web browser plugin must be explicitly enabled. To enable
+       it, the following packages must be included:
+        <systemitem>java-1_6_0-ibm-alsa</systemitem>,
+        <systemitem>java-1_6_0-ibm-devel</systemitem>,
+        <systemitem>java-1_6_0-ibm-fonts</systemitem>,
+        <systemitem>java-1_6_0-ibm-jdbc</systemitem>, and
+        <systemitem>java-1_6_0-ibm-plugin</systemitem>. They are commented
+       out in the default <filename>config.xml</filename>. </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>Branchserver</term>
+     <listitem>
+      <para> The <filename>Branchserver</filename> image is a specialized
+       image which can be used for deploying a &branchserv; instead of
+       using the standard method (installing &sls; with the
+       &slepos; add-on and manual configuration of the
+       &branchserv;). </para>
+      <para> The provided image is suitable for online installation, where
+       the terminal images and LDAP data are downloaded from the
+       &admserv;. For offline installation the terminal images and OIF
+       files must be added to the &branchserv; image before building. </para>
+      <para> For more information, see <xref linkend="branchserv_image"/>.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>&admserv; and &combserv;</term>
+     <listitem>
+      <para> Image templates for fast installation of the &admserv; or
+       the combination of &admserv; and &branchserv; are also
+       included. </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   <para> All system images are based on &sls;. You can extend
+    &pos; system images to include add-on features such as: </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para> Advanced Linux Sound Architecture (ALSA) library for audio
+      support, </para>
+    </listitem>
+    <listitem>
+     <para> additional device drivers, </para>
+    </listitem>
+    <listitem>
+     <para> GNOME or KDE desktop environments, </para>
+    </listitem>
+    <listitem>
+     <para> IBM&trade; Java technology support, </para>
+    </listitem>
+    <listitem>
+     <para> Firefox and other Web browsers, </para>
+    </listitem>
+    <listitem>
+     <para> Samba 3 Client for SMB/CIFS connectivity to
+      Microsoft&trade; Windows&trade; servers, </para>
+    </listitem>
+    <listitem>
+     <para> VNC 4 Remote Control Client for remotely controlling the
+      terminal. </para>
+    </listitem>
+   </itemizedlist>
+   <para> System images that you create are initially stored on the
+    &admserv; (or on the &imgserv; if you have chosen to set up a
+    dedicated &imgserv;). Before you deploy your &pos; terminals,
+    transmit the system images via rsync to specific directories on the
+    &branchserv; from where they can be downloaded to &pos;
+    terminals at boot time. </para>
+   <para> When a &pos; terminal is started for the first time, it
+    performs a PXE boot (or boots from CD or USB flash drive) and then
+    registers with the &branchserv; to obtain the information it needs
+    to download its system image. The TFTP service on the &branchserv;
+    automatically delivers the matching system image to the &pos;
+    terminal. </para>
+   <para> To make this work as designed, you must create reference objects
+    in the LDAP directory for the types of &pos; terminals you intend
+    to deploy in your system. For detailed information, refer to <xref
+     linkend="sec.slepos_term.ldap"/>. Correctly creating and configuring
+    these objects during the installation of the &branchserv;s saves
+    you from separately managing the start-up of each &pos; terminal.
+   </para>
+  </sect2>
+ </sect1>
+ <sect1 xml:id="prep_repo">
+  <title>Preparing Source Repositories</title>
+
+  <para>
+   <!--In &slepos; 11 SP1 and earlier versions, <command>poscdtool</command> and
+    <command>poscopytool</command> were used to copy SLEPOS and SLES media and
+    prepare source repositories for image building. Starting with SLEPOS 11
+    SP2,-->
+   The default package repository for image building is provided by a SUSE
+   SMT server. &slepos; is already preconfigured for an SMT server
+   running on the same machine as the &slepos; &imgserv;. When the
+   connection to the SUSE package and update server has been set up, image
+   building will work out of the box. </para>
+
+  <para> The SMT server should be installed according to the SMT
+   documentation (<link
+    xlink:href="http://www.suse.com/documentation/smt11/"/>). It can be
+   installed either on the &imgserv; machine (then the image building
+   works out of the box) or on a separate machine available in the network
+   (using HTTP protocol). </para>
+
+  <para> The image configuration file <filename>config.xml</filename>
+   contains repository aliases, for example <literal>{SLES 11 SP3
+    i386}</literal>. These aliases are mapped to repository urls via the
+    <filename>/etc/kiwi/repoalias</filename> file. It is also possible to
+   use the repository URLs directly without aliasing, as in the previous
+   &slepos; releases. The repository URLs must point to a repository of
+   rpm-md type. <filename>/etc/kiwi/repoalias</filename> has the following
+   format for describing URL aliases: </para>
+
+  <screen>#SLES SP3 repository 
+{SLES 11 SP3 i386}  http://smt_host/repo/$RCE/SLES11-SP3-Pool/ 
+# SLES SP3 update 
+{SLES 11 SP3 i386 update}  http://smt_host/repo/$RCE/SLES11-SP3-Updates/ 
+[...]</screen>
+
+  <para> The following SMT channels should be configured:
+    <systemitem>SLES</systemitem>, <systemitem>SLES-Updates</systemitem>,
+    <systemitem>SLEPOS</systemitem>,
+    <systemitem>SLEPOS-Updates</systemitem>. </para>
+
+  <sect2 xml:id="smt_on_imgserv">
+   <title>Running SMT on the &imgserv;</title>
+   <para> &slepos; is already preconfigured for an SMT server running
+    on the &imgserv; machine. When the connection to the SUSE package
+    and update server has been set up, image building will work out of the
+    box. No special configuration is necessary. </para>
+   <para> This is the full list of repositories (in rpm-md format) required
+    for building an SP3 image (<literal>i586</literal> repositories for
+    terminals and <literal>x86_64</literal> repositories for servers): </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      <filename>/srv/www/htdocs/repo/$RCE/SLES11-SP3-Pool/sle-11-<replaceable>arch</replaceable></filename>,
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>/srv/www/htdocs/repo/$RCE/SLES11-SP3-Updates/sle-11-<replaceable>arch</replaceable></filename>,
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>/srv/www/htdocs/repo/$RCE/SLE11-POS-SP3-Pool/sle-11-<replaceable>arch</replaceable></filename>,
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>/srv/www/htdocs/repo/$RCE/SLE11-POS-SP3-Updates/sle-11-<replaceable>arch</replaceable></filename>.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2 xml:id="smt_standalone">
+   <title>Running SMT on a Separate Machine</title>
+   <para> Besides the default of installing the SMT server on the same
+    machine as the &imgserv;, the SMT server can on a separate machine.
+    If a separate machine is used, the local paths to the image
+    repositories must be changed to URLs pointing to the SMT machine, for
+    example: </para>
+   <screen>/srv/www/htdocs/repo/$RCE/SLE11-POS-SP3-Updates/sle-11-<replaceable>arch</replaceable></screen>
+   <para> must be changed to: </para>
+   <screen>http://<replaceable>server.name</replaceable>/repo/$RCE/SLE11-POS-SP2-Updates/sle-11-<replaceable>arch</replaceable></screen>
+   <para> This is the full list of repositories (in rpm-md format) required
+    for building an SP3 image (<literal>i586</literal> repositories for
+    terminals and <literal>x86_64</literal> repositories for servers): </para>
+   <itemizedlist mark="bullet" spacing="normal">
+    <listitem>
+     <para>
+      <filename>http://<replaceable>server.name</replaceable>/repo/$RCE/SLES11-SP3-Pool/sle-11-<replaceable>arch</replaceable></filename>,
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>http://<replaceable>server.name</replaceable>/repo/$RCE/SLES11-SP3-Updates/sle-11-<replaceable>arch</replaceable></filename>,
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>http://<replaceable>server.name</replaceable>/repo/$RCE/SLE11-POS-SP3-Pool/sle-11-<replaceable>arch</replaceable></filename>,
+     </para>
+    </listitem>
+    <listitem>
+     <para>
+      <filename>http://<replaceable>server.name</replaceable>/repo/$RCE/SLE11-POS-SP3-Updates/sle-11-<replaceable>arch</replaceable></filename>.
+     </para>
+    </listitem>
+   </itemizedlist>
+  </sect2>
+
+  <sect2>
+   <title>Using &sls; and &slepos; Media Directly to Create an SMT
+    Repository</title>
+   <para> It is possible to use the &sls; and &slepos; media
+    directly to create an SMT repository. The media can be mounted to a
+    directory or copied. The following example of the image configuration
+    should be changed to point to the used directories. The repository type
+    should be set to <literal>yast2</literal>: </para>
+   <screen>
+&lt;!--   SLE REPOSITORY --&gt;
+&lt;repository type="yast2"&gt;
+ &lt;source path="<replaceable>/var/lib/SLEPOS/dist/SLES-11-SP3-DVD-i586-DVD1</replaceable>"/&gt;
+&lt;/repository&gt;
+&lt;!--   SLEPOS REPOSITORY --&gt;
+&lt;repository type="yast2"&gt;
+ &lt;source path="/var/lib/SLEPOS/dist/SLE-11-SP3-POS-i586-x86_64-DVD1"/&gt;
+&lt;/repository&gt;
+</screen>
+   <para> It is however strongly recommended to also add the update
+    repositories, using SMT as described above or by creating a plain
+    directory repository manually (for details see KIWI documentation). </para>
+   <note>
+    <title>Configuring Repositories in &yast; Image Creator</title>
+    <para> The repository configuration can also be changed in &yast;
+     Image Creator. In this case, the repository type is detected
+     automatically. </para>
+   </note>
+  </sect2>
+ </sect1>
+</chapter>

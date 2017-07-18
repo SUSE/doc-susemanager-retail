@@ -1,0 +1,3336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sect1
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<sect1 xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" role="General" xml:id="ad_bt0325q">
+ <title>LDAP Objects Reference</title>
+
+ <para>
+  This section provides an alphabetical list of all &slepos; elements
+  represented in the LDAP directory. The <emphasis role="strong">must</emphasis> attributes for each element must
+  be defined when creating the element with posAdmin. The <emphasis role="strong">may</emphasis> attributes are
+  optional. All elements are structural.
+ </para>
+
+ <sect2 xml:id="b48rav2">
+  <title>organizationalUnit</title>
+  <para>
+   Organizational Unit (<literal>organizationalUnit</literal>) objects are
+   containers that typically represent regions, divisions, or branches within a
+   company. These objects can be nested to visually represent the structure and
+   organization of your company. Branch location objects are created in
+   <literal>organizationalUnit</literal> containers within the LDAP directory.
+  </para>
+  <xi:include href="SLEPOS_objects_organizationalUnit.xml" parse="xml"/>
+<!--
+    <table>
+     <title>Attributes for organizationalUnit Objects</title>
+     <tgroup cols="3">
+      <thead>
+       <row id="bsxk81t">
+        <entry>
+         <para>
+          Attribute
+         </para>
+        </entry>
+        <entry>
+         <para>
+          Type
+         </para>
+        </entry>
+        <entry>
+         <para>
+          Explanation
+         </para>
+        </entry>
+       </row>
+      </thead>
+      <tbody>
+       <row id="bsxk81u">
+        <entry>
+         <para>
+          <literal>- -ou <replaceable>ou_name</replaceable></literal>
+         </para>
+        </entry>
+        <entry>
+         <para>
+          must
+         </para>
+        </entry>
+        <entry>
+         <para>
+          Specifies the name of the Organizational Unit, for example:
+          <option>- -ou myorgunit</option>.
+         </para>
+        </entry>
+       </row>
+       <row id="bsxkjv9">
+        <entry>
+         <para>
+          <literal> - -description
+          `<replaceable>string</replaceable>´</literal>
+         </para>
+        </entry>
+        <entry>
+         <para>
+          may
+         </para>
+        </entry>
+        <entry>
+         <para>
+          Contains a human-readable description of the object.
+         </para>
+        </entry>
+       </row>
+      </tbody>
+     </tgroup>
+    </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2b">
+  <title>scBranchServer</title>
+  <para>
+   The &branchserv; object stores configuration information that is specific
+   to each &branchserv;. There must be a &branchserv; object for every
+   &branchserv; in the &slepos; system. Note that the &admserv; does
+   not have an associated object in the LDAP tree structure.
+  </para>
+  <important>
+   <title>Defining the &branchserv; Host Name</title>
+   <para>
+    The location of the <systemitem>scBranchServer</systemitem> object in the
+    LDAP directory must correspond to the host name defined for the
+    &branchserv; during installation. For example, if the host name is
+    <literal>bs.mybranch.myorgunit.myorg.us</literal>, the
+    <literal>dn</literal> of the <systemitem>scBranchServer</systemitem> object
+    is
+    <literal>cn=bs,cn=server,cn=mybranch,ou=myorgunit,o=myorg,c=us</literal>.
+    You must create the <systemitem>scBranchServer</systemitem> object and its
+    supporting organizational structure before you can run
+    <command>posInitBranchserver</command> and deploy the &branchserv;. For
+    information on creating the &branchserv; objects, see
+    <xref linkend="sec.branchserv.ldapobjects"/>.
+   </para>
+  </important>
+  <para>
+   For information on adding this object class to the LDAP directory, see
+   <xref linkend="ad_bsxlcvy"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scBranchServer.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scBranchServer Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>cn</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name of an entity.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scRefServerDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN of a <systemitem>scRefServer</systemitem>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPubKey</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Public key at server for the SSH client.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2c">
+  <title>scCashRegister</title>
+  <para>
+   The <systemitem>scCashRegister</systemitem> objects (also called hardware
+   reference objects) store information about specific &pos; hardware.
+  </para>
+  <para>
+   Typically, you should define an <systemitem>scCashRegister</systemitem>
+   object for each type of terminal used on the &slepos; system. However, if a
+   &pos; terminal does not have a specific
+   <systemitem>scCashRegister</systemitem> object for its specific hardware
+   type, it will use the configuration defined in the default
+   <systemitem>scCashRegister</systemitem> object. For information on adding
+   this object class to the LDAP directory, see
+   <xref linkend="sec.slepos_term.ldap.cashreg"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scCashRegister.xml" parse="xml"/>
+<!-- <table>
+    <title>Attributes for scCashRegister Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The common name of the &pos; terminal.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scCashRegisterName</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+        <entry colname="3">
+         <para>
+          The model type of the &pos; terminal.
+         </para>
+         <para>
+          If this field is set to <literal>default</literal> the current
+          <literal>scCashRegister</literal> object is used as the default
+          &pos; configuration. If a &pos; terminal does not have an
+          <literal>scCashRegister</literal> object for its specific hardware
+          type, it will use the configuration defined in the default
+          <literal>scCashRegister</literal> object.
+         </para>
+        </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPosImageDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+        The distinguished name of the default system image defined for
+        this &pos; terminal type.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDiskJournal</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         This boolean field is set to TRUE if journaling should be enabled.
+         Journaling is only added on disk-based machines.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scRaidScheme</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Definition of RAID. Only RAID type 1 is supported.
+         The format of the entry is:
+         <literal>1 <replaceable>disk1</replaceable> <replaceable>disk2</replaceable></literal>.
+         The disks can be specified by name (<filename>/dev/sda</filename>) or
+         by id (<filename>/dev/disk/by-id/ata-ST3160815AS_Z4A1ATWL</filename>).
+         The values are separated by spaces.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2d">
+  <title>scConfigFileSyncTemplate</title>
+  <para>
+   <systemitem>scConfigFileSyncTemplate</systemitem> objects are used when
+   running services, such as an X Window System, which require hardware-dependent
+   configuration files. The <systemitem>scConfigFileSyncTemplate</systemitem>
+   object points to the configuration file that a &pos; terminal needs to
+   run a given service. This object differs from
+   <systemitem>scConfigFileTemplate</systemitem> objects, because the
+   configuration data is not stored in the object; rather, the object points to
+   a configuration file outside the LDAP directory.
+  </para>
+  <para>
+   This element exists under Image Reference objects (class
+   <systemitem>scPosImage</systemitem>), but it can also exist under
+   <systemitem>scCashRegister</systemitem> objects.
+  </para>
+  <para>
+   For information on adding this object class to the LDAP directory, see
+   <xref linkend="sec.slepos_term.ldap.conffilesynctemp" xrefstyle="SectTitleOnPage"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scConfigFileSyncTemplate.xml" parse="xml"/>
+<!-- <table>
+    <title>Attributes for scConfigFileSyncTemplate Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The common name of the configuration file, also the name of the
+          resulting configuration file on the &branchserv;.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scMust</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The flag used to enable or disable the configuration file. Allowed
+          values are TRUE to enable and FALSE to disable.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigFile</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          Specifies the path where the configuration file is installed on
+          the &pos; terminal, for example: <filename>/etc/ntp.conf
+          </filename> or <filename>/etc/X11/xorg.conf</filename>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scBsize</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          Specifies the block size for the TFTP download. Due to internal
+          limitations of atftp, the maximum block size is 65464 Bytes.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigFileLocalPath</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The local source path of the configuration file on the &admserv;,
+          for example: <filename>/srv/SLEPOS/config/X11/xorg.conf.mydata</filename>. This
+          path must be located in the <filename>rsync</filename> directory.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigMd5</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The MD5 checksum value of the configuration file is automatically
+          generated by <command>posAdmin</command>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>description</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+        The description of the configuration file.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2e">
+  <title>scConfigFileTemplate</title>
+  <para>
+   <systemitem>scConfigFileTemplate</systemitem> objects are used when running
+   services, such as the X Window service, that require hardware-dependent
+   configuration files. An <systemitem>scConfigFileTemplate</systemitem> object
+   contains the configuration file data that a &pos; terminal needs to run a
+   given service. This element can also exist under
+   <systemitem>scCashRegister</systemitem> objects.
+  </para>
+  <para>
+   For information on adding this object class to the LDAP directory, see
+   <xref linkend="sec.slepos_term.ldap.conffiletemp" xrefstyle="SectTitleOnPage"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scConfigFileTemplate.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scConfigFileTemplate Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The common name of the configuration file, also name of the
+          resulting configuration file created on the &branchserv;.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scMust</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          This flag is used to enable or disable the configuration file.
+          Allowed values are TRUE to enable and FALSE to disable the
+          configuration file.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigFile</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          Specifies the path where the configuration file is installed on
+          the &pos; terminal, for example:
+          <filename>/etc/ntp.conf</filename> or
+          <filename>/etc/X11/xorg.conf</filename>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scBsize</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          Specifies the block size for the TFTP download. Due to internal
+          limitations of atftp, the maximum block size is 65464 Bytes.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigFileData</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The source path of the configuration file, for example:
+          <filename>/tmp/xorg.conf.mydata</filename>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigFileParser</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Name of the <systemitem>parserFunction</systemitem> to apply.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigMd5</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         MD5sum of the configuration file.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>description</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         A description of the configuration file.
+        </para>
+       </entry>
+      </row>
+       <row rowsep="0" id="ad_b5udhl6">
+        <entry colname="1">
+         <para>
+          <command>- -scConfigFileUpdateModel</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          may
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The update model for synchronizing configuration files. Allowed
+          values are <literal>pulled</literal> and
+          <literal>changed</literal>.
+         </para>
+        </entry>
+       </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="scPxeFileTemplate">
+  <title>scPxeFileTemplate</title>
+  <para>
+   The <systemitem>scPxeFileTemplate</systemitem> object is used to specify
+   command line options for selected terminals. This object can be placed in
+   the same position as <systemitem>scConfigFileTemplate</systemitem> and
+   <systemitem>scConfigFileSyncTemplate</systemitem> (typically under the
+   <systemitem>scCashRegister</systemitem> object). It has the following
+   attributes:
+  </para>
+  <xi:include href="SLEPOS_objects_scPxeFileTemplate.xml" parse="xml"/>
+<!--<table>
+   <title>Attributes for <systemitem>scPxeFileTemplate</systemitem> Object</title>
+   <tgroup cols="3">
+    <thead>
+     <row rowsep="1">
+      <entry colname="1">
+       <para>
+        Name
+       </para>
+      </entry>
+      <entry colname="2">
+       <para>
+        Type
+       </para>
+      </entry>
+      <entry colname="2">
+       <para>
+        Description
+       </para>
+      </entry>
+     </row>
+    </thead>
+    <tbody>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <systemitem>cn</systemitem>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para>
+        must
+       </para>
+      </entry>
+      <entry colname="3">
+       <para>
+        cn name
+       </para>
+      </entry>
+     </row>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <systemitem>scMust</systemitem>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para>
+        must
+       </para>
+      </entry>
+      <entry colname="3">
+       <para>
+        <literal>TRUE</literal> or <literal>FALSE</literal>, if
+        <literal>TRUE</literal>, the object is used.
+       </para>
+      </entry>
+     </row>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <systemitem>scKernelParameters</systemitem>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para>
+        must
+       </para>
+      </entry>
+      <entry colname="3">
+       <para>
+        Line to append to the pxe file.
+       </para>
+      </entry>
+     </row>
+     <row rowsep="0">
+      <entry colname="1">
+       <para>
+        <systemitem>Description</systemitem>
+       </para>
+      </entry>
+      <entry colname="2">
+       <para>
+        may
+       </para>
+      </entry>
+      <entry colname="3">
+       <para>
+        Description
+       </para>
+      </entry>
+     </row>
+    </tbody>
+   </tgroup>
+  </table>-->
+ </sect2>
+
+ <sect2 xml:id="scDistributionContainer">
+  <title>scDistributionContainer</title>
+  <para>
+   An <systemitem>scDistributionContainer</systemitem> is a container for the
+   distribution of sets of images. A distribution set is a collection of images
+   designed for &pos; terminals on a given version of the Linux kernel. The
+   Default distribution container references the current version of the kernel
+   included in &slepos;.
+  </para>
+  <xi:include href="SLEPOS_objects_scDistributionContainer.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for <systemitem>scDistributionContainer</systemitem> Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name for an entity.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scKernelName</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Filename of the kernel located under <filename>/boot</filename>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scInitrdName</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Filename of the <filename>initrd.gz</filename> located under
+         <filename>/boot</filename>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scKernelVersion</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Version string of the kernel written to the configuration file.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scKernelMatch</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Rule for matching <systemitem>scKernelVersion</systemitem> with the uname
+         result.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scKernelExpression</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Expression used to match the <systemitem>scKernelVersion</systemitem>
+         against uname.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+  <para>
+   The default <systemitem>scDistributionContainer</systemitem> has
+   <literal>scKernelName=linux</literal> and
+   <literal>scInitrdName=initrd.gz</literal>. If a distribution container is
+   created with either one of those two names different, a specific PXE file is
+   then created under <filename>/srv/tftpboot/boot/pxelinux.cfg</filename> when
+   a terminal registers. (See also <xref linkend="terminal_kernel_options"/>.)
+   This ensures that the specific kernel and initrd get properly loaded.
+  </para>
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2g">
+  <title>scHarddisk</title>
+  <para>
+   An <systemitem>scHarddisk</systemitem> object describes the configuration of
+   the hard disk of a &pos; terminal. For information on adding this object
+   class, refer to <xref linkend="sec.slepos_term.ldap.harddisk"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scHarddisk.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scHarddisk Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+       <row rowsep="0" id="ad_bsy2am1">
+        <entry colname="1">
+         <para>
+          <command>- -base</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The base distinguished name of the Hardware Reference object, e. g. <literal>cn=crtype3,cn=global,o=myorg,c=us</literal>.
+         </para>
+        </entry>
+       </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The common name of the device, for example:
+          <literal>sda</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDevice</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The device of the hard disk, for example:
+         <filename>/dev/sda</filename> or
+         <filename>/dev/disk/by-*</filename>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scHdSize</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Size of the hard disk in MB.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPartitionsTable</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+         <para>
+          A semicolon-separated (<literal>;</literal>) list of partition
+          entries. Each entry consists of three space-separated parameters:
+          the size in megabytes, the partition type ID
+          (<literal>82</literal> or <literal>S</literal> for swap,
+          <literal>83</literal> or <literal>L</literal> for a Linux
+          partition), and the mount point. If the mountpoint equals
+          <literal>/</literal>, the partition is assumed to be the root
+          partition, and <literal>x</literal> means no mountpoint (for
+          example for swap). The first partition should be a service partition
+          (with type ID <literal>83</literal> and mountpoint
+          <literal>/srv/SLEPOS</literal>). For the last partition, size can be specified
+          as <literal>x</literal>, which results in all remaining
+          space to be used.
+         </para>
+         <para>
+          This attribute is deprecated. It is recommended to store partition
+          data in the <systemitem>scPartition</systemitem> object which
+          supports more features, such as encrypted partitions. For more
+          information, see <xref linkend="ad_scpartition" />.
+         </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2h">
+  <title>scHardware</title>
+  <para>
+   Reference standard PC hardware type and server hardware.
+  </para>
+  <xi:include href="SLEPOS_objects_scHardware.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scHardware Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name for an entity.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPosImageDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Default image DN of a cash register.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scRefPcDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN to PC hardware type, typically under global.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scRefMonitorDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN of monitor type.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scRefServerDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN of a reference server.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scSUSEManager</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Stores SUSE Manager host address.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2j">
+  <title>scLocation</title>
+  <para>
+   An scLocation object represents a branch office, which is a site where a
+   &branchserv; and &pos; terminals are located. Location containers are
+   used to store information about the deployed &pos; terminals and the
+   &branchserv;s. This and all other information that can be modified at the
+   &branchserv; should be stored or referenced in the Location containers to
+   limit the need to grant write privileges to subtrees.
+  </para>
+  <para>
+   For information on adding this object class to the LDAP directory, see
+   <xref linkend="ad_bsxkk8v"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scLocation.xml" parse="xml"/>
+<!--
+   <table>
+    <title>Attributes for <systemitem>scLocation</systemitem> elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+      <tbody>
+       <row rowsep="0" id="ad_bsxkmq6">
+        <entry colname="1">
+         <para>
+          <command>- -cn</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The common name of the location.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmq7">
+        <entry colname="1">
+         <para>
+          <command>- -ipNetworkNumber</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The network address of the subnet of the branch, for example:
+          <literal>192.168.1.0</literal>.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmq8">
+        <entry colname="1">
+         <para>
+          <command>- -ipNetmaskNumber</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The netmask of the subnet of the branch, for example:
+          <literal>255.255.255.0</literal>.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmq9">
+        <entry colname="1">
+         <para>
+          <command>- -scDhcpRange</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The dynamic IP address range of the DHCP server of the subnet.
+          This is needed to register the &pos; terminals. It is a
+          comma-separated value pair, for example: <literal>192.168.1.10,
+          192.168.1.54</literal>.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmqa">
+        <entry colname="1">
+         <para>
+          <command>- -scDhcpFixedRange</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The fixed IP address range of the DHCP server reserved for the
+          &pos; terminals. It is also a comma-separated value pair, such as
+          <literal>192.168.1.55, 192.168.1.88</literal>.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="O" id="ad_scdhcpextern">
+        <entry>
+         <para>
+          <literal>- -scDhcpExtern</literal>
+         </para>
+        </entry>
+        <entry>
+         <para>
+          must
+         </para>
+        </entry>
+        <entry>
+         <para>
+          Allow an external DHCP server to be used instead of setting up
+          your own on the &branchserv; (<literal>TRUE</literal> or
+          <literal>FALSE</literal>).
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmqb">
+        <entry colname="1">
+         <para>
+          <command>- -scDefaultGw</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The default gateway for this location. This is normally a router
+          to the corporate wide area network.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmqc">
+        <entry colname="1">
+         <para>
+          <command>- -scDynamicIp</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          This flag is used to enable or disable registration of new
+          terminals on the &branchserv; when <option>scDhcpExtern</option>
+          is set to <literal>FALSE</literal>. Allowed values are
+          <literal>TRUE</literal> to enable and <literal>FALSE</literal> to
+          disable the registration mechanism.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmqd">
+        <entry colname="1">
+         <para>
+          <command>- -scWorkstationBaseName</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The base name of the &pos; terminals of a branch used to create a
+          unique name for each terminal. It is used in combination with the
+          <literal>scDhcpFixedRange</literal> attribute and
+          <literal>scEnumerationMask</literal>. For example, using
+          <literal>scWorkstationBaseName</literal> <literal>CR</literal>, an
+          <literal>scEnumerationMask</literal> of <literal>000</literal>,
+          and the above-mentioned <literal>scDhcpFixedRange</literal> to
+          build the name of the &pos; terminals and their corresponding IP
+          addresses, the first newly registered terminal gets the name
+          <literal>CR001</literal> and the IP address
+          <literal>192.168.1.55</literal>. The next terminal is named
+          <literal>CR002</literal> and gets the IP address
+          <literal>192.168.1.56</literal>, and so on. The IP addresses are
+          taken from the range specified by
+          <literal>scDhcpFixedRange</literal>.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmqe">
+        <entry colname="1">
+         <para>
+          <command>- -scEnumerationMask</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          Refers to <literal>scWorkstationBaseName</literal>.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_bsxkmqf">
+        <entry colname="1">
+         <para>
+          <command>- -associatedDomain</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          may
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          This optional entry configures the DNS domain and the domain part of
+          the hostnames of the &pos; terminals to be in the stated domain. If
+          this entry is left empty, the domain consists of the LDAP structure
+          of the <literal>scLocation</literal> entry DN. With this entry, a
+          different domain can be chosen.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" id="ad_userpassword">
+        <entry colname="1">
+         <para>
+          <command>- -userPassword</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          This mandatory entry configures the &branchserv; password for
+          security purposes. This password must be used when installing a
+          &branchserv; using the <command>posInitBranchserver</command>
+          command.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0">
+        <entry colname="1">
+         <para>
+          <command>- -scAllowRoles</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          may
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          <literal>TRUE</literal> or <literal>FALSE</literal>. If
+          <literal>TRUE</literal> and <command>scAllowGlobalRoles</command>
+          is also <literal>TRUE</literal>, the role-based mode and all roles
+          are enabled. If <literal>TRUE</literal> and
+          <command>scAllowGlobalRoles</command> is <literal>FALSE</literal>,
+          the role-based mode is enabled, but only roles under
+          <systemitem>scLocation</systemitem> are used. If
+          <literal>FALSE</literal>, roles are not enabled.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" >
+        <entry colname="1">
+         <para>
+          <command>- -scAllowGlobalRoles</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          may
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          <literal>TRUE</literal> or <literal>FALSE</literal>. If
+          <literal>TRUE</literal> and <command>scAllowRoles</command> is
+          also <literal>TRUE</literal>, the role-based mode and all roles
+          are enabled.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" >
+        <entry colname="1">
+         <para>
+          <command>- -scDnsMapFunc</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          may
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          If it contains <literal>NONE</literal> or is empty,
+          the terminal DNS name is independent of the ID, the
+          old scheme is used  (CR01, CR02...).
+         </para>
+         <para>
+          If it contains
+          <literal>DIRECT</literal>, the ID is used as the DNS name
+          (unsupported characters are removed).
+         </para>
+         <para>
+          If it contains
+          <literal>TRANSFORM:<replaceable>regexp</replaceable></literal>,
+          the regexp is applied on ID and the $ result is used as DNS name.
+         </para>
+        </entry>
+       </row>
+       <row rowsep="0" >
+        <entry colname="1">
+         <para>
+          <command>- -scIpMapFunc</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          may
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          If it contains <literal>NONE</literal> or is empty,
+          the terminal IP is independent of the ID, a value
+          from a fixed range is used.
+         </para>
+         <para>
+          If it contains <literal>DIRECT</literal>, the first numeric value
+          contained in the ID is extracted and used to compute the terminal
+          IP address. The value can be a 32bit numeric value, which is then
+          OR-ed with the network address to get a terminal IP. For example,
+          if the network address is <literal>192.168.0.0/16</literal> and the
+          value is <literal>257</literal>, the result is <literal>192.168.1.1</literal>.
+          It is also possible to extract either the complete IP address (in the
+          <replaceable>192.168.0.1</replaceable> format) or the IP without the
+          network address (<replaceable>1.1</replaceable>).
+         </para>
+         <para>
+          If it contains
+          <literal>TRANSFORM:<replaceable>perl_regexp</replaceable></literal>,
+          the regexp is used to extract a numeric value used to compute the
+          terminal IP address. It does not have to be the first number
+          contained in the ID. The value can be a 32bit numeric value, which
+          is then OR-ed with the network address to get a terminal IP. For
+          example, if the network address is <literal>192.168.0.0/16</literal>
+          and the value is <literal>257</literal>, the result is
+          <literal>192.168.1.1</literal>. It is also possible to use the
+          regexp to extract either a complete IP address (in the
+          <replaceable>192.168.0.1</replaceable> format) or an IP without the
+          network address (<replaceable>1.1</replaceable>).
+         </para>
+         <para>
+          For example <literal>transform:IP([0-9.]+)</literal> extracts the
+          IP part from ID <literal>workplace17-IP192.168.20.30</literal>.
+          The resulting IP address is <literal>192.168.20.30</literal>.
+<!- -It can be added to LDAP with this posAdmin argument:
+- -scIpMapFunc 'transform:IP([0-9.]+)'- ->
+         </para>
+         <para>
+          The IDs in the pool must be selected so they don't conflict
+          with &branchserv; address, static (<systemitem>scDhcpFixedRange</systemitem>)
+          and dynamic ranges (<systemitem>scDhcpRange</systemitem>), etc.
+         </para>
+        </entry>
+       </row>
+      </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2k">
+  <title>scNetworkcard</title>
+  <para>
+   An <systemitem>scNetworkcard</systemitem> object stores the configuration
+   for a &branchserv; network interface card.
+  </para>
+  <xi:include href="SLEPOS_objects_scNetworkcard.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scNetworkcard Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDevice</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The name of the network device of the card, for example:
+         <literal>eth0</literal> or <literal>eth1</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>ipHostNumber</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The IP address, for example: <literal>192.168.1.1</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>macAddress</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         MAC address in maximal, colon separated hex notation, for example:
+         <literal>00:00:92:90:ee:e2</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scModul</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The name of the Linux kernel module for the network interface
+         card.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scModulOption</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The module options for the network
+         interface card to be passed to the kernel.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>ipNetmaskNumber</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         If the <literal>ipHostNumber</literal> is not inside the defined
+         subnet of the location, add the netmask, which belongs to the IP
+         address assigned to the network interface card.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2l">
+  <title>scPosImage</title>
+  <para>
+   The Image Reference object stores information about an image stored on the
+   &admserv;. By default, an Image Reference object is created for the
+   Minimal client image. For information on adding this object class to the
+   LDAP directory, see <xref linkend="sec.slepos_term.ldap.posimage"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scPosImage.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scPosImage Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+       <row rowsep="0" id="ad_bsy2v39">
+        <entry colname="1">
+         <para>
+          <command>- -base</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The base distinguished name of the <literal>scPosImage</literal>
+          object, for example:
+          <literal>cn=default,cn=global,o=myorg,c=us</literal>.
+         </para>
+        </entry>
+       </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <literal>cn</literal>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The common name of the system image, for example:
+         <literal>mydesktop</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scImageName</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The name of the system image, for example:
+         <literal>mydesktop</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPosImageVersion</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The version number of the system image, followed by the flag
+         <literal>passive</literal> or <literal>active</literal>, for
+         example: <literal>2.0.4; active</literal>. The version number
+         and the flag are semicolon-separated (<literal>;</literal>).
+        </para>
+        <para>
+         This attribute is deprecated. It is recommended to store image
+         version data in the <systemitem>scImageVersion</systemitem> object
+         which supports more features, such as encrypted images, and takes
+         precedence over the <systemitem>scPosImageVersion</systemitem>
+         attribute of the <systemitem>scPosImage</systemitem> object. For
+         more information, see <xref linkend="ad_scimageversion" />.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDhcpOptionsRemote</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The boot option of the &pos; terminal. The mandatory value is
+          <literal>/boot/pxelinux.0</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDhcpOptionsLocal</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Additional DHCP options for local boot.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scImageFile</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The name of the image file, which the terminal will download from
+         the &branchserv;, for example:
+         <literal>mydesktop</literal>.<replaceable>arch</replaceable>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scBsize</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Specifies the block size for the TFTP download of the system image.
+         There is a limitation of the block counter of 32768 and therefore
+         the minimal possible value increases with the image size. For
+         example, for image sizes less than 128 MB the size
+         <literal>4096</literal> (4 KB) can be used, <literal>8192</literal>
+         (8 KB) for image sizes of less than 256MB, <literal>16384</literal>
+         (16 KB) for image sizes of less than 512 MB and
+         <literal>32768</literal> (32 KB) for image sizes less than 1GB. Also,
+         the image block size cannot exceed 65464 Bytes, which also
+         limits the maximum image size to 2GB. If you insert a too small
+         value, it is automatically raised to the minimal sufficient value.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigFile</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Configuration file
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2m">
+  <title>scRamDisk</title>
+  <para>
+   An scRamDisk object represents the configuration of a &pos; terminal RAM
+   disk.
+  </para>
+  <para>
+   For information on adding this object class to the LDAP directory, see
+   <xref linkend="sec.slepos_term.ldap.ramdisk"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scRamDisk.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scRamDisk Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+       <row rowsep="0" id="ad_bsy27ig">
+        <entry colname="1">
+         <para>
+          <command>- -base</command>
+         </para>
+        </entry>
+        <entry colname="2">
+         <para>
+          must
+         </para>
+        </entry>
+        <entry colname="3">
+         <para>
+          The base distinguished name of the Hardware Reference object, for
+          example: <literal>cn=crtype3, cn=global,o=myorg,c=us</literal>.
+         </para>
+        </entry>
+       </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+          The common name of the device, for example:
+          <literal>ram</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDevice</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+         <para>
+          The RAM disk device.
+         </para>
+         <para>
+          The device <literal>/dev/ram0</literal> cannot be used because it
+          is used for the initial RAM disk. Therefore, we recommend using
+          <literal>/dev/ram1</literal>.
+         </para>
+         <para>
+          The RAM device should not be confused with the hard disk device,
+          which uses a partition table.
+         </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2n">
+  <title>scRefObjectContainer</title>
+  <para>
+   <option>Global</option> (scRefObjectContainer, cn=global): All globally
+   valid information for a chain or company&mdash;that is server hardware,
+   &pos; hardware, or client images&mdash;is stored in the Global
+   container of the class <systemitem>scRefObjectContainer</systemitem> in the
+   form of reference objects. These reference objects are linked to the actual
+   entries for the &pos; terminals and servers in the branches using unique
+   names.
+  </para>
+  <para>
+   The initial LDAP structure after installation includes only one
+   <systemitem>scRefObjectContainer</systemitem> named <option>global</option>
+   under the directory root. Other
+   <systemitem>scRefObjectContainer</systemitem> objects can be added as
+   needed. However, the <systemitem>scRefObjectContainer</systemitem> container
+   objects should always have <option>cn=global</option> and appear only once
+   per directory level. This provides great flexibility. For example, each
+   server can be assigned by its own reference objects and therefore by its own
+   hardware types. On the other hand, if all the servers have the same
+   hardware, a unified standard can be defined in the global container on the
+   regional or organizational level.
+  </para>
+  <xi:include href="SLEPOS_objects_scRefObjectContainer.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scRefObjectContainer Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name for an entity.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2o">
+  <title>scServerContainer</title>
+  <para>
+   <option>Server Container </option>(scServerContainer): A container for all
+   the &branchserv; objects for a given site. The information pertaining to
+   the &branchserv;s is stored in the Server container.
+  </para>
+  <para>
+   To provide system redundancy and failover, there can be multiple
+   &branchserv;s for each site.
+  </para>
+  <para>
+   For information on adding this object class to the LDAP directory, see
+   <xref linkend="ad_bsxlcvy" xrefstyle="SectTitleOnPage"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scServerContainer.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scServerContainer Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name for an entity.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2p">
+  <title>scService</title>
+  <para>
+   <systemitem>scService</systemitem> contains the configuration for
+   &branchserv; services like DNS, TFTP, or DHCP.
+  </para>
+  <para>
+   For information on adding this object class to the LDAP directory, see
+   <xref linkend="ad_bsxlcvy"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scService.xml" parse="xml"/>
+<!--
+   <table>
+    <title>Attributes for scService Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name of the service.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>ipHostNumber</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The virtual IP address of the service.
+         Since SLEPOS11 SP2, the ipHostNumber attribute can be omitted if the service is using the same IP address as the &branchserv;.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDnsName</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The name of an entry in the DNS table, under which the service is
+         available.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scServiceName</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Name of the service being configured,
+         for example: <literal>dns</literal>,
+         <literal>dhcp</literal>, <literal>tftp</literal>,
+         or <literal>posleases</literal>.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scServiceStartScript</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The name of the init script in <filename>/etc/init.d</filename>
+         used to start the service, such as atftp for the TFTP service.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scServiceStatus</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The status of the service (TRUE or FALSE). FALSE disables the
+         service, which is then ignored during the DNS record generation and
+         &branchserv; operation.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scServiceEmail</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Where should the service send an e-mail to?
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPosleasesMaxNotify</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Maximum number of booted image notifications
+         (maximum of scNotifiedImage entries).
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPosleasesChecktime</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         <command>posleases2ldap</command> pause before
+         checking uploads.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPosleasesTimeout</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Time spent by <command>posleases2ldap</command>
+         on checking uploaded files.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDhcpFixedLeaseTime</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DHCP lease time for fixed leases (final registration), the default value is 14400.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDhcpDynLeaseTime</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DHCP lease time for dynamic leases (first boot), the default value is 300.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+  <note>
+   <title>IP address of TFTP service</title>
+   <para>
+    During &branchserv; initialization, the TFTP configuration file
+    (<filename>/etc/sysconfig/atftpd</filename>) correctly assumes IP address
+    of the TFTP service from the <systemitem>ipHostNumber</systemitem> of the
+    TFTP<systemitem>scService</systemitem> object), and not simply the IP
+    address of the &branchserv;.
+   </para>
+  </note>
+ </sect2>
+
+ <sect2 xml:id="ad_b58oz2q">
+  <title>scWorkstation</title>
+  <para>
+   The Workstation object stores information for a specific &pos; terminal.
+   Using information from the Hardware Reference object
+   (<systemitem>scCashRegister</systemitem>) and Image Reference object
+   (<systemitem>scPosImage</systemitem>), <command>posleases2ldap</command>
+   automatically creates a Workstation object in the LDAP directory for every
+   &pos; terminal that registers on the &branchserv;. For information on
+   this process, see <xref linkend="ad_cntrlhw"/>.
+  </para>
+  <xi:include href="SLEPOS_objects_scWorkstation.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scWorkstation Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row>
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name for an entity.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>macAddress</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         MAC address in maximal, colon-separated hexadecimal notation, for
+         example: <literal>00:00:92:90:EE:E2</literal>. The attribute
+         can be multivalue and contain multiple MAC adresses.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>ipHostNumber</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         IPv4 addresses as a dotted decimal omitting leading zeros.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scRefPcDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN to the used scCashRegister object.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scPosImageDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Direct reference for image.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scPosImageVersion</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Direct image version setting, takes precedence over the image version
+         set under the used <systemitem>scPosImage</systemitem> object.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scPosRegisterBiosVersion</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         BIOS version of a cash register.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scPosRegisterType</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         cashregister type, used to assign an
+         <systemitem>scCashRegister</systemitem> object.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scId</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Contains ID assigned to the terminal.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scRoleDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN of the used role assigned to the terminal.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigFileDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Reference for a configuration type object
+         (<systemitem>scConfigFileTemplate</systemitem>,
+         <systemitem>scConfigFileSyncTemplate</systemitem>,
+         <systemitem>scPxeFileTemplate</systemitem>)
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scDiskJournal</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Turn on disk journaling.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scConfigUpdate</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         If set to TRUE, the workstation's config.MAC will be regenerated.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scNotifiedImage</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Contains image and version, the time of notification, and md5sum
+         of the notified <filename>config.MAC</filename> file separated by
+         semicolons
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scAllowedRolesDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Acts as a filter to only allow roles explicitly
+         stated in this multivalue attribute. If it is left
+         empty, all roles are permitted.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scRoleBased</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The workstation was registered in the role-based mode. Use
+         role-based logic when recreating <filename>config.<replaceable>MAC</replaceable></filename>
+         from LDAP (TRUE or FALSE).
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scSerialNumber</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         deprecated
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Serial number of the used workstation.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scStandardPrinterDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         deprecated
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN of the standard printer for a location or workstation.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>userPassword</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         deprecated
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Password of user.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scStandardPrinter</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         deprecated
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Name of the standard printer.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scPosGroupDn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         deprecated
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         DN of a CR group.
+        </para>
+       </entry>
+      </row>
+      <row>
+       <entry colname="1">
+        <para>
+         <systemitem>scLastBootTime</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Used to store time of the last boot in linux time format.
+         If <systemitem>scLastBootTime</systemitem> is empty, the workstaton will
+         never be deleted. To delete workstations that were not booted in last T
+         seconds, use: <command>pos ws-remove - -no-boot-in-last
+          <replaceable>T</replaceable></command>. To delete workstations that were
+         not booted since specified date, use: <command>pos ws-remove - -no-boot-since
+          <replaceable>datetime</replaceable></command>, where <replaceable>datetime</replaceable>
+         is a date/time string compatible with linux <command>date</command>, for example
+         <literal>2013-08-13 15:21:14</literal>.
+        </para>
+        <para>
+         Under normal conditions, workstations are additionaly checked whether
+         they are online or not, and deleted only if offline and older than
+         specified. To override this check, use <command>- -force</command>
+         parameter. On the other hand, if you only want to test which
+         workstations will be removed, use <option>- -dry-run</option>
+         parameter.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_scrole">
+  <title>scRole</title>
+  <para>
+   The <systemitem>scRole</systemitem> object stores information about specific
+   roles.
+  </para>
+  <xi:include href="SLEPOS_objects_scRole.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scRole Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>cn</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Common name.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scRoleName</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Name of the role displayed in the list on the terminal.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scRoleDescription</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Description of the role displayed in the list on the terminal.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scAllowedHwTypes</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Multivalue parameter, marks the role to be used only with given
+         hardware types.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_scimageversion">
+  <title>scImageVersion</title>
+  <para>
+   The <systemitem>scImageVersion</systemitem> object replaces the
+   <systemitem>scPosImageVersion</systemitem> attribute of the
+   <systemitem>scPosImage</systemitem> object. The
+   <systemitem>scImageVersion</systemitem> supports more features, such as
+   encrypted images.
+  </para>
+  <xi:include href="SLEPOS_objects_scImageVersion.xml" parse="xml"/>
+<!--<table>
+    <title>Attributes for scImageVersion Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scVersion</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Image version number
+         (<replaceable>x</replaceable>.<replaceable>y</replaceable>.<replaceable>z</replaceable> format).
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scDisabled</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Enables or disables this version for registration.
+         Possible values are <literal>TRUE</literal> (disables
+         the version) and <literal>FALSE</literal> (enables the
+         version). The default value is <literal>FALSE</literal>
+         (the version is enabled).
+        </para>
+        <!- -
+        <para>
+         <literal>TRUE</literal> is same as <literal>passive</literal>,
+         <literal>FALSE</literal> is same as <literal>active</literal>
+         <systemitem>scPosImageVersion</systemitem> attribute.
+        </para>
+        - ->
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPassword</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Image password.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+
+ <sect2 xml:id="ad_scpartition">
+  <title>scPartition</title>
+  <para>
+   The <systemitem>scPartition</systemitem> replaces the
+   <systemitem>scPartitionsTable</systemitem> attribute of the
+   <systemitem>scHarddisk</systemitem> object. The
+   <systemitem>scPartition</systemitem> supports more features, such as
+   encrypted partitions.
+  </para>
+  <xi:include href="SLEPOS_objects_scPartition.xml" parse="xml"/>
+<!--
+   <table>
+    <title>Attributes for scPartition Elements</title>
+    <tgroup cols="3">
+     <thead>
+      <row rowsep="1">
+       <entry colname="1">
+        <para>
+         Name
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Type
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         Description
+        </para>
+       </entry>
+      </row>
+     </thead>
+     <tbody>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPartNum</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         must
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Defines the
+         order of partitions (not the partition number shown by fdisk,
+         the real partiton number is determined by KIWI during terminal boot).
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPartType</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The type of partition (<literal>82</literal> or <literal>S</literal> for
+         swap, <literal>83</literal> or <literal>L</literal> for a Linux partition).
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPartMount</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         The mount point of the partition.
+         Use <literal>/</literal> for the root partition.
+         Use <literal>x</literal> for a partition without
+         a mountpoint (for example a swap partition).
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPartSize</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Size of partition in (binary) megabytes. For the last partition, size
+         can be specified as <literal>x</literal>, which results in all
+         remaining available space to be used.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>scPassword</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Partition password. Specifying <literal>*</literal> as partition
+         password means that a random password is generated on each boot. This
+         is useful for swap partitions.
+        </para>
+       </entry>
+      </row>
+      <row rowsep="0">
+       <entry colname="1">
+        <para>
+         <systemitem>description</systemitem>
+        </para>
+       </entry>
+       <entry colname="2">
+        <para>
+         may
+        </para>
+       </entry>
+       <entry colname="3">
+        <para>
+         Some additional information, only for reference.
+        </para>
+       </entry>
+      </row>
+     </tbody>
+    </tgroup>
+   </table>-->
+ </sect2>
+</sect1>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter
+[
+  <!ENTITY % entities SYSTEM "entity-decl.ent">
+    %entities;
+]>
+<!-- Converted by suse-upgrade version 1.1 -->
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" conformance=",doc,yes,4," xml:lang="en" xml:id="cha.slepos_buildingimages_sle12">
+ <title>Deploying and Using &sle; 12-Based &imgsrv; and 64-Bit Client Images</title>
+ <info/>
+<para>
+A &sle; 11-based image server can be used to create 32-bit client images. However, to create 64-bit client images required for booting 64-bit Point of Service clients, it is necessary to set up a &sle; 12-based image server on a dedicated machine. The following chapters provide explanation on how to deploy a &sle; 12-based image server as well as create and boot 64-bit client images.
+</para>
+ <xi:include href="slepos_imageserv_sle12.xml" parse="xml"/>
+ <xi:include href="slepos_imagebuilding_kiwi_sle12.xml" parse="xml"/>
+ <xi:include href="slepos_boot_64_images.xml" parse="xml"/>
+</chapter>

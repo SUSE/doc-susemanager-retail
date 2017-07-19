@@ -956,17 +956,11 @@
   </para>
 
   <sect2 xml:id="sec.oview.imgtools">
-   <title>&kiwi; and &imgcreat;</title>
-   <remark>taroth 071017: DEV - please check the following text - Ok or something wrong/missing? </remark>
+   <title>&kiwi;</title>
    <para>
-    To create the images for the &pos; terminals, &slepos; includes both
-    a command line tool (&kiwi;) and a graphical front-end for &kiwi;:
-    &imgcreat;.
-    <remark>taroth 071106: commenting
-     xsrc wrapper as we won't mention migration topic/old imaging tools for now (see cihlarov's mail
-     on doku-intern)</remark>
-    Install the image building tools by selecting the <systemitem>&slepos; Image
-    Server</systemitem> and the <systemitem>&slepos; Images</systemitem> software
+    To create the images for the &pos; terminals, &slepos; includes a command
+    line tool called &kiwi;. It can be installed by selecting the <systemitem>&slepos-old; Image
+    Server</systemitem> and the <systemitem>&slepos-old; Images</systemitem> software
     patterns in &yast;.
    </para>
    <para>
@@ -979,9 +973,8 @@
     burned to a CD or copied to a USB flash drive for manual distribution.
    </para>
    <para>
-    For detailed information on &kiwi; and &imgcreat;, refer to
-    <xref linkend="cha.slepos_kiwi"/> and
-    <xref linkend="cha.slepos_imgcreator"/>.
+    For detailed information on &kiwi; refer to
+    <xref linkend="cha.slepos_kiwi"/>.
    </para>
   </sect2>
  </sect1>
@@ -995,38 +988,28 @@
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
     <para>
-     &admserv;,
+     &admserv;
     </para>
    </listitem>
    <listitem>
     <para>
-     &imgserv;,
+     &imgserv;
     </para>
    </listitem>
    <listitem>
     <para>
-     &branchserv;s,
+     &branchserv;s
     </para>
    </listitem>
    <listitem>
     <para>
-     &pos; terminals.
+     &pos; terminals
     </para>
    </listitem>
   </itemizedlist>
 
   <para>
-   The way in which these components are deployed depends on your system
-   requirements. For example, systems that maintain hundreds of system images
-   might require a dedicated &imgserv;, whereas smaller systems can have the
-   image building utilities installed on the &admserv;. Some customers might
-   install the Administration and &branchserv;s on a single box, while
-   others deploy the &branchserv; on a &pos; terminal.
-  </para>
-
-  <para>
    The flexibility of the architecture provides broad scalability.
-   <remark>emap: changed from saleabilty to scalability. I hope that's what was meant.</remark>
    In large environments components can be distributed to improve
    system performance, while in smaller environments components can be
    consolidated to maximize the use of system resources.
@@ -1071,24 +1054,21 @@
      <itemizedlist mark="bullet" spacing="normal">
       <listitem>
        <para>
-        Install an &admserv; that includes the image building utilities
-        (&kiwi; and &imgcreat;) and all the files and directories
-        required to create Point of Service images. For detailed instructions,
+        Install an &admserv;. For detailed instructions,
         see <xref linkend="cha.slepos_adminserv"/>.
        </para>
       </listitem>
       <listitem>
        <para>
-        Install an &admserv; and a dedicated &imgserv;. For detailed
+        Install a dedicated &imgserv;. For detailed
         instructions, see <xref linkend="cha.slepos_imgserv"/>.
        </para>
       </listitem>
       <listitem>
        <para>
-        Install an Admin/&branchserv; combination.
-<!--For detailed instructions,
-        see <xref linkend="cha.adminbranch"/>.-->
-<!--FIXME-->
+        Deploy an Admin/&branchserv; combination by installing the
+	<systemitem>&slepos; for &admserv;</systemitem> and
+	<systemitem>&slepos; for &branchserv;</systemitem> patterns using YaST.
        </para>
       </listitem>
      </itemizedlist>

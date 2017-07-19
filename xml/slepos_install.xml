@@ -9,8 +9,8 @@
  <title>&slepos; Installation</title>
  <info/>
  <para>
-  &slepos; is distributed as an add-on product for &sls; 11 systems. To
-  install &slepos; 11, install the &sls; 11 base system first. You can
+  &slepos; is distributed as an add-on product for &sls; 12 systems. To
+  install &slepos; 3.1, install the &sls; 12 base system first. You can
   choose to install the &slepos; add-on together with your base system
   during the initial installation process, or you can install the &slepos;
   add-on on top of an already installed base system at any later time.
@@ -26,7 +26,7 @@
   <procedure>
    <step>
     <para>
-     Start &sls; 11 installation as usual. For more information, see the
+     Start &sls; 12 installation as usual. For more information, see the
      &sls; documentation.
     </para>
    </step>
@@ -161,10 +161,10 @@
   </procedure>
  </sect1>
  <sect1>
-  <title>Upgrading &slepos; 11 to &slepos; 11 SP2</title>
+  <title>Upgrading &slepos-old; 11 to &slepos-old; 11 SP2</title>
 
   <para>
-   Upgrading &slepos; 11 to &slepos; 11 SP2 consists of two steps:
+   Upgrading &slepos-old; 11 to &slepos-old; 11 SP2 consists of two steps:
   </para>
 
   <itemizedlist mark="bullet" spacing="normal">
@@ -175,7 +175,7 @@
    </listitem>
    <listitem>
     <para>
-     upgrading &slepos; 11 to &slepos; 11 SP2.
+     upgrading &slepos-old; 11 to &slepos-old; 11 SP2.
     </para>
    </listitem>
   </itemizedlist>
@@ -187,15 +187,15 @@
   </para>
 
   <para>
-   If you want to upgrade &slepos; 11 at the same time as &sls; 11, check the
+   If you want to upgrade &slepos-old; 11 at the same time as &sls; 11, check the
    <guimenu>Include Add-On Product from Separate Media</guimenu> option during
-   selection of the installation mode. You will be asked to select the &slepos; 11
+   selection of the installation mode. You will be asked to select the &slepos-old; 11
    SP2 installation source.
   </para>
 
   <para>
-   If you want to upgrade &slepos; 11 after the &sls; 11 upgrade, use the &yast;
-   <guimenu>Add-On Products</guimenu> module and add &slepos; 11 SP2 as an add-on.
+   If you want to upgrade &slepos-old; 11 after the &sls; 11 upgrade, use the &yast;
+   <guimenu>Add-On Products</guimenu> module and add &slepos-old; 11 SP2 as an add-on.
    Network upgrade is not supported in this scenario and results in
    installation failure during the second installation stage because of DNS
    resolving failure. You can work around this limitation by switching to a
@@ -206,13 +206,12 @@
   </para>
 
   <para>
-   During the upgrade installation, you will be asked to select a &slepos;
-   pattern. If you do not want to change the installed pattern, click
+   During the upgrade installation, you will be asked to select a &slepos-old; pattern. If you do not want to change the installed pattern, click
    <guimenu>Next</guimenu>.
   </para>
 
   <sect2>
-   <title>&slepos; Configuration After Upgrade</title>
+   <title>&slepos-old; Configuration After Upgrade</title>
    <para>
     The &admserv; does not need to be configured after upgrading. Only
     the &branchserv; needs reconfiguration after an upgrade. The

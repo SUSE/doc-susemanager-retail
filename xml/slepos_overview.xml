@@ -56,11 +56,10 @@
   </para>
 
   <note>
-   <title>Creating a Dedicated &imgserv;</title>
+   <title>Dedicated &imgserv;</title>
    <para>
-    However, if you have a large system and want to offload the image building
-    function from the &admserv;, you can also set up a dedicated
-    &imgserv;. For more information, see
+    While it is possible to build images on &admserv;, it is recommended to set
+    up a dedicated &imgserv;. For more information, see
     <xref linkend="cha.slepos_adminserv"/> and
     <xref linkend="cha.slepos_imgserv"/>.
    </para>
@@ -122,7 +121,7 @@
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
-      One server with an x86 or x86-64 processor.
+      One server with an x86-64 processor.
      </para>
     </listitem>
     <listitem>
@@ -135,7 +134,7 @@
     </listitem>
     <listitem>
      <para>
-      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      A minimum of 1 GB RAM; recommended 3 GB (at least 1 GB per
       CPU).
      </para>
     </listitem>
@@ -156,7 +155,7 @@
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
-      One server with an x86 or x86-64 processor.
+      One server with an x86-64 processor.
      </para>
     </listitem>
     <listitem>
@@ -169,7 +168,7 @@
     </listitem>
     <listitem>
      <para>
-      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      A minimum of 1 GB RAM; recommended 3 GB (at least 1 GB per
       CPU).
      </para>
     </listitem>
@@ -190,7 +189,7 @@
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
-      One server with an x86 or x86-64 processor.
+      One server with an x86-64 processor.
      </para>
     </listitem>
     <listitem>
@@ -204,7 +203,7 @@
     </listitem>
     <listitem>
      <para>
-      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      A minimum of 1 GB RAM; recommended 3 GB (at least 1 GB per
       CPU).
      </para>
     </listitem>
@@ -237,7 +236,7 @@
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
-      One server with an x86 or x86-64 processor.
+      One server with an x86-64 processor.
      </para>
     </listitem>
     <listitem>
@@ -250,7 +249,7 @@
     </listitem>
     <listitem>
      <para>
-      A minimum of 512 MB RAM; recommended 512 MB - 3 GB (at least 512 MB per
+      A minimum of 1 GB RAM; recommended 1 GB - 3 GB (at least 1 GB per
       CPU).
      </para>
     </listitem>

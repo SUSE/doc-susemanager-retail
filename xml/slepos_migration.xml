@@ -6,18 +6,18 @@
 ]>
 <!-- Converted by suse-upgrade version 1.1 -->
 <chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:id="cha.slepos_migration">
- <title>Migration from Older Versions</title>
+ <title>Migrating and Upgrading</title>
  <info/>
  <para>
-  This section covers the migration from &slepos; 10 systems to &slepos; 11 systems.
+  This section covers the supported migration and upgrading scenarios.
  </para>
  
  <sect1>
-  <title>Migration from &slepos; 10 to &slepos; 11</title>
+  <title>Migration from &slepos-old; 10 to &slepos-old; 11</title>
 
   <para>
-   Migrating &slepos; 10 to &slepos; 11 is done during &sls; 10 upgrade to &sls; 11. No
-   pre-migration actions are required, but backing up of the &slepos; 10 system is
+   Migrating &slepos-old; 10 to &slepos-old; 11 is done during &sls; 10 upgrade to &sls; 11. No
+   pre-migration actions are required, but backing up of the &slepos-old; 10 system is
    recommended.
   </para>
 
@@ -26,7 +26,7 @@
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
-      Installed and configured &slepos; 10 system,
+      Installed and configured &slepos-old; 10 system,
      </para>
     </listitem>
     <listitem>
@@ -36,7 +36,7 @@
     </listitem>
     <listitem>
      <para>
-      &slepos; 11 add-on product.
+      &slepos-old; 11 add-on product.
      </para>
     </listitem>
    </itemizedlist>
@@ -45,7 +45,7 @@
   <sect2>
    <title>Pre-Migration Backup</title>
    <para>
-    It is highly recommended to back up your &slepos; 10 configuration before
+    It is highly recommended to back up your &slepos-old; 10 configuration before
     upgrading. On the &admserv;, backup configuration files are stored in
     the <filename>/etc/SLEPOS</filename> directory and the LDAP database. The
     LDAP database can be backed up by saving output of
@@ -64,28 +64,28 @@
     <step>
      <para>
       Start the installation of &sls; 11 as an upgrade from your current &sls; 10
-      and &slepos; 10 system. When asked for the installation add-on, provide the
-      path to your &slepos; 11 add-on.
+      and &slepos-old; 10 system. When asked for the installation add-on, provide the
+      path to your &slepos-old; 11 add-on.
      </para>
      <note>
       <title>Network Interfaces</title>
       <para>
        During the installation of &sls; 11, set up your network interfaces as
-       specified in the &slepos; 10 LDAP database.
+       specified in the &slepos-old; 10 LDAP database.
       </para>
      </note>
     </step>
     <step>
      <para>
-      During the installation of the &slepos; 11 add-on, the previous &slepos; 10
+      During the installation of the &slepos-old; 11 add-on, the previous &slepos-old; 10
       installation is detected automatically. You will be asked to confirm the
       detected components or to make adjustments.
      </para>
     </step>
     <step>
      <para>
-      After confirming the installation, &slepos; 11 will be installed and
-      configured according to the existing &slepos; 10 installation.
+      After confirming the installation, &slepos-old; 11 will be installed and
+      configured according to the existing &slepos-old; 10 installation.
      </para>
     </step>
     <step>
@@ -124,17 +124,17 @@
     <title>ScHarddisk LDAP Entry</title>
     <para>
      Many disk drives available in
-     <filename>/dev/hd<replaceable>X</replaceable></filename> in &slepos; 10
+     <filename>/dev/hd<replaceable>X</replaceable></filename> in &slepos-old; 10
      <remark>emap: See above, no such product.</remark>
      are available in <filename>/dev/sd<replaceable>X</replaceable></filename>
-     in &slepos; 11. This can cause problems after migration.
+     in &slepos-old; 11. This can cause problems after migration.
     </para>
     <para>
      For example, if there is a <systemitem>scCashRegister</systemitem> object
      with <systemitem>scHarddisk</systemitem> <filename>/dev/hda</filename> in
-     the &slepos; 10 LDAP database, migrating to &slepos; 11 with old images and an
+     the &slepos-old; 10 LDAP database, migrating to &slepos-old; 11 with old images and an
      old kernel works correctly. The old images contain an old kernel with the
-     naming scheme used in &slepos; 10. But when you assign newly-built &slepos; 11
+     naming scheme used in &slepos-old; 10. But when you assign newly-built &slepos-old; 11
      images to the <systemitem>scCashRegister</systemitem> object, you need to
      change <systemitem>scHarddisk</systemitem> accordingly.
      <remark>emap: Nothing new here. Is the earlier "Post-Migration" section needed? Redundant info can be convenient sometimes but this is extreme: identical text in the same chapter after a short time.</remark>
@@ -143,11 +143,11 @@
   </sect2>
  </sect1>
  <sect1>
-  <title>Manual Conversion of Image Configurations for &slepos; 11 SP2</title>
+  <title>Manual Conversion of Image Configurations for &slepos-old; 11 SP2</title>
 
   <para>
-   Image configurations created in &slepos; 11 or &slepos; 11 SP1 must be converted
-   for use in &slepos; 11 SP2. This conversion is done automatically in Image
+   Image configurations created in &slepos-old; 11 or &slepos-old; 11 SP1 must be converted
+   for use in &slepos-old; 11 SP2. This conversion is done automatically in Image
    Creator. If you want to use old configurations directly in &kiwi;,
    convert the configurations using <command>xsltproc</command> and the
    stylesheet provided in
@@ -167,7 +167,7 @@
 </screen>
  </sect1>
  <sect1 xml:id="migr11sp1-11sp2">
-  <title>Migration from &slepos; 11 SP1 to &slepos; 11 SP2</title>
+  <title>Migration from &slepos-old; 11 SP1 to &slepos-old; 11 SP2</title>
 
   <para>
    No pre-migration actions are required.
@@ -178,7 +178,7 @@
    <itemizedlist mark="bullet" spacing="normal">
     <listitem>
      <para>
-      Installed and configured &slepos; 11 SP2 system with latest updates
+      Installed and configured &slepos-old; 11 SP2 system with latest updates
      </para>
     </listitem>
     <listitem>
@@ -194,14 +194,14 @@
    <procedure>
     <step>
      <para>
-      Save the content of the LDAP database on the &slepos; 11 SP1 &admserv; to
+      Save the content of the LDAP database on the &slepos-old; 11 SP1 &admserv; to
       an ldif file:
      </para>
 <screen>slapcat &gt;sp1.ldif</screen>
     </step>
     <step>
      <para>
-      On the &slepos; 11 SP1 &admserv;, save system and boot images excluding
+      On the &slepos-old; 11 SP1 &admserv;, save system and boot images excluding
       PXE and &kiwi; files:
      </para>
 <screen>find /srv/SLEPOS/boot /srv/SLEPOS/image  \! -type d \! -path "*pxelinux*"  \
@@ -210,7 +210,7 @@
     <step>
      <para>
       Move the <filename>sp1.ldif</filename> and
-      <filename>sp1-images.tar.gz</filename> to a freshly installed &slepos; 11
+      <filename>sp1-images.tar.gz</filename> to a freshly installed &slepos-old; 11
       SP2 FP2 &admserv;. Make sure the fix for bnc#775040 is installed.
      </para>
     </step>
@@ -284,7 +284,7 @@
  </sect1>
  
  <sect1 xml:id="migr11sp2tosp3">
-  <title>Migration from &slepos; 11 SP2 to &slepos; 11 SP3</title>
+  <title>Migration from &slepos-old; 11 SP3 to &slepos; 3.1</title>
 
   <para>
    The migration consist of three steps:
@@ -305,10 +305,10 @@
    </step>
    <step>
     <para>
-     Migrate the data to the &slepos; 11 SP3 &admserv;
+     Migrate the data to the &slepos; 3.1 &admserv;
     </para>
     <para>
-     Transfer the collected backup to your &slepos; 11 SP3 server (make sure the
+     Transfer the collected backup to your &slepos; 3.1 server (make sure the
      <systemitem>POS_Migration</systemitem> package is installed) and call
      <command>slepos_migrate.sh</command> tool:
     </para>
@@ -333,10 +333,47 @@
    </step>
   </procedure>
 
-  <note> 
-   <title> &slepos; 11 SP2 Images</title>
-   <para>It is possible to use &slepos; 11 SP2 images with &slepos; 11 SP3
+<!--  <note> 
+   <title> &slepos-old; 11 SP2 Images</title>
+   <para>It is possible to use &slepos-old; 11 SP2 images with &slepos-old; 11 SP3
     servers.</para>
   </note>
+-->
+<sect2>
+  <title>Upgrading &slepos-old; 11 SP3 to &slepos; 3.1</title>
+
+  <para>
+   If you want to upgrade &slepos-old; 11 at the same time as &sls; 11 SP3, check the
+   <guimenu>Include Add-On Product from Separate Media</guimenu> option during
+   selection of the installation mode. You will be asked to select the &slepos; 11
+   SP3 installation source.
+  </para>
+
+  <para>
+   If you want to upgrade &slepos-old; 11 after the &sls; 11 SP3 upgrade, use the &yast;
+   <guimenu>Add-On Products</guimenu> module and add &slepos; 3.1 as an add-on.
+   Network upgrade is not supported in this scenario and results in
+   installation failure during the second installation stage because of DNS
+   resolving failure. You can work around this limitation by switching to a
+   second console
+   (<keycombo><keycap function="control"/><keycap>F2</keycap></keycombo>), logging in
+   as root and starting DNS server manually with the <command>rcnamed
+   start</command> command.
+  </para>
+
+  <para>
+   During the upgrade installation, you will be asked to select a &slepos; pattern. If you do not want to change the installed pattern, click
+   <guimenu>Next</guimenu>.
+  </para>
+  <sect3>
+   <title>&slepos; Configuration After Upgrade</title>
+   <para>
+    The &admserv; does not need to be configured after upgrading. Only
+    the &branchserv; needs reconfiguration after an upgrade. The
+    non-interactive reconfiguration is triggered via the
+    <command>posInitBranchserver -r -n</command> command.
+   </para>
+  </sect3>
+</sect2>
  </sect1>
 </chapter>

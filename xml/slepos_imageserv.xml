@@ -12,26 +12,12 @@
  <title>Setting Up an &imgserv;</title>
  <info/>
  <para> The &imgserv; is the machine used for building custom image
-  files for &pos; systems. It is possible to combine the functions of
-  &admserv; and &imgserv; on a single machine. However, if you have
-  a large system and want to offload the image building function from the
-  &admserv;, you can set up a dedicated &imgserv; on a separate
-  machine. It is also recommended to separate the &imgserv; for
-  security reasons. Image building under root privileges can affect the
-  &admserv;. </para>
- <para> To install a dedicated &imgserv;, select the <guimenu>Image
-   Server (IS)</guimenu> pattern during installation, but not the
-   <guimenu>Admin Server (AS)</guimenu> pattern. For a SLE12-based
-  installation, select the <guimenu>SLEPOS_Image_Server</guimenu> pattern.
-  For more information about the installation process, see <xref
-   linkend="cha.slepos_inst"/>. </para>
+  files for &pos; systems. While it is possible to combine the functions of
+  &admserv; and &imgserv; on a single machine, it is recommended to set up a
+  dedicated &imgserv; on a separate machine.</para>
 
- <note>
-   <title>/var/lib/SLEPOS/ on Btrfs Subvolume</title>
-   <para>
-     The <filename>/var/lib/SLEPOS/</filename> directory can be hundreds of megabytes in size. If the directory does not reside on a Btrfs subvolume, zypper will include it into snapshots. To prevent this from happening and save disk space, make sure that the directory is placed on a Btrfs subvolume.
-    </para>
-   </note>
+ <para> For instructions on installing &imgserv;, refer to <xref
+   linkend="cha.slepos_imageserv_sle12"/>. </para>
  
   <sect1 xml:id="imagetypes">
 

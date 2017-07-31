@@ -130,7 +130,7 @@
      </para>
     </entry>
     <entry>
-     <para> may,multivalue </para>
+     <para> may </para>
     </entry>
     <entry>
      <para> Contains ID assigned to the Point Of Service terminal </para>
@@ -296,7 +296,7 @@
      </para>
     </entry>
     <entry>
-     <para> may,multivalue </para>
+     <para> may </para>
     </entry>
     <entry>
      <para> DN of the role assigned to the Point Of Service terminal

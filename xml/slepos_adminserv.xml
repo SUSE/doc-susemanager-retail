@@ -1243,5 +1243,4 @@ registerImages [ --include-boot ] http:remote_tarball
    </sect3>
   </sect2>
  </sect1>
- <xi:include href="slepos_adminserv_gui.xml" parse="xml"/>
 </chapter>

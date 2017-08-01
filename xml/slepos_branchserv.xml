@@ -695,11 +695,11 @@ scNetworkcard attribute
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
     <para>
-     To verify that <command>posleases2ldap</command> is currently running,
-     run the following command:
+     To check whether <command>posleases2ldap</command> is currently running,
+     use the following command:
     </para>
     <para>
-     <command>systemctl start posleases2ldap.service</command>
+     <command>systemctl status posleases2ldap.service</command>
     </para>
    </listitem>
   </itemizedlist>

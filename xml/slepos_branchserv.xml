@@ -681,11 +681,12 @@ scNetworkcard attribute
   </sect2>
  </sect1>
  <sect1 xml:id="b48t0rs">
-  <title>Starting the <command>posleases2ldap</command> Core Script</title>
+  <title>Starting the <command>posleases2ldap</command> Service</title>
 
   <para>
-   Start the core script (<command>posleases2ldap</command>) as a daemon
-   process on the &branchserv;. The core script is responsible for
+   Start the <systemitem>posleases2ldap</systemitem> service on the
+   &branchserv; using the <command>systemctl start
+   posleases2ldap.service</command> command. The services is responsible for
    registering any new &pos; terminals at the LDAP directory and
    transferring image install notification data to the LDAP directory on the
    &admserv;.
@@ -695,28 +696,10 @@ scNetworkcard attribute
    <listitem>
     <para>
      To verify that <command>posleases2ldap</command> is currently running,
-     execute the following command:
+     run the following command:
     </para>
     <para>
-     <command>rcposleases2ldap status</command>
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     To manually start the <filename>posleases2ldap</filename> service, execute
-     the following command:
-    </para>
-    <para>
-     <command>rcposleases2ldap start</command>
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     To ensure the &branchserv; automatically starts the core script at boot
-     time, execute the following command:
-    </para>
-    <para>
-     <command>insserv posleases2ldap</command>
+     <command>systemctl start posleases2ldap.service</command>
     </para>
    </listitem>
   </itemizedlist>

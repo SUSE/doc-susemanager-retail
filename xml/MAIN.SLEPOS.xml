@@ -9,7 +9,7 @@
                  type="text/xml"
                  title="Profiling step"?>
 <?provo dirname="slepos11/"?>
-<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en" xml:id="book.slepos">
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en" xml:id="book.susemanager.retail">
  <title>&slepos; Guide</title>
  <info><productname>&slepos;</productname>
   <productnumber>3.1 and &slepos-old; &imgsrv; 12</productnumber><date>
@@ -25,7 +25,7 @@
  <xi:include href="slepos_branchserv.xml" parse="xml"/>
  <xi:include href="slepos_terminals.xml" parse="xml"/>
  <xi:include href="slepos_management.xml" parse="xml"/>
- <xi:include href="slepos_imagebuilding.xml" parse="xml"/>
+ <!-- <xi:include href="slepos_imagebuilding.xml" parse="xml"/> -->
  <xi:include href="slepos_imagebuilding_sle12.xml" parse="xml"/>
  <xi:include href="slepos_customization.xml" parse="xml"/>
  <xi:include href="slepos_ldap.xml" parse="xml"/>

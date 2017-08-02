@@ -1497,7 +1497,7 @@ initrd-netboot-suse-SLES11.i686-2.1.1.splash.md5
    <para> If you cannot electronically distribute &pos; images over
     your network, you must manually distribute the images using isoboot
     images. For more information on creating an isoboot image, see <xref
-     linkend="cha.slepos_imgcreator"/>. </para>
+     linkend="cha.slepos_kiwi"/>. </para>
    <para> The behavior of &pos; terminals booting from CD is similar to
     &pos; terminals that receive the first and second stage boot images
     over the LAN from a &branchserv;. The following is a general

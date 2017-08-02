@@ -28,7 +28,7 @@
    Every &pos; terminal requires two images: a boot image and a system
    image. You can also create your own images using &imgcreat; or
    &kiwi;. For more information, refer to <xref
-    linkend="cha.slepos_imgcreator"/> and <xref linkend="cha.slepos_kiwi"
+    linkend="cha.slepos_kiwi"/> and <xref linkend="cha.slepos_kiwi"
    />. </para>
 
   <sect2 xml:id="imagetypes.boot">

@@ -686,9 +686,8 @@
    <sect3>
     <title>Usage</title>
     <para> In normal operation, <command>posleases2ldap</command> is run as a daemon. It can be
-     started by using the <command>/etc/init.d/posleases2ldap init</command> script, which is also
-     used to start the daemon at boot time. To enable this, use <command>chkconfig posleases2ldap
-      on</command>. </para>
+     started by using the <command>systemctl start posleases2ldap</command> command, which is also
+     used to start the daemon at boot time. To enable this, use <command>systemctl enable posleases2ldap</command>. </para>
     <para> If <command>posleases2ldap</command> is started manually, it immediately runs in the
      background. To avoid this, use the optional parameter <command>-d</command>. If started this
      way, <command>posleases2ldap</command> stops when the shell is closed. </para>
@@ -934,11 +933,11 @@
    </sect3>
    <sect3>
     <title>Usage</title>
-    <para> On a &branchserv;, run <command>rcposASWatch start</command> to start and
-      <command>rcposASWatch stop</command> to stop the <command>posASwatch</command> service. To
-     check the service status, use the <command>rcposASWatch status</command> command. </para>
+    <para> On a &branchserv;, run <command>systemclt start posASWatch</command> to start and
+      <command>systemctl stop posASWatch</command> to stop the <command>posASwatch</command> service. To
+     check the service status, use the <command>systemctl status posASWatch</command> command. </para>
     <para> To ensure that the &branchserv; starts the <command>posASWatch</command> command
-     automatically at boot time, execute the <command>insserv posASWatch</command> command. </para>
+     automatically at boot time, execute the <command>systemctl enable posASWatch</command> command. </para>
    </sect3>
   </sect2>
 

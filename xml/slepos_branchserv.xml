@@ -708,8 +708,8 @@ scNetworkcard attribute
   <title>Starting the <command>posASWatch</command> Service</title>
 
   <para>
-   The <command>posASWatch</command> command checks if the Administration
-   server is available. It also checks the status of LDAP synchronization replication and
+   The <command>systemctl start posASWatch</command> command checks if the
+   &admserv; is available. It also checks the status of LDAP synchronization replication and
    the <literal>posleases2ldap</literal> core service. The service is started
    with the <command>rcposASWatch start</command> command and stopped with the
    <command>rcposASWatch stop</command> command. To check the service status,

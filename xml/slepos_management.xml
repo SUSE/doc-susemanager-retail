@@ -290,6 +290,6 @@ group pos virtual_ip mount_mnt openldap named dhcpd aftp pureftp posaswatch posl
     <filename>boot/ext</filename> directory are not removed by the <command>undo</command>
    command, they should be deleted manually if they are not needed anymore. </para>
  </sect1>
- <xi:include href="slepos_remotemanage.xml" parse="xml"/>
+ <!-- <xi:include href="slepos_remotemanage.xml" parse="xml"/> -->
  <xi:include href="slepos_backup.xml" parse="xml"/>
 </chapter>

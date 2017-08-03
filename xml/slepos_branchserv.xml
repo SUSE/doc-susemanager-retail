@@ -780,4 +780,26 @@ scNetworkcard attribute
    selected OIF file or online installation.
   </para>
  </sect1>
+ <sect1 xml:id="branchserv_susemanproxy">
+  <title>Installing a &branchserv; on the Host Running &susemanproxy;</title>
+  <para>
+    It is possible to install a &branchserv; on the same machine running
+    &susemanproxy;. To do this, deploy a &branchserv; by installing the
+    <guimenu>&slepos; &branchserv;</guimenu> pattern first (see <xref
+    linkend="cha.slepos_inst"/>). Install then &susemanproxy; as described in 
+    <link
+	xlink:href="https://www.suse.com/documentation/suse-manager-3/book_suma_advanced_topics_31/data/at_manager_proxy_inst_and_clients.html"
+	/>. Make sure that you <emphasis role="strong">do not</emphasis> install the
+    <systemitem>susemanager-tftpsync-recv</systemitem> package.
+  </para>
+
+  <warning>
+    <title>&susemanproxy; Boot Server</title>
+    <para>
+      Do not enable boot server of &susemanproxy;, as it conflics with the boot
+      server of &slepos;.
+     </para>
+    </warning>
+    
+ </sect1>
 </chapter>

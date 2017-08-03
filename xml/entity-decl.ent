@@ -138,6 +138,7 @@
 <!ENTITY productnumber "11 SP2">
 <!ENTITY sdk           "SUSE Software Development Kit">
 <!ENTITY slreg         "SUSE&reg; Linux">
+<!ENTITY susemanproxy  "SUSE Manager Proxy">
 <!ENTITY slepos-old    "SUSE Linux Enterprise Point of Service">
 <!ENTITY slepos        "SUSE Manager for Retail">
 <!ENTITY sleposreg     "SUSE&reg; Manager for Retail">

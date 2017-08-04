@@ -104,11 +104,11 @@
     (2013-08-1)
    </para>
   </listitem>
-  <listitem>
+  <!-- <listitem>
    <para>
     The <xref linkend="hiavail"/> section has been added. (2013-08-1)
    </para>
-  </listitem>
+  </listitem> -->
   <listitem>
    <para>
     The <command>posLDIFReport</command> script has been added. See

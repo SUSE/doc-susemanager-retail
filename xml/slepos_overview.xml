@@ -464,12 +464,6 @@
     </listitem>
     <listitem>
      <para>
-      System redundancy and failover. A pair of &branchserv;s can be
-      configured as a two-node high availability cluster with replicated data.
-     </para>
-    </listitem>
-    <listitem>
-     <para>
       NTP, SNMP, logging of syslog output from terminals and other services are
       not configured using the &slepos; tools, but can be configured using the
       standard &sls; tools.
@@ -645,21 +639,6 @@
       </tbody>
      </tgroup>
     </table>
-   </sect3>
-   <sect3 xml:id="sec.server.bs.ha">
-    <title>High Availability Configuration</title>
-    <para>
-     For high availability, &branchserv;s can be configured in two-node
-     pairs. The primary node runs all of the scripts and services required to
-     download &branchserv; configuration information, synchronize time, and
-     download system images from the &admserv;. The secondary node stays
-     synchronized with the primary, ready to take over and run the scripts and
-     services if the primary fails.
-    </para>
-    <para>
-     For information on installing a high availability environment, refer to
-     <xref linkend="hiavail"/>.
-    </para>
    </sect3>
    <sect3 xml:id="sec.server.bs.tftp">
     <title>TFTP Server Directory Structure</title>

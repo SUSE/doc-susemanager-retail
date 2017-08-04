@@ -1340,56 +1340,6 @@
    </sect3>
   </sect2>
 
-  <sect2>
-   <title>posAdmin-GUI</title>
-   <para> posAdmin-GUI is a graphical tool for creating new &branchserv;, Image, and
-    CashRegister objects. </para>
-   <sect3>
-    <title>Usage</title>
-    <para> posAdmin-GUI is started with the following command: </para>
-    <screen>posAdmin-GUI [<replaceable>YaST2_parameters</replaceable>] [<replaceable>SLEPOS_XML_file</replaceable>]</screen>
-    <para> where <replaceable>YaST2_parameters</replaceable> is the path to the optional
-     &slepos; XML file and <replaceable>YaST2_parameters</replaceable> are optional &yast;
-     parameters. The following YaST options can be used with posAdmin-GUI (in any combination): </para>
-    <variablelist>
-     <varlistentry>
-      <term>
-       <command>--fullscreen</command>
-      </term>
-      <listitem>
-       <para> Fullscreen mode is used for `opt(`defaultsize) dialogs. <!--FIXME-->
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>
-       <command>--noborder</command>
-      </term>
-      <listitem>
-       <para> No window manager border is used for `opt(`defaultsize) dialogs. <!--FIXME-->
-       </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>
-       <command>--auto-fonts</command>
-      </term>
-      <listitem>
-       <para> Picks fonts automatically, disregarding Qt settings. </para>
-      </listitem>
-     </varlistentry>
-     <varlistentry>
-      <term>
-       <command>--help</command>
-      </term>
-      <listitem>
-       <para> Displays &yast; help text. </para>
-      </listitem>
-     </varlistentry>
-    </variablelist>
-   </sect3>
-  </sect2>
-
   <sect2 xml:id="posLDIFReport">
    <title>posLDIFReport</title>
    <para> The <command>posLDIFReport</command> script generates a report with a list of all

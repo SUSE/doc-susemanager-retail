@@ -71,7 +71,7 @@
      </para>
     </entry>
     <entry>
-     <para> must,multivalue </para>
+     <para> must </para>
     </entry>
     <entry>
      <para> IP address of default gateway for location. This is normally a
@@ -238,7 +238,7 @@
      </para>
     </entry>
     <entry>
-     <para> may,multivalue </para>
+     <para> may,multivalue,deprecated </para>
     </entry>
     <entry>
      <para> DN of a scRefServer </para>
@@ -251,7 +251,7 @@
      </para>
     </entry>
     <entry>
-     <para> may,multivalue </para>
+     <para> may </para>
     </entry>
     <entry>
      <para> DNS mapping function (<literal>NONE</literal> |
@@ -280,7 +280,7 @@
      </para>
     </entry>
     <entry>
-     <para> may,multivalue </para>
+     <para> may </para>
     </entry>
     <entry>
      <para> IP mapping function (<literal>NONE</literal> |
@@ -296,7 +296,7 @@
      </para>
     </entry>
     <entry>
-     <para> may,multivalue </para>
+     <para> may,multivalue,deprecated </para>
     </entry>
     <entry>
      <para> DN of a scRefServer </para>

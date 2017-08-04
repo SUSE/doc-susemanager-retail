@@ -318,7 +318,7 @@
    installation, the image creation utilities (&imgcreat; and &kiwi; ) are installed on the
    &admserv; along with all the files and directories required to create &pos; images. For a
    detailed, step-by-step introduction to building &slepos; images using &imgcreat;, refer
-   to <xref linkend="cha.slepos_imgcreator"/>. </para>
+   to <xref linkend="cha.slepos_kiwi"/>. </para>
 
   <para> After you have created the images required for your &pos; terminals, you must copy the
    images to the appropriate directories on the &admserv; so that the rsync service can transmit
@@ -333,7 +333,7 @@
 
   <procedure>
    <step>
-    <para> Build new images as described in <xref linkend="cha.slepos_imgcreator"/>. </para>
+    <para> Build new images as described in <xref linkend="cha.slepos_kiwi"/>. </para>
    </step>
    <step>
     <para> Deploy boot images as decribed in <xref linkend="sec.adminserv.bootimagecopying"/>.
@@ -1243,5 +1243,4 @@ registerImages [ --include-boot ] http:remote_tarball
    </sect3>
   </sect2>
  </sect1>
- <xi:include href="slepos_adminserv_gui.xml" parse="xml"/>
 </chapter>

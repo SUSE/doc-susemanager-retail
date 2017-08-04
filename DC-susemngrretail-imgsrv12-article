@@ -5,7 +5,7 @@
 ##
 ## Basics
 MAIN="MAIN.SLEPOS.xml"
-ROOTID="cha.slepos_buildingimages_sle12"
+ROOTID="cha.susemanagerretail_buildingimages_sle12"
 
 ## Profiling
 PROFOS="slepos"

@@ -30,7 +30,7 @@ It is recommended to use a dedicated machine for setting up a &sle; 12-based &im
 </itemizedlist>
 
 <para>
-In both cases, make sure to install the <guimenu>SLEPOS_Image_Server</guimenu> pattern. For further information, refer to the &sls; 12 documentation at <link xlink:href="https://www.suse.com/documentation/sles-12/index.html"/>.
+In both cases, make sure to install the <guimenu>&slepos; &imgserv;</guimenu> pattern. For further information, refer to the &sls; 12 documentation at <link xlink:href="https://www.suse.com/documentation/sles-12/index.html"/>.
  </para>
 
  <note>

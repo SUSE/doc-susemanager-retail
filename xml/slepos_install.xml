@@ -9,8 +9,8 @@
  <title>&slepos; Installation</title>
  <info/>
  <para>
-  &slepos; is distributed as an add-on product for &sls; 12 systems. To
-  install &slepos; 3.1, install the &sls; 12 base system first. You can
+  &slepos; is distributed as an add-on product for &sls; 12 SP2 systems. To
+  install &slepos; 3.1, install the &sls; 12 SP2  base system first. You can
   choose to install the &slepos; add-on together with your base system
   during the initial installation process, or you can install the &slepos;
   add-on on top of an already installed base system at any later time.
@@ -26,7 +26,7 @@
   <procedure>
    <step>
     <para>
-     Start &sls; 12 installation as usual. For more information, see the
+     Start &sls; 12 SP2 installation as usual. For more information, see the
      &sls; documentation.
     </para>
    </step>
@@ -79,18 +79,15 @@
     <para>
      In the <guimenu>Server Pattern Selection</guimenu> step of the
      installation, select the &slepos; patterns appropriate for the type of
-     server you are installing. For &admserv;, select the <guimenu>Admin
-     Server (AS)</guimenu> pattern. For &branchserv;, select the
-     <guimenu>Branch Server (BS)</guimenu> pattern. For &imgserv;, select
-     the <guimenu>Image Server (IS)</guimenu> pattern.
+     server you are installing. For &admserv;, select the <guimenu>&slepos; for &admserv;</guimenu> pattern. For &branchserv;, select the
+     <guimenu>&slepos; for &branchserv;</guimenu> pattern. For &imgserv;, select
+     the <guimenu>&slepos-old; &imgserv;</guimenu> pattern.
     </para>
     <para>
      You can combine patterns to install a server with multiple functions. For
-     example, for an &admserv; with image building capabilities, select both
-     <guimenu>Admin Server (AS)</guimenu> and <guimenu>Image Server
-     (IS)</guimenu> patterns. For an &admserv; and &branchserv;
-     combination, select both <guimenu>Admin Server (AS)</guimenu> and
-     <guimenu>Branch Server (BS)</guimenu> patterns.
+     example, for an &admserv; and &branchserv;
+     combination, select both <guimenu>&slepos; for &admserv;</guimenu> and
+     <guimenu>&slepos; for &branchserv;</guimenu> patterns.
     </para>
    </step>
   </procedure>
@@ -144,80 +141,17 @@
     <para>
      In the <guimenu>Server Pattern Selection</guimenu> step of the
      installation, select the &slepos; patterns appropriate for the type of
-     server you are installing. For &admserv;, select the <guimenu>Admin
-     Server (AS)</guimenu> pattern. For &branchserv;, select the
-     <guimenu>Branch Server (BS)</guimenu> pattern. For &imgserv;, select
-     the <guimenu>Image Server (IS)</guimenu> pattern.
+     server you are installing. For &admserv;, select the <guimenu>&slepos; for &admserv;</guimenu> pattern. For &branchserv;, select the
+     <guimenu>&slepos; for &branchserv;</guimenu> pattern. For &imgserv;, select
+     the <guimenu>&slepos-old; for &imgserv;</guimenu> pattern.
     </para>
     <para>
      You can combine patterns to install a server with multiple functions. For
-     example, for an &admserv; with image building capabilities, select both
-     <guimenu>Admin Server (AS)</guimenu> and <guimenu>Image Server
-     (IS)</guimenu> patterns. For an &admserv; and &branchserv;
-     combination, select both <guimenu>Admin Server (AS)</guimenu> and
-     <guimenu>Branch Server (BS)</guimenu> patterns.
+     example, for an &admserv; and &branchserv;
+     combination, select both <guimenu>&slepos; for &admserv;</guimenu> and
+     <guimenu>&slepos; for &branchserv;</guimenu> patterns.
     </para>
    </step>
   </procedure>
- </sect1>
- <sect1>
-  <title>Upgrading &slepos-old; 11 to &slepos-old; 11 SP2</title>
-
-  <para>
-   Upgrading &slepos-old; 11 to &slepos-old; 11 SP2 consists of two steps:
-  </para>
-
-  <itemizedlist mark="bullet" spacing="normal">
-   <listitem>
-    <para>
-     upgrading &sls; 11 to &sls; 11 SP2,
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     upgrading &slepos-old; 11 to &slepos-old; 11 SP2.
-    </para>
-   </listitem>
-  </itemizedlist>
-
-  <para>
-   These two steps can be performed either together or separately. For
-   information on the &sls; 11 upgrade, consult the &sls; 11 SP2 Installation Quick Start
-   guide.
-  </para>
-
-  <para>
-   If you want to upgrade &slepos-old; 11 at the same time as &sls; 11, check the
-   <guimenu>Include Add-On Product from Separate Media</guimenu> option during
-   selection of the installation mode. You will be asked to select the &slepos-old; 11
-   SP2 installation source.
-  </para>
-
-  <para>
-   If you want to upgrade &slepos-old; 11 after the &sls; 11 upgrade, use the &yast;
-   <guimenu>Add-On Products</guimenu> module and add &slepos-old; 11 SP2 as an add-on.
-   Network upgrade is not supported in this scenario and results in
-   installation failure during the second installation stage because of DNS
-   resolving failure. You can work around this limitation by switching to a
-   second console
-   (<keycombo><keycap function="control"/><keycap>F2</keycap></keycombo>), logging in
-   as root and starting DNS server manually with the <command>rcnamed
-   start</command> command.
-  </para>
-
-  <para>
-   During the upgrade installation, you will be asked to select a &slepos-old; pattern. If you do not want to change the installed pattern, click
-   <guimenu>Next</guimenu>.
-  </para>
-
-  <sect2>
-   <title>&slepos-old; Configuration After Upgrade</title>
-   <para>
-    The &admserv; does not need to be configured after upgrading. Only
-    the &branchserv; needs reconfiguration after an upgrade. The
-    non-interactive reconfiguration is triggered via the
-    <command>posInitBranchserver -r -n</command> command.
-   </para>
-  </sect2>
  </sect1>
 </chapter>

@@ -681,11 +681,12 @@ scNetworkcard attribute
   </sect2>
  </sect1>
  <sect1 xml:id="b48t0rs">
-  <title>Starting the <command>posleases2ldap</command> Core Script</title>
+  <title>Starting the <command>posleases2ldap</command> Service</title>
 
   <para>
-   Start the core script (<command>posleases2ldap</command>) as a daemon
-   process on the &branchserv;. The core script is responsible for
+   Start the <systemitem>posleases2ldap</systemitem> service on the
+   &branchserv; using the <command>systemctl start
+   posleases2ldap.service</command> command. The services is responsible for
    registering any new &pos; terminals at the LDAP directory and
    transferring image install notification data to the LDAP directory on the
    &admserv;.
@@ -694,29 +695,11 @@ scNetworkcard attribute
   <itemizedlist mark="bullet" spacing="normal">
    <listitem>
     <para>
-     To verify that <command>posleases2ldap</command> is currently running,
-     execute the following command:
+     To check whether <command>posleases2ldap</command> is currently running,
+     use the following command:
     </para>
     <para>
-     <command>rcposleases2ldap status</command>
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     To manually start the <filename>posleases2ldap</filename> service, execute
-     the following command:
-    </para>
-    <para>
-     <command>rcposleases2ldap start</command>
-    </para>
-   </listitem>
-   <listitem>
-    <para>
-     To ensure the &branchserv; automatically starts the core script at boot
-     time, execute the following command:
-    </para>
-    <para>
-     <command>insserv posleases2ldap</command>
+     <command>systemctl status posleases2ldap.service</command>
     </para>
    </listitem>
   </itemizedlist>
@@ -725,8 +708,8 @@ scNetworkcard attribute
   <title>Starting the <command>posASWatch</command> Service</title>
 
   <para>
-   The <command>posASWatch</command> command checks if the Administration
-   server is available. It also checks the status of LDAP synchronization replication and
+   The <command>systemctl start posASWatch</command> command checks if the
+   &admserv; is available. It also checks the status of LDAP synchronization replication and
    the <literal>posleases2ldap</literal> core service. The service is started
    with the <command>rcposASWatch start</command> command and stopped with the
    <command>rcposASWatch stop</command> command. To check the service status,
@@ -796,5 +779,34 @@ scNetworkcard attribute
    remain unconfigured. Then it offers offline installation based on the
    selected OIF file or online installation.
   </para>
+ </sect1>
+ <sect1 xml:id="branchserv_susemanproxy">
+  <title>Installing a &branchserv; on the Host Running &susemanproxy;</title>
+  <para>
+    If you use &suseman; to manage hosts in your PoS environment, it makes
+sense to have the &susemanproxy; installed on every branch. In fact, it is
+possible to deploy &susemanproxy; on the same host as the &branchserv;. In
+this case certain functionality of &susemanproxy, such as the DHCP and PXE boot
+server, must be disabled, as it is provided by the &branchserv;.
+  </para>
+  <para>
+    To install a &branchserv; on the same machine running
+    &susemanproxy;, deploy a &branchserv; by installing the
+    <guimenu>&slepos; &branchserv;</guimenu> pattern first (see <xref
+    linkend="cha.slepos_inst"/>). Install then &susemanproxy; as described in 
+    <link
+	xlink:href="https://www.suse.com/documentation/suse-manager-3/book_suma_advanced_topics_31/data/at_manager_proxy_inst_and_clients.html"
+	/>. Make sure that you <emphasis role="strong">do not</emphasis> install the
+    <systemitem>susemanager-tftpsync-recv</systemitem> package.
+  </para>
+
+  <warning>
+    <title>&susemanproxy; Boot Server</title>
+    <para>
+      Do not enable boot server of &susemanproxy;, as it conflics with the boot
+      server of &slepos;.
+     </para>
+    </warning>
+    
  </sect1>
 </chapter>

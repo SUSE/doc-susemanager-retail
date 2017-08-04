@@ -5,7 +5,7 @@
     %entities;
 ]>
 <!-- Converted by suse-upgrade version 1.1 -->
-<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" conformance=",doc,yes,4," xml:lang="en" xml:id="cha.slepos_buildingimages_sle12">
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0" conformance=",doc,yes,4," xml:lang="en" xml:id="cha.susemanagerretail_buildingimages_sle12">
  <title>Deploying and Using &sle; 12-Based &imgsrv; and 64-Bit Client Images</title>
  <info/>
 <para>

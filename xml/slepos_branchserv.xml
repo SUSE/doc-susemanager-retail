@@ -786,7 +786,7 @@ scNetworkcard attribute
     If you use &suseman; to manage hosts in your PoS environment, it makes
 sense to have the &susemanproxy; installed on every branch. In fact, it is
 possible to deploy &susemanproxy; on the same host as the &branchserv;. In
-this case certain functionality of &susemanproxy, such as the DHCP and PXE boot
+this case certain functionality of &susemanproxy;, such as the DHCP and PXE boot
 server, must be disabled, as it is provided by the &branchserv;.
   </para>
   <para>

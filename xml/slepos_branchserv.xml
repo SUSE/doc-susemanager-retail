@@ -783,8 +783,15 @@ scNetworkcard attribute
  <sect1 xml:id="branchserv_susemanproxy">
   <title>Installing a &branchserv; on the Host Running &susemanproxy;</title>
   <para>
-    It is possible to install a &branchserv; on the same machine running
-    &susemanproxy;. To do this, deploy a &branchserv; by installing the
+    If you use &suseman; to manage hosts in your PoS environment, it makes
+sense to have the &susemanproxy; installed on every branch. In fact, it is
+possible to deploy &susemanproxy; on the same host as the &branchserv;. In
+this case certain functionality of &susemanproxy, such as the DHCP and PXE boot
+server, must be disabled, as it is provided by the &branchserv;.
+  </para>
+  <para>
+    To install a &branchserv; on the same machine running
+    &susemanproxy;, deploy a &branchserv; by installing the
     <guimenu>&slepos; &branchserv;</guimenu> pattern first (see <xref
     linkend="cha.slepos_inst"/>). Install then &susemanproxy; as described in 
     <link

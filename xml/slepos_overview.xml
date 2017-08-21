@@ -1046,8 +1046,8 @@
       <listitem>
        <para>
         Deploy an Admin/&branchserv; combination by installing the
-	<systemitem>&slepos; for &admserv;</systemitem> and
-	<systemitem>&slepos; for &branchserv;</systemitem> patterns using YaST.
+	<systemitem>&sleposabbr; &admservshort;</systemitem> and
+	<systemitem>&sleposabbr; &branchserv;</systemitem> patterns using YaST.
        </para>
       </listitem>
      </itemizedlist>

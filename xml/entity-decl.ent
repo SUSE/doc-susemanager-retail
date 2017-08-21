@@ -141,6 +141,7 @@
 <!ENTITY suseman       "SUSE Manager">
 <!ENTITY susemanproxy  "SUSE Manager Proxy">
 <!ENTITY slepos-old    "SUSE Linux Enterprise Point of Service">
+<!ENTITY sleposabbr    "SLEPOS">
 <!ENTITY slepos        "SUSE Manager for Retail">
 <!ENTITY sleposreg     "SUSE&reg; Manager for Retail">
 <!ENTITY slert         "&sle; Real Time">
@@ -155,6 +156,7 @@
 <!ENTITY yup           "yup">
 <!ENTITY imgcreat      "Image Creator">
 <!ENTITY admserv       "Administration Server">
+<!ENTITY admservshort       "Admin Server">
 <!ENTITY branchserv    "Branch Server">
 <!ENTITY imgserv       "Image Building Server">
 <!ENTITY imgsrv       "Image Server">

@@ -104,6 +104,75 @@
    server fails or the connection is down.
   </para>
  </sect1>
+
+ <sect1 xml:id="sec.current_imp">
+   <title>Current Implementation</title>
+
+   <para>
+     The following diagram shows the current implementation of &slepos;.
+   </para>
+
+  <figure xml:id="fig.susemanretail_diag">
+   <title>&slepos; Current Implementation</title>
+   <mediaobject>
+    <imageobject role="fo">
+     <imagedata fileref="susemanretail_diag.png" width="90%" format="PNG"/>
+    </imageobject>
+    <imageobject role="html">
+     <imagedata fileref="susemanretail_diag.png" width="90%" format="PNG"/>
+    </imageobject>
+   </mediaobject>
+  </figure>
+
+  <para>
+    &slepos; consists of four components.
+  </para>
+
+  <variablelist>
+   <varlistentry>
+    <term>Central Server</term>
+    <listitem>
+     <para>
+      Machine running the SUSE Manager Server and &admserv; (see <xref linkend="sec.server.as"/>). Both servers are
+      based on &sle; 12.
+     </para>
+    </listitem>
+    </varlistentry>
+   <varlistentry>
+    <term>Image Server</term>
+    <listitem>
+     <para>
+      Server for building boot images (see <xref
+      linkend="sec.server.special.is"/>). &imgserv; is based on &sle; 12
+      and usually runs on a dedicated machine.
+     </para>
+    </listitem>
+    </varlistentry>
+   <varlistentry>
+    <term>Branch Server</term>
+    <listitem>
+     <para>
+      Machine running SUSE Manager Proxy and &branchserv; (see <xref linkend="sec.server.bs"/>). Both servers are based on &sle; 12.
+     </para>
+    </listitem>
+    </varlistentry>
+   <varlistentry>
+    <term>POS</term>
+    <listitem>
+     <para>
+      Point of Service terminals.
+     </para>
+    </listitem>
+    </varlistentry>
+  </variablelist>
+
+  <para>
+    For information on deploying SUSE Manager, refer to the official
+    documentation available at <link xlink:href="https://www.suse.com/documentation/suse-manager-3/"/>
+  </para>
+
+ </sect1>
+
  <sect1 xml:id="sec.sysreq">
   <title>System Requirements</title>
 
@@ -265,10 +334,7 @@
   <title>Server Types</title>
 
   <para>
-   &slepos; is based on &sle; and installed as an add-on product. After
-   installation and setup, your &slepos; system includes one centralized
-   &admserv;, one or more &branchserv;s, and &pos; terminals. This
-   section focuses on the server types used in &slepos; and gives an
+   This section focuses on the server types used in &slepos; and gives an
    overview of the tasks they run and the services they provide.
   </para>
 

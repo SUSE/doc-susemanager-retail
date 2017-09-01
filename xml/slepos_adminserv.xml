@@ -221,12 +221,6 @@
     <para> Note that terminal images used with SUSE Manager must include the
       <systemitem>suse_manager_client_registration</systemitem> package. In the default
       <filename>config.xml</filename> it is commented out. </para>
-   <note>
-     <title>Use SUSE Manager 2.1 to Manage POS Terminals</title>
-     <para>
-       Since the current version of &slepos; doesn't support SUSE Manager 3 API, SUSE Manager 2.1 must be used for managing POS terminals, including those based on &sle; 12 SP2.
-      </para>
-     </note>
 
    </step>
    <step>

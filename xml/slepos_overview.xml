@@ -152,7 +152,9 @@
     <term>Branch Server</term>
     <listitem>
      <para>
-      Machine running SUSE Manager Proxy and &branchserv; (see <xref linkend="sec.server.bs"/>). Both servers are based on &sle; 12.
+      Machine running SUSE Manager Proxy and &branchserv; (see <xref
+      linkend="sec.server.bs"/>). Both servers are based on &sle; 12. A typical
+      &slepos; deployment includes multiple &branchserv;s.
      </para>
     </listitem>
     </varlistentry>

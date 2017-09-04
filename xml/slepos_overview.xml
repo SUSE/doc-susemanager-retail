@@ -133,7 +133,8 @@
     <term>Central Server</term>
     <listitem>
      <para>
-      Machine running the SUSE Manager Server and &admserv; (see <xref linkend="sec.server.as"/>). Both servers are
+      The SUSE Manager Server and the &admserv; (see <xref
+      linkend="sec.server.as"/>) running on two separate physical machines. Both servers are
       based on &sle; 12.
      </para>
     </listitem>

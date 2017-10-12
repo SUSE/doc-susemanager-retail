@@ -675,10 +675,10 @@
        <phrase>&pos; boot process</phrase>
       </textobject>
       <imageobject role="fo">
-       <imagedata fileref="posleases2ldap.svg" width="100%" format="svg"/>
+       <imagedata fileref="posleases2ldap.svg" width="100%"/>
       </imageobject>
       <imageobject role="html">
-       <imagedata fileref="posleases2ldap.svg" width="100%" format="svg"/>
+       <imagedata fileref="posleases2ldap.svg" width="100%"/>
       </imageobject>
      </mediaobject>
     </figure>

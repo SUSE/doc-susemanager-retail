@@ -1405,10 +1405,10 @@ echo "luks_sda3 /dev/sda3 /usb_key/keyfile luks" &gt;/etc/crypttab
       <title>&yast; Package Manager</title>
       <mediaobject>
        <imageobject role="fo">
-        <imagedata fileref="software_selection_details_3.png" width="75%" format="PNG"/>
+        <imagedata fileref="software_selection_details_3.png" width="75%"/>
        </imageobject>
        <imageobject role="html">
-        <imagedata fileref="software_selection_details_3.png" width="75%" format="png"/>
+        <imagedata fileref="software_selection_details_3.png" width="75%"/>
        </imageobject>
       </mediaobject>
      </figure>

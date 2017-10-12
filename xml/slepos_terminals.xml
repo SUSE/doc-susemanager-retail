@@ -920,10 +920,10 @@ POS_ID=<replaceable>id selected on the terminal</replaceable></screen>
     <textobject role="description"><phrase>&pos; boot process</phrase>
     </textobject>
     <imageobject role="fo">
-     <imagedata fileref="slrs_decision_a.png" width="80%" format="png"/>
+     <imagedata fileref="slrs_decision_a.png" width="80%" />
     </imageobject>
     <imageobject role="html">
-     <imagedata fileref="slrs_decision_a.png" width="80%" format="png"/>
+     <imagedata fileref="slrs_decision_a.png" width="80%" />
     </imageobject>
    </mediaobject>
   </figure>
@@ -1267,10 +1267,10 @@ initrd-netboot-suse-SLES11.i686-2.1.1.splash.md5
      <textobject role="description"><phrase>&pos; boot process</phrase>
      </textobject>
      <imageobject role="fo">
-      <imagedata fileref="usecases.png" width="100%" format="png"/>
+      <imagedata fileref="usecases.png" width="100%" />
      </imageobject>
      <imageobject role="html">
-      <imagedata fileref="usecases.png" width="100%" format="png"/>
+      <imagedata fileref="usecases.png" width="100%" />
      </imageobject>
     </mediaobject>
    </figure>

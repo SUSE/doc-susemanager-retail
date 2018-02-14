@@ -1280,7 +1280,6 @@
    <xref linkend="ad_bsxkk8v"/>.
   </para>
   <xi:include href="SLEPOS_objects_scLocation.xml" parse="xml"/>
-<!--
    <table>
     <title>Attributes for <systemitem>scLocation</systemitem> elements</title>
     <tgroup cols="3">
@@ -1303,7 +1302,8 @@
        </entry>
       </row>
      </thead>
-      <tbody>
+     <tbody>
+      <!--
        <row rowsep="0" id="ad_bsxkmq6">
         <entry colname="1">
          <para>
@@ -1586,11 +1586,15 @@
           are enabled.
          </para>
         </entry>
-       </row>
-       <row rowsep="0" >
+        </row>
+      -->
+      <row rowsep="0" >
+       <!-- enable this row again:
+            https://bugzilla.suse.com/show_bug.cgi?id=1052337
+       -->
         <entry colname="1">
          <para>
-          <command>- -scDnsMapFunc</command>
+          <command>--scDnsMapFunc</command>
          </para>
         </entry>
         <entry colname="2">
@@ -1619,7 +1623,7 @@
        <row rowsep="0" >
         <entry colname="1">
          <para>
-          <command>- -scIpMapFunc</command>
+          <command>--scIpMapFunc</command>
          </para>
         </entry>
         <entry colname="2">
@@ -1659,12 +1663,12 @@
           network address (<replaceable>1.1</replaceable>).
          </para>
          <para>
-          For example <literal>transform:IP([0-9.]+)</literal> extracts the
+          For example, <literal>transform:IP([0-9.]+)</literal> extracts the
           IP part from ID <literal>workplace17-IP192.168.20.30</literal>.
           The resulting IP address is <literal>192.168.20.30</literal>.
-<!- -It can be added to LDAP with this posAdmin argument:
-- -scIpMapFunc 'transform:IP([0-9.]+)'- ->
+It can be added to LDAP with this posAdmin argument:
          </para>
+<screen>--scIpMapFunc 'transform:IP([0-9.]+)'</screen>
          <para>
           The IDs in the pool must be selected so they don't conflict
           with &branchserv; address, static (<systemitem>scDhcpFixedRange</systemitem>)
@@ -1674,7 +1678,7 @@
        </row>
       </tbody>
     </tgroup>
-   </table>-->
+   </table>
  </sect2>
 
  <sect2 xml:id="ad_b58oz2k">

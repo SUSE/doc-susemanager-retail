@@ -145,7 +145,7 @@
   <tip>
    <title>For More Information</title>
    <para> Refer to the &kiwi; package documentation under
-     <filename>/usr/share/doc/packages/kiwi/kiwi.pdf</filename> for a detailed listing of all
+     <filename>/usr/share/doc/packages/kiwi/pdf/kiwi.pdf</filename> for a detailed listing of all
     configuration files and directories available for &kiwi; (Section 1.3 <emphasis>The
      &kiwi; Image Description</emphasis>). </para>
   </tip>

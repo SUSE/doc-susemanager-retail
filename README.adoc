@@ -1,9 +1,15 @@
 = SUSE Manager for Retail
 
-Documentation for the SUSE Manager for Retail
+Legacy documentation for SUSE Manager for Retail 3.1
+
+More modern versions of SUSE Manager for Retail have
+their documentation sources at:
+
+* 3.2 and 4.0: https://github.com/SUSE/doc-susemanager
+* 4.1+: https://github.com/uyuni-project/uyuni-docs
 
 Released versions of the documentation are published at
-https://www.suse.com/documentation/.
+https://documentation.suse.com/.
 
 
 == Branches
